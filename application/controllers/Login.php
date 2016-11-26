@@ -20,7 +20,7 @@ class Login extends CI_Controller {
         $username = $this->input->post("username");
         $password = $this->input->post("password");
         
-        $cek = $this->mod_login->cek_user($username,md5($password));
+        $cek = $this->mod_login->cek_user($username,md5($password)); //pelajari metode enkripsi selain md5
         if(count($cek) == 1){
             foreach ($cek as $cek) {
                 $level = $cek['level'];
