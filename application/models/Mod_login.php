@@ -3,7 +3,7 @@ class Mod_login extends CI_Model{
  function __construct()
  {
  parent::__construct();
- $this->tbl = "tb_users"; // untuk membuat variabel tbl yang mewakili nama tabel yang digunakan dibawah
+ $this->tbl = "tb_users"; // untuk membuat variabel tbl yang mewakili nama tabel yang digunakan dibawah sesuai dengan database
  }
  
  function cek_user($username="",$password="")
