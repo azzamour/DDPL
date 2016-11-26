@@ -1,0 +1,259 @@
+# Translation of Twenty Sixteen in Indonesian
+# This file is distributed under the same license as the Twenty Sixteen package.
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2015-12-13 06:07:09+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: GlotPress/2.1.0-alpha\n"
+"Project-Id-Version: Twenty Sixteen\n"
+
+#. Theme Name of the plugin/theme
+msgid "Twenty Sixteen"
+msgstr "Twenty Sixteen"
+
+#: inc/customizer.php:283
+msgid "Red"
+msgstr "Merah"
+
+#: searchform.php:16
+msgctxt "submit button"
+msgid "Search"
+msgstr "Cari"
+
+#: searchform.php:14
+msgctxt "placeholder"
+msgid "Search &hellip;"
+msgstr "Cari &hellip;"
+
+#: searchform.php:13
+msgctxt "label"
+msgid "Search for:"
+msgstr "Pencarian untuk:"
+
+#: functions.php:158
+msgid "Add widgets here to appear in your sidebar."
+msgstr "Tambahkan widget ke sini agar ditampilkan pada bilah sisi."
+
+#: template-parts/content.php:14
+msgid "Featured"
+msgstr "Andalan"
+
+#: template-parts/content-none.php:28
+msgid "It seems we can&rsquo;t find what you&rsquo;re looking for. Perhaps searching can help."
+msgstr "Tampaknya kami tak bisa menemukan apa yang Anda inginkan. Mungkin pencarian bisa membantu."
+
+#: template-parts/content-none.php:23
+msgid "Sorry, but nothing matched your search terms. Please try again with some different keywords."
+msgstr "Maaf, tapi tak ada yang cocok dengan terma pencarian Anda. Silakan coba lgi dengan kata kunci berbeda."
+
+#: template-parts/content-none.php:19
+msgid "Ready to publish your first post? <a href=\"%1$s\">Get started here</a>."
+msgstr "Siap menerbitkan pos pertamamu? <a href=\"%1$s\">Mulailah di sini</a>."
+
+#: template-parts/content-none.php:13
+msgid "Nothing Found"
+msgstr "Tak ada apapun"
+
+#: template-parts/biography.php:33
+msgid "View all posts by %s"
+msgstr "Tampilkan semua pos berdasarkan %s"
+
+#: template-parts/biography.php:28
+msgid "Author:"
+msgstr "Penulis:"
+
+#: single.php:38
+msgid "Previous post:"
+msgstr "Pos sebelumnya:"
+
+#: single.php:35
+msgid "Next post:"
+msgstr "Pos berikutnya:"
+
+#: single.php:37
+msgid "Previous"
+msgstr "Sebelumnya"
+
+#: single.php:34
+msgid "Next"
+msgstr "Selanjutnya"
+
+#: search.php:18
+msgid "Search Results for: %s"
+msgstr "Hasil Pencarian untuk: %s"
+
+#: inc/template-tags.php:106
+msgctxt "Used before tag names."
+msgid "Tags"
+msgstr "Tag"
+
+#: inc/template-tags.php:98
+msgctxt "Used before category names."
+msgid "Categories"
+msgstr "Kategori"
+
+#: inc/template-tags.php:95 inc/template-tags.php:103
+msgctxt "Used between list items, there is a space after the comma."
+msgid ", "
+msgstr ", "
+
+#: inc/template-tags.php:79
+msgctxt "Used before publish date."
+msgid "Posted on"
+msgstr "Diposkan pada"
+
+#: inc/template-tags.php:50
+msgid "Leave a comment<span class=\"screen-reader-text\"> on %s</span>"
+msgstr "Berikan komentar<span class=\"screen-reader-text\"> untuk %s</span>"
+
+#: inc/template-tags.php:38
+msgctxt "Used before post format."
+msgid "Format"
+msgstr "Format"
+
+#: inc/template-tags.php:25
+msgctxt "Used before post author name."
+msgid "Author"
+msgstr "Penulis"
+
+#: inc/customizer.php:293
+msgid "Yellow"
+msgstr "Kuning"
+
+#: inc/customizer.php:273
+msgid "Gray"
+msgstr "Abu-Abu"
+
+#: inc/customizer.php:263
+msgid "Dark"
+msgstr "Gelap"
+
+#: inc/customizer.php:253
+msgid "Default"
+msgstr "Bawaan"
+
+#: inc/customizer.php:160
+msgid "Link Color"
+msgstr "Warna Taut"
+
+#: inc/customizer.php:130
+msgid "Base Color Scheme"
+msgstr "Skema Warna Dasar"
+
+#: image.php:102 single.php:29
+msgctxt "Parent post link"
+msgid "<span class=\"meta-nav\">Published in</span><span class=\"post-title\">%title</span>"
+msgstr "<span class=\"meta-nav\">Diterbitkan di</span><span class=\"post-title\">%title</span>"
+
+#: image.php:73
+msgctxt "Used before full size attachment link."
+msgid "Full size"
+msgstr "Ukuran penuh"
+
+#: image.php:56 template-parts/content-page.php:23
+#: template-parts/content-single.php:25 template-parts/content.php:33
+msgid "Pages:"
+msgstr "Laman:"
+
+#: image.php:25
+msgid "Next Image"
+msgstr "Gambar selanjutnya"
+
+#: image.php:24
+msgid "Previous Image"
+msgstr "Gambar sebelumnya"
+
+#: header.php:47
+msgid "Menu"
+msgstr "Menu"
+
+#: header.php:27
+msgid "Skip to content"
+msgstr "Lompat ke konten"
+
+#: functions.php:285
+msgid "collapse child menu"
+msgstr "persempit menu anak"
+
+#: functions.php:284
+msgid "expand child menu"
+msgstr "perlebar menu anak"
+
+#. translators: If there are characters in your language that are not supported
+#. by Montserrat, translate this to 'off'. Do not translate into your own
+#. language.
+#: functions.php:208
+msgctxt "Montserrat font: on or off"
+msgid "on"
+msgstr "nyala"
+
+#. translators: If there are characters in your language that are not supported
+#. by Merriweather, translate this to 'off'. Do not translate into your own
+#. language.
+#: functions.php:203
+msgctxt "Merriweather font: on or off"
+msgid "on"
+msgstr "nyala"
+
+#. translators: If there are characters in your language that are not supported
+#. by Inconsolata, translate this to 'off'. Do not translate into your own
+#. language.
+#: functions.php:213
+msgctxt "Inconsolata font: on or off"
+msgid "on"
+msgstr "nyala"
+
+#: functions.php:156
+msgid "Sidebar"
+msgstr "Bilah Sisi"
+
+#: functions.php:89 header.php:62
+msgid "Social Links Menu"
+msgstr "Menu Tautan Sosial"
+
+#: functions.php:88 header.php:51
+msgid "Primary Menu"
+msgstr "Menu Utama"
+
+#: footer.php:51
+msgid "Proudly powered by %s"
+msgstr "Dengan bangga ditenagai oleh %s"
+
+#: comments.php:69
+msgid "Comments are closed."
+msgstr "Komentar ditutup."
+
+#: archive.php:51 image.php:60 index.php:48 search.php:39
+#: template-parts/content-page.php:27 template-parts/content-single.php:29
+#: template-parts/content.php:37
+msgid "Page"
+msgstr "Laman"
+
+#: archive.php:50 index.php:47 search.php:38
+msgid "Next page"
+msgstr "Laman berikutnya"
+
+#: archive.php:49 index.php:46 search.php:37
+msgid "Previous page"
+msgstr "Laman sebelumnya"
+
+#: 404.php:21
+msgid "It looks like nothing was found at this location. Maybe try a search?"
+msgstr "Sepertinya tidak ditemukan apapun di sini. Mungkin coba pencarian?"
+
+#: 404.php:17
+msgid "Oops! That page can&rsquo;t be found."
+msgstr "Ups! Laman tersebut tak ditemukan."
+
+#. Author of the plugin/theme
+msgid "the WordPress team"
+msgstr "Tim WordPress"
+
+#. #-#-#-#-#  twentysixteen.pot (Twenty Sixteen 1.3)  #-#-#-#-#
+#. Author URI of the plugin/theme
+#: footer.php:51
+msgid "https://wordpress.org/"
+msgstr "https://wordpress.org/"
