@@ -20,10 +20,9 @@ class Auth {
      redirect('dashboard');
      }elseif ($this->hak=="")
      {
-     echo "<script>alert('Anda belum login!');</script>";
+     echo "<script>alert('Anda belum login! Silahkan login terlebih dahulu');</script>";
      redirect('login');
      }else{
- 
      }
  }
 }
