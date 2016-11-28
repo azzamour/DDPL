@@ -26,7 +26,7 @@ define('DB_NAME', 'sataproj_gool');
 define('DB_USER', 'sataproj_gool');
 
 /** MySQL database password */
-define('DB_PASSWORD', '2G9B4(Rp)S');
+define('DB_PASSWORD', 'p1803e![7S');
 
 /** MySQL hostname */
 define('DB_HOST', 'localhost');
@@ -46,14 +46,14 @@ define('DB_COLLATE', '');
  *
  * @since 2.6.0
  */
-define('AUTH_KEY',         'npx3fxbakahgrm6z17sqwupkqij8uc7za4s3l9oquaksam0gxkveriqlh7wa7j3l');
-define('SECURE_AUTH_KEY',  'dnajvjmrhgrxikn5v8l2mmapxvythp3yvhgrt9pvllqhukknx6hmdinf4orrnzlj');
-define('LOGGED_IN_KEY',    'sym7fxw7p5x02tipzxxyk2rtcdbltws9cx1jc4ottbqjswfuklm62xbdwxdftnpd');
-define('NONCE_KEY',        'lx9gpqgdtwpsrbmcdn9ib9rzswakvqybyhxz636spv3a8binprpshl7l2jn522ob');
-define('AUTH_SALT',        'htipsl0pbt1x4mg1k4eb3syhiqq8ntx0gcptu6cw6lqff82w2q82zds3g4uxxies');
-define('SECURE_AUTH_SALT', '62bukxjayywgltrbvguhd5tinutjia9ms7per3uzwdknwlgfn0diy2aowi590q5p');
-define('LOGGED_IN_SALT',   'qhqq7ate1ysyytupgpugcv5dodiqkuzjej8mkstz5vcatqsmnlmajzcbl1ciyxoz');
-define('NONCE_SALT',       'sfzhnlasgrykuhhgzsnrjszpz75qwkwbnfi1hv2zlf8odbfq3bkksbqllaudowyy');
+define('AUTH_KEY',         'ieta6y9gxw7bzfkc5eetlz2pquf8xvfyny8zro0osqlkxup5wkx3o4sbfwfqxcjz');
+define('SECURE_AUTH_KEY',  'f7xu4mrnmrrkofgr8gikdv2wj3nbtjioqegu99nxneal7bbwa1pmo4yrgiek2b4q');
+define('LOGGED_IN_KEY',    'm1jpjtli7mh5khf1ghdc6fdinzpdmrtctffcc3eohy7qiqqslrg9yihbc2jbllqi');
+define('NONCE_KEY',        'xxybim4za04nhzhmjmxtcibketns4xjob59b8pr2n9rvrxjnak8ax70vthohzzhi');
+define('AUTH_SALT',        '3jbpkeezklrj7re9e7moobnbkmtjviiexm8hgod2gti9pabezdqi4gnpj23kznzm');
+define('SECURE_AUTH_SALT', 'lmz11th0x85xssytjdimhzim8gungqpn8qydeypzkl1stoccizc2icwjrhl7xtsm');
+define('LOGGED_IN_SALT',   'n3gww5znitempzgbrckwst3ip8weqp6llbiu5bxc3u01l9k9h3uedkqi2dtcn6hl');
+define('NONCE_SALT',       'ns7oqqeifdij543oeg0otl1tuuz96rinciu8hpqfhbpvwr5nh9ezrezc6yeaah2s');
 
 /**#@-*/
 
