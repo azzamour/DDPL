@@ -1,0 +1,25 @@
+[21-Jan-2016 20:52:34 UTC] PHP Parse error:  syntax error, unexpected T_STRING, expecting ',' or ';' in /home/konserbadai/public_html/tes/app/armdls/buy/views/buy.php on line 11
+[21-Jan-2016 20:52:40 UTC] PHP Parse error:  syntax error, unexpected T_STRING, expecting ',' or ';' in /home/konserbadai/public_html/tes/app/armdls/buy/views/buy.php on line 11
+[22-Jan-2016 06:03:35 UTC] PHP Parse error:  syntax error, unexpected T_CLASS, expecting ')' in /home/konserbadai/public_html/tes/app/armdls/buy/views/buy.php on line 361
+[22-Jan-2016 06:03:48 UTC] PHP Parse error:  syntax error, unexpected T_CLASS, expecting ')' in /home/konserbadai/public_html/tes/app/armdls/buy/views/buy.php on line 361
+[22-Jan-2016 06:04:16 UTC] PHP Parse error:  syntax error, unexpected T_CLASS, expecting ')' in /home/konserbadai/public_html/tes/app/armdls/buy/views/buy.php on line 361
+[22-Jan-2016 06:19:24 UTC] PHP Parse error:  syntax error, unexpected T_CONSTANT_ENCAPSED_STRING, expecting ')' in /home/konserbadai/public_html/tes/app/armdls/buy/views/buy.php on line 398
+[22-Jan-2016 06:19:36 UTC] PHP Parse error:  syntax error, unexpected T_CONSTANT_ENCAPSED_STRING, expecting ')' in /home/konserbadai/public_html/tes/app/armdls/buy/views/buy.php on line 398
+[22-Jan-2016 06:20:29 UTC] PHP Parse error:  syntax error, unexpected T_CONSTANT_ENCAPSED_STRING, expecting ')' in /home/konserbadai/public_html/tes/app/armdls/buy/views/buy.php on line 398
+[22-Jan-2016 17:48:47 UTC] PHP Parse error:  syntax error, unexpected $end, expecting T_FUNCTION in /home/konserbadai/public_html/tes/app/armdls/buy/models/Buy_models.php on line 113
+[22-Jan-2016 17:49:38 UTC] PHP Parse error:  syntax error, unexpected $end in /home/konserbadai/public_html/tes/app/armdls/buy/views/buy.php on line 464
+[23-Jan-2016 10:38:38 UTC] PHP Parse error:  syntax error, unexpected T_ELSE in /home/konserbadai/public_html/tes/app/armdls/admin/controllers/Admin.php on line 152
+[23-Jan-2016 10:39:20 UTC] PHP Parse error:  syntax error, unexpected T_ELSE in /home/konserbadai/public_html/tes/app/armdls/admin/controllers/Admin.php on line 152
+[23-Jan-2016 10:39:57 UTC] PHP Parse error:  syntax error, unexpected T_ELSE in /home/konserbadai/public_html/tes/app/armdls/admin/controllers/Admin.php on line 152
+[23-Jan-2016 10:39:57 UTC] PHP Parse error:  syntax error, unexpected T_ELSE in /home/konserbadai/public_html/tes/app/armdls/admin/controllers/Admin.php on line 152
+[23-Jan-2016 10:58:02 UTC] PHP Parse error:  syntax error, unexpected T_PUBLIC in /home/konserbadai/public_html/tes/app/armdls/admin/controllers/Admin.php on line 225
+[24-Jan-2016 17:04:25 UTC] PHP Parse error:  syntax error, unexpected T_PUBLIC in /home/konserbadai/public_html/app/armdls/admin/controllers/Admin.php on line 57
+[24-Jan-2016 17:04:28 UTC] PHP Parse error:  syntax error, unexpected T_PUBLIC in /home/konserbadai/public_html/app/armdls/admin/controllers/Admin.php on line 57
+[24-Jan-2016 17:04:29 UTC] PHP Parse error:  syntax error, unexpected T_PUBLIC in /home/konserbadai/public_html/app/armdls/admin/controllers/Admin.php on line 57
+[24-Jan-2016 17:05:05 UTC] PHP Parse error:  syntax error, unexpected T_PUBLIC in /home/konserbadai/public_html/app/armdls/admin/controllers/Admin.php on line 57
+[24-Jan-2016 17:05:18 UTC] PHP Parse error:  syntax error, unexpected T_PUBLIC in /home/konserbadai/public_html/app/armdls/admin/controllers/Admin.php on line 57
+[24-Jan-2016 17:05:19 UTC] PHP Parse error:  syntax error, unexpected T_PUBLIC in /home/konserbadai/public_html/app/armdls/admin/controllers/Admin.php on line 57
+[24-Jan-2016 17:05:19 UTC] PHP Parse error:  syntax error, unexpected T_PUBLIC in /home/konserbadai/public_html/app/armdls/admin/controllers/Admin.php on line 57
+[07-Mar-2016 18:19:02 UTC] PHP Fatal error:  Out of memory (allocated 3932160) (tried to allocate 30720 bytes) in /home/konserbadai/public_html/sys/database/DB_query_builder.php on line 2609
+[07-Mar-2016 18:19:02 UTC] PHP Fatal error:  Out of memory (allocated 2883584) (tried to allocate 30720 bytes) in /home/konserbadai/public_html/sys/helpers/url_helper.php on line 417
+[07-Mar-2016 18:19:02 UTC] PHP Fatal error:  Out of memory (allocated 3932160) (tried to allocate 30720 bytes) in /home/konserbadai/public_html/sys/database/DB_query_builder.php on line 2609

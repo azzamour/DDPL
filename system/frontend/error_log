@@ -1,0 +1,54 @@
+[21-Jan-2016 20:52:34 UTC] PHP Parse error:  syntax error, unexpected T_STRING, expecting ',' or ';' in /home/konserbadai/public_html/tes/app/armdls/buy/views/buy.php on line 11
+[21-Jan-2016 20:52:40 UTC] PHP Parse error:  syntax error, unexpected T_STRING, expecting ',' or ';' in /home/konserbadai/public_html/tes/app/armdls/buy/views/buy.php on line 11
+[22-Jan-2016 06:03:35 UTC] PHP Parse error:  syntax error, unexpected T_CLASS, expecting ')' in /home/konserbadai/public_html/tes/app/armdls/buy/views/buy.php on line 361
+[22-Jan-2016 06:03:48 UTC] PHP Parse error:  syntax error, unexpected T_CLASS, expecting ')' in /home/konserbadai/public_html/tes/app/armdls/buy/views/buy.php on line 361
+[22-Jan-2016 06:04:16 UTC] PHP Parse error:  syntax error, unexpected T_CLASS, expecting ')' in /home/konserbadai/public_html/tes/app/armdls/buy/views/buy.php on line 361
+[22-Jan-2016 06:19:24 UTC] PHP Parse error:  syntax error, unexpected T_CONSTANT_ENCAPSED_STRING, expecting ')' in /home/konserbadai/public_html/tes/app/armdls/buy/views/buy.php on line 398
+[22-Jan-2016 06:19:36 UTC] PHP Parse error:  syntax error, unexpected T_CONSTANT_ENCAPSED_STRING, expecting ')' in /home/konserbadai/public_html/tes/app/armdls/buy/views/buy.php on line 398
+[22-Jan-2016 06:20:29 UTC] PHP Parse error:  syntax error, unexpected T_CONSTANT_ENCAPSED_STRING, expecting ')' in /home/konserbadai/public_html/tes/app/armdls/buy/views/buy.php on line 398
+[22-Jan-2016 17:48:47 UTC] PHP Parse error:  syntax error, unexpected $end, expecting T_FUNCTION in /home/konserbadai/public_html/tes/app/armdls/buy/models/Buy_models.php on line 113
+[22-Jan-2016 17:49:38 UTC] PHP Parse error:  syntax error, unexpected $end in /home/konserbadai/public_html/tes/app/armdls/buy/views/buy.php on line 464
+[23-Jan-2016 10:38:38 UTC] PHP Parse error:  syntax error, unexpected T_ELSE in /home/konserbadai/public_html/tes/app/armdls/admin/controllers/Admin.php on line 152
+[23-Jan-2016 10:39:20 UTC] PHP Parse error:  syntax error, unexpected T_ELSE in /home/konserbadai/public_html/tes/app/armdls/admin/controllers/Admin.php on line 152
+[23-Jan-2016 10:39:57 UTC] PHP Parse error:  syntax error, unexpected T_ELSE in /home/konserbadai/public_html/tes/app/armdls/admin/controllers/Admin.php on line 152
+[23-Jan-2016 10:39:57 UTC] PHP Parse error:  syntax error, unexpected T_ELSE in /home/konserbadai/public_html/tes/app/armdls/admin/controllers/Admin.php on line 152
+[23-Jan-2016 10:58:02 UTC] PHP Parse error:  syntax error, unexpected T_PUBLIC in /home/konserbadai/public_html/tes/app/armdls/admin/controllers/Admin.php on line 225
+[24-Jan-2016 17:04:25 UTC] PHP Parse error:  syntax error, unexpected T_PUBLIC in /home/konserbadai/public_html/app/armdls/admin/controllers/Admin.php on line 57
+[24-Jan-2016 17:04:28 UTC] PHP Parse error:  syntax error, unexpected T_PUBLIC in /home/konserbadai/public_html/app/armdls/admin/controllers/Admin.php on line 57
+[24-Jan-2016 17:04:29 UTC] PHP Parse error:  syntax error, unexpected T_PUBLIC in /home/konserbadai/public_html/app/armdls/admin/controllers/Admin.php on line 57
+[24-Jan-2016 17:05:05 UTC] PHP Parse error:  syntax error, unexpected T_PUBLIC in /home/konserbadai/public_html/app/armdls/admin/controllers/Admin.php on line 57
+[24-Jan-2016 17:05:18 UTC] PHP Parse error:  syntax error, unexpected T_PUBLIC in /home/konserbadai/public_html/app/armdls/admin/controllers/Admin.php on line 57
+[24-Jan-2016 17:05:19 UTC] PHP Parse error:  syntax error, unexpected T_PUBLIC in /home/konserbadai/public_html/app/armdls/admin/controllers/Admin.php on line 57
+[24-Jan-2016 17:05:19 UTC] PHP Parse error:  syntax error, unexpected T_PUBLIC in /home/konserbadai/public_html/app/armdls/admin/controllers/Admin.php on line 57
+[07-Mar-2016 18:19:02 UTC] PHP Fatal error:  Out of memory (allocated 3932160) (tried to allocate 30720 bytes) in /home/konserbadai/public_html/sys/database/DB_query_builder.php on line 2609
+[07-Mar-2016 18:19:02 UTC] PHP Fatal error:  Out of memory (allocated 2883584) (tried to allocate 30720 bytes) in /home/konserbadai/public_html/sys/helpers/url_helper.php on line 417
+[07-Mar-2016 18:19:02 UTC] PHP Fatal error:  Out of memory (allocated 3932160) (tried to allocate 30720 bytes) in /home/konserbadai/public_html/sys/database/DB_query_builder.php on line 2609
+[11-Dec-2016 05:37:39 UTC] PHP Warning:  file_get_contents(/etc/timezone): failed to open stream: No such file or directory in /home/sataproj/public_domain/order/frontend/app/config/config.php on line 3
+[11-Dec-2016 05:37:39 UTC] PHP Notice:  date_default_timezone_set(): Timezone ID '' is invalid in /home/sataproj/public_domain/order/frontend/app/config/config.php on line 3
+[11-Dec-2016 05:37:43 UTC] PHP Warning:  file_get_contents(/etc/timezone): failed to open stream: No such file or directory in /home/sataproj/public_domain/order/frontend/app/config/config.php on line 3
+[11-Dec-2016 05:37:43 UTC] PHP Notice:  date_default_timezone_set(): Timezone ID '' is invalid in /home/sataproj/public_domain/order/frontend/app/config/config.php on line 3
+[11-Dec-2016 05:37:51 UTC] PHP Warning:  file_get_contents(/etc/timezone): failed to open stream: No such file or directory in /home/sataproj/public_domain/order/frontend/app/config/config.php on line 3
+[11-Dec-2016 05:37:51 UTC] PHP Notice:  date_default_timezone_set(): Timezone ID '' is invalid in /home/sataproj/public_domain/order/frontend/app/config/config.php on line 3
+[11-Dec-2016 05:37:58 UTC] PHP Warning:  file_get_contents(/etc/timezone): failed to open stream: No such file or directory in /home/sataproj/public_domain/order/frontend/app/config/config.php on line 3
+[11-Dec-2016 05:37:58 UTC] PHP Notice:  date_default_timezone_set(): Timezone ID '' is invalid in /home/sataproj/public_domain/order/frontend/app/config/config.php on line 3
+[11-Dec-2016 05:38:41 UTC] PHP Warning:  file_get_contents(/etc/timezone): failed to open stream: No such file or directory in /home/sataproj/public_domain/order/frontend/app/config/config.php on line 3
+[11-Dec-2016 05:38:41 UTC] PHP Notice:  date_default_timezone_set(): Timezone ID '' is invalid in /home/sataproj/public_domain/order/frontend/app/config/config.php on line 3
+[11-Dec-2016 05:38:51 UTC] PHP Warning:  file_get_contents(/etc/timezone): failed to open stream: No such file or directory in /home/sataproj/public_domain/order/frontend/app/config/config.php on line 3
+[11-Dec-2016 05:38:51 UTC] PHP Notice:  date_default_timezone_set(): Timezone ID '' is invalid in /home/sataproj/public_domain/order/frontend/app/config/config.php on line 3
+[11-Dec-2016 05:38:53 UTC] PHP Warning:  file_get_contents(/etc/timezone): failed to open stream: No such file or directory in /home/sataproj/public_domain/order/frontend/app/config/config.php on line 3
+[11-Dec-2016 05:38:53 UTC] PHP Notice:  date_default_timezone_set(): Timezone ID '' is invalid in /home/sataproj/public_domain/order/frontend/app/config/config.php on line 3
+[11-Dec-2016 05:45:01 UTC] PHP Warning:  date_default_timezone_get(): It is not safe to rely on the system's timezone settings. You are *required* to use the date.timezone setting or the date_default_timezone_set() function. In case you used any of those methods and you are still getting this warning, you most likely misspelled the timezone identifier. We selected the timezone 'UTC' for now, but please set date.timezone to select your timezone. in /home/sataproj/public_domain/order/frontend/app/config/config.php on line 3
+[11-Dec-2016 05:45:42 UTC] PHP Parse error:  syntax error, unexpected 'http' (T_STRING) in /home/sataproj/public_domain/order/frontend/app/config/config.php on line 21
+[11-Dec-2016 05:49:58 GMT] PHP Parse error:  syntax error, unexpected ')' in /home/sataproj/public_domain/order/frontend/app/armdls/admin/controllers/Admin.php on line 299
+[11-Dec-2016 06:50:42 GMT] PHP Parse error:  syntax error, unexpected '}', expecting ',' or ';' in /home/sataproj/public_domain/order/frontend/app/armdls/admin/views/schedule.php on line 39
+[11-Dec-2016 17:35:50 GMT] PHP Parse error:  syntax error, unexpected '{' in /home/sataproj/public_domain/order.goolfutsal.com/frontend/app/armdls/admin/views/schedule.php on line 39
+[12-Dec-2016 20:34:58 GMT] PHP Parse error:  syntax error, unexpected ''); ?>superadmin/managerial'' (T_CONSTANT_ENCAPSED_STRING) in /home/sataproj/public_domain/order.goolfutsal.com/frontend/app/armdls/superadmin/views/landing.php on line 8
+[12-Dec-2016 21:10:10 GMT] PHP Parse error:  syntax error, unexpected 'p_price' (T_STRING), expecting ',' or ';' in /home/sataproj/public_domain/order.goolfutsal.com/frontend/app/armdls/admin/views/invoice.php on line 130
+[12-Dec-2016 21:10:11 GMT] PHP Parse error:  syntax error, unexpected 'p_price' (T_STRING), expecting ',' or ';' in /home/sataproj/public_domain/order.goolfutsal.com/frontend/app/armdls/admin/views/invoice.php on line 130
+[12-Dec-2016 21:10:12 GMT] PHP Parse error:  syntax error, unexpected 'p_price' (T_STRING), expecting ',' or ';' in /home/sataproj/public_domain/order.goolfutsal.com/frontend/app/armdls/admin/views/invoice.php on line 130
+[12-Dec-2016 21:10:12 GMT] PHP Parse error:  syntax error, unexpected 'p_price' (T_STRING), expecting ',' or ';' in /home/sataproj/public_domain/order.goolfutsal.com/frontend/app/armdls/admin/views/invoice.php on line 130
+[12-Dec-2016 21:10:13 GMT] PHP Parse error:  syntax error, unexpected 'p_price' (T_STRING), expecting ',' or ';' in /home/sataproj/public_domain/order.goolfutsal.com/frontend/app/armdls/admin/views/invoice.php on line 130
+[12-Dec-2016 21:10:14 GMT] PHP Parse error:  syntax error, unexpected 'p_price' (T_STRING), expecting ',' or ';' in /home/sataproj/public_domain/order.goolfutsal.com/frontend/app/armdls/admin/views/invoice.php on line 130
+[12-Dec-2016 21:10:14 GMT] PHP Parse error:  syntax error, unexpected 'p_price' (T_STRING), expecting ',' or ';' in /home/sataproj/public_domain/order.goolfutsal.com/frontend/app/armdls/admin/views/invoice.php on line 130
+[12-Dec-2016 21:41:52 GMT] PHP Parse error:  syntax error, unexpected '<' in /home/sataproj/public_domain/order.goolfutsal.com/frontend/app/armdls/admin/controllers/Admin.php on line 298
+[12-Dec-2016 21:42:08 GMT] PHP Parse error:  syntax error, unexpected '<' in /home/sataproj/public_domain/order.goolfutsal.com/frontend/app/armdls/admin/controllers/Admin.php on line 298
