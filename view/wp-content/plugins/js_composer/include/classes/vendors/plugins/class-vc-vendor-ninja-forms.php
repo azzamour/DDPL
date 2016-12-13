@@ -17,7 +17,7 @@ class Vc_Vendor_NinjaForms implements Vc_Vendor_Interface {
 		vc_lean_map( 'ninja_form', array(
 			$this,
 			'addShortcodeSettings',
-		));
+		) );
 	}
 
 	/**
@@ -30,24 +30,25 @@ class Vc_Vendor_NinjaForms implements Vc_Vendor_Interface {
 	 * @deprecated 4.9
 	 */
 	public function mapNinjaForms( $ninja_forms = array() ) {
+		_deprecated_function( 'mapNinjaForms', '4.2 (will be removed in 5.1)'. 'Vc_Vendor_NinjaForms::addShortcodeSettings' );
 		// We map only [ninja_form] shortcode same as contact-form-7
 		vc_map( array(
-				'base' => 'ninja_forms_display_form',
-				'name' => __( 'Ninja Forms', 'js_composer' ),
-				'icon' => 'icon-wpb-ninjaforms',
-				'category' => __( 'Content', 'js_composer' ),
-				'description' => __( 'Place Ninja Form', 'js_composer' ),
-				'params' => array(
-					array(
-						'type' => 'dropdown',
-						'heading' => __( 'Select ninja form', 'js_composer' ),
-						'param_name' => 'id',
-						'value' => $ninja_forms,
-						'save_always' => true,
-						'description' => __( 'Choose previously created ninja form from the drop down list.', 'js_composer' ),
-					),
+			'base' => 'ninja_forms_display_form',
+			'name' => __( 'Ninja Forms', 'js_composer' ),
+			'icon' => 'icon-wpb-ninjaforms',
+			'category' => __( 'Content', 'js_composer' ),
+			'description' => __( 'Place Ninja Form', 'js_composer' ),
+			'params' => array(
+				array(
+					'type' => 'dropdown',
+					'heading' => __( 'Select ninja form', 'js_composer' ),
+					'param_name' => 'id',
+					'value' => $ninja_forms,
+					'save_always' => true,
+					'description' => __( 'Choose previously created ninja form from the drop down list.', 'js_composer' ),
 				),
-			) );
+			),
+		) );
 	}
 
 	/**
@@ -82,10 +83,9 @@ class Vc_Vendor_NinjaForms implements Vc_Vendor_Interface {
 		);
 	}
 
-	private function get_forms()
-	{
+	private function get_forms() {
 		$ninja_forms = array();
-		if( $this->is_ninja_forms_three() ) {
+		if ( $this->is_ninja_forms_three() ) {
 
 			$ninja_forms_data = ninja_forms_get_all_forms();
 
@@ -112,8 +112,7 @@ class Vc_Vendor_NinjaForms implements Vc_Vendor_Interface {
 		return $ninja_forms;
 	}
 
-    private function is_ninja_forms_three()
-    {
-        return ( version_compare( get_option( 'ninja_forms_version', '0.0.0' ), '3.0', '<' ) || get_option( 'ninja_forms_load_deprecated', FALSE ) );
-    }
+	private function is_ninja_forms_three() {
+		return ( version_compare( get_option( 'ninja_forms_version', '0.0.0' ), '3.0', '<' ) || get_option( 'ninja_forms_load_deprecated', false ) );
+	}
 }

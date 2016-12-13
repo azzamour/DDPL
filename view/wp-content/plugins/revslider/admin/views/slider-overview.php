@@ -673,7 +673,7 @@ $stable_version = get_option('revslider-stable-version', '4.1');
 
 <!-- Import slider dialog -->
 <div id="dialog_import_slider" title="<?php _e("Import Slider",'revslider'); ?>" class="dialog_import_slider" style="display:none">
-	<form action="<?php echo RevSliderBase::$url_ajax; ?>" enctype="multipart/form-data" method="post">
+	<form action="<?php echo RevSliderBase::$url_ajax; ?>" enctype="multipart/form-data" method="post" id="form-import-slider-local">
 		<br>
 		<input type="hidden" name="action" value="revslider_ajax_action">
 		<input type="hidden" name="client_action" value="import_slider_slidersview">
@@ -694,12 +694,12 @@ $stable_version = get_option('revslider-stable-version', '4.1');
 				<td><input type="radio" name="update_navigations" value="true" checked="checked"> <?php _e("Overwrite",'revslider'); ?></td>
 				<td><input type="radio" name="update_navigations" value="false"> <?php _e("Append",'revslider'); ?></td>
 			</tr>
-			<tr>
+			<!--tr>
 				<td><?php _e("Static Styles:",'revslider'); ?></td>
 				<td><input type="radio" name="update_static_captions" value="true"> <?php _e("Overwrite",'revslider'); ?></td>
 				<td><input type="radio" name="update_static_captions" value="false"> <?php _e("Append",'revslider'); ?></td>
 				<td><input type="radio" name="update_static_captions" value="none" checked="checked"> <?php _e("Ignore",'revslider'); ?></td>
-			</tr>
+			</tr-->
 			<?php
 			$single_page_creation = RevSliderFunctions::getVal($glob_vals, "single_page_creation", "off");
 			?>

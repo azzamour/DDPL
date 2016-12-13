@@ -689,6 +689,7 @@ class RevSliderTemplate {
 			data-gridheight="<?php echo $template['height']; ?>"
 			data-zipname="<?php echo $template['zip']; ?>"
 			data-uid="<?php echo $template['uid']; ?>"
+			data-title="<?php echo esc_html($template['title']); ?>"
 			<?php
 			if($deny !== ''){ //add needed version number here 
 				?>
@@ -769,13 +770,13 @@ class RevSliderTemplate {
 				if(isset($template['package_parent']) && $template['package_parent'] !== ''){
 				}else{
 					?>
-					<div class="install_template_slider<?php echo $deny; ?>" data-zipname="<?php echo $template['zip']; ?>" data-uid="<?php echo $template['uid']; ?>"><i class="eg-icon-download"></i><?php _e('Install Slider', 'revslider'); ?></div>							
+					<div class="install_template_slider<?php echo $deny; ?>" data-zipname="<?php echo $template['zip']; ?>" data-uid="<?php echo $template['uid']; ?>" data-title="<?php echo esc_html($template['title']); ?>"><i class="eg-icon-download"></i><?php _e('Install Slider', 'revslider'); ?></div>							
 					<?php
 				}
 				if(isset($template['package']) && $template['package'] !== ''){
 					?>
 					<span class="tp-clearfix" style="margin-bottom:5px"></span>
-					<div class="install_template_slider_package<?php echo $deny; ?>" data-zipname="<?php echo $template['zip']; ?>" data-uid="<?php echo $template['uid']; ?>"><i class="eg-icon-download"></i><?php _e('Install Slider Pack', 'revslider'); ?></div>							
+					<div class="install_template_slider_package<?php echo $deny; ?>" data-zipname="<?php echo $template['zip']; ?>" data-uid="<?php echo $template['uid']; ?>" data-title="<?php echo esc_html($template['title']); ?>"><i class="eg-icon-download"></i><?php _e('Install Slider Pack', 'revslider'); ?></div>							
 					<?php
 				}
 			} else {
@@ -818,6 +819,7 @@ class RevSliderTemplate {
 				data-gridheight="<?php echo $template['height']; ?>"
 				data-zipname="<?php echo $template['zip']; ?>"
 				data-uid="<?php echo $template['uid']; ?>"
+				data-title="<?php echo esc_html($template['title']); ?>"
 				data-slidenumber="<?php echo $template['number']; ?>"
 				<?php
 				if($deny !== ''){ //add needed version number here 
@@ -897,7 +899,7 @@ class RevSliderTemplate {
 			<?php
 			if($deny == '' && $allow_install == true){
 				?>
-				<div class="install_template_slide<?php echo $deny; ?>" data-slidenumber="<?php echo $template['number']; ?>" data-zipname="<?php echo $template['zip']; ?>" data-uid="<?php echo $template['uid']; ?>"><i class="eg-icon-download"></i><?php _e('Install Slider', 'revslider'); ?></div>							
+				<div class="install_template_slide<?php echo $deny; ?>" data-slidenumber="<?php echo $template['number']; ?>" data-zipname="<?php echo $template['zip']; ?>" data-uid="<?php echo $template['uid']; ?>" data-title="<?php echo esc_html($template['title']); ?>"><i class="eg-icon-download"></i><?php _e('Install Slider', 'revslider'); ?></div>							
 				<?php
 			} else {
 				?>
@@ -1102,13 +1104,13 @@ class RevSliderTemplate {
 				if ($allow_install !== false) {
 					if($slider_id !== false){
 						?>								
-						<div class="install_template_slider" data-zipname="<?php echo $template['zip']; ?>" data-uid="<?php echo $template['uid']; ?>"><i class="eg-icon-download"></i><?php _e('Re-Install Slider', 'revslider'); ?></div>							
+						<div class="install_template_slider" data-zipname="<?php echo $template['zip']; ?>" data-uid="<?php echo $template['uid']; ?>" data-title="<?php echo esc_html($template['title']); ?>"><i class="eg-icon-download"></i><?php _e('Re-Install Slider', 'revslider'); ?></div>							
 						<span class="tp-clearfix" style="margin-bottom:5px"></span>
 						<?php
 						if(isset($template['package']) && $template['package'] !== ''){
 							$txt = ($template['package_full_installded']) ? __('Re-Install Slider Pack', 'revslider') : __('Install Slider Pack', 'revslider');
 							?>
-							<div class="install_template_slider_package" data-zipname="<?php echo $template['zip']; ?>" data-uid="<?php echo $template['uid']; ?>"><i class="eg-icon-download"></i><?php echo $txt; ?></div>							
+							<div class="install_template_slider_package" data-zipname="<?php echo $template['zip']; ?>" data-uid="<?php echo $template['uid']; ?>" data-title="<?php echo esc_html($template['title']); ?>"><i class="eg-icon-download"></i><?php echo $txt; ?></div>							
 							<span class="tp-clearfix" style="margin-bottom:5px"></span>
 							<?php
 						}
@@ -1129,7 +1131,7 @@ class RevSliderTemplate {
 					<?php
 					if ($slider_id !== false && isset($template['package']) && $template['package'] !== '' && $template['package_full_installded']) {
 						?>
-						<div class="add_template_slider_item_package" data-uid="<?php echo $template['uid']; ?>"><i class="eg-icon-plus"></i><?php echo __('Add Slider Pack', 'revslider'); ?></div>
+						<div class="add_template_slider_item_package" data-uid="<?php echo $template['uid']; ?>" data-title="<?php echo esc_html($template['title']); ?>"><i class="eg-icon-plus"></i><?php echo __('Add Slider Pack', 'revslider'); ?></div>
 						<?php
 					}
 				} else {
@@ -1552,6 +1554,37 @@ class RevSliderTemplate {
 					</div>
 					<?php
 				}
+				if($is_package_parent){
+					$uids = $this->get_package_uids($m_slider['uid']);
+					?>
+					<script type="text/javascript">
+					slider_package_uids['<?php echo $m_slider['uid']; ?>'] = [];
+					slider_package_names['<?php echo $m_slider['uid']; ?>'] = {};
+					<?php
+					if(!empty($uids)){
+						foreach($uids as $sid => $uid){
+							$spt = $m_slider['title'];
+							foreach($tp_template_slider as $sl => $tpsli){
+								if($uid == $tpsli['uid']){
+									$spt = $tpsli['title'];
+									break;
+								}
+							}
+							?>
+							slider_package_uids['<?php echo $m_slider['uid']; ?>'].push({'<?php echo $sid; ?>': '<?php echo $uid; ?>'});
+							slider_package_names["<?php echo $uid; ?>"] = {};
+							slider_package_names["<?php echo $uid; ?>"].name = "<?php echo esc_html($spt); ?>";
+							slider_package_names["<?php echo $uid; ?>"].sliderid = "<?php echo $sid; ?>";
+							
+							
+
+							<?php
+						}
+					}
+					?>
+					</script>
+					<?php
+				}
 			}
 		}else{
 			echo '<span style="color: #F00; font-size: 20px">';
@@ -1587,6 +1620,7 @@ class RevSliderTemplate {
 		
 		if($package !== false){
 			$i = 0;
+			$tuids = array();
 			foreach($sliders as $slider){
 				if(isset($slider['package']) && $slider['package'] == $package){
 					if(isset($slider['package_parent']) && $slider['package_parent'] == 'true') continue; //dont install parent package
@@ -1597,13 +1631,31 @@ class RevSliderTemplate {
 					}else{ //add the installed slider id, as we have the template installed already
 						$sid = $slider['id'];
 					}
-					$uids[$sid] = $slider['uid'];
+					$order = (isset($slider['package_order'])) ? $slider['package_order'] : 0;
+					$tuids[] = array(
+						'uid' => $slider['uid'],
+						'sid' => $sid,
+						'order' => $order
+					);
 				}
+			}
+		}
+		if(!empty($tuids)){
+			usort($tuids, array($this, 'sort_by_order'));
+			foreach($tuids as $uid){
+				$uids[$uid['sid']] = $uid['uid'];
 			}
 		}
 		
 		return $uids;
 	}
+	
+	
+	public function sort_by_order($a, $b) {
+		return $a['order'] - $b['order'];
+	}
+
+	
 	
 	/**
 	 * check if all Slider of a certain package is installed, do this with the uid of a slider

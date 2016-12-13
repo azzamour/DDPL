@@ -17,6 +17,8 @@ $load_all_javascript = RevSliderBase::getVar($arrValues, 'load_all_javascript', 
 $pack_page_creation = RevSliderBase::getVar($arrValues, 'pack_page_creation', 'on');
 $single_page_creation = RevSliderBase::getVar($arrValues, 'single_page_creation', 'off');
 
+$stage_collapse = RevSliderBase::getVar($arrValues, "stage_collapse",'off');
+
 $enable_newschannel = apply_filters('revslider_set_notifications', 'on');
 $enable_newschannel = RevSliderBase::getVar($arrValues, "enable_newschannel",$enable_newschannel);
 
@@ -200,6 +202,28 @@ $force_activation_box = RevSliderBase::getVar($arrValues, 'force_activation_box'
 							
 							<div class="description_container">
 								<span class="description"><?php _e("Define the default Grid Sizes for devices: Desktop, Tablet and Mobile",'revslider'); ?></span>
+							</div>
+						</td>
+					</tr>
+					
+					<tr valign="top">
+						<th scope="row">
+							<?php _e("Slide Stage Collapse:",'revslider'); ?>
+						</th>
+						<td>
+							<span id="stage_collapse_wrapper" class="radio_settings_wrapper">
+								<div class="radio_inner_wrapper">
+									<input type="radio" id="" value="on" name="stage_collapse" <?php checked($stage_collapse, 'on'); ?>>
+									<label for="" style="cursor:pointer;"><?php _e("On",'revslider'); ?></label>
+								</div>
+				
+								<div class="radio_inner_wrapper">
+									<input type="radio" id="" value="off" name="stage_collapse" <?php checked($stage_collapse, 'off'); ?>>
+									<label for="" style="cursor:pointer;"><?php _e("Off",'revslider'); ?></label>
+								</div>
+							</span>
+							<div class="description_container">
+								<span class="description"><?php _e("Collapse left WordPress Menu on Slide Stage automatically ",'revslider'); ?></span>
 							</div>
 						</td>
 					</tr>

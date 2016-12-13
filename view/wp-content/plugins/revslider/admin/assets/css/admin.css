@@ -1013,7 +1013,7 @@ div.star_red:before { content: '\f155'; font-family: "dashicons"; color:#e03301;
 #viewWrapper .wp-color-result		{	margin: 0px !important; display:inline-block; width:74px; height:26px;border:1px solid #ddd; box-shadow: none;-webkit-box-shadow: none; -moz-box-shadow:none; outline:none; border-radius: 5px;-moz-border-radius: 5px;-webkit-border-radius: 5px;box-sizing:border-box;-moz-box-sizing:border-box;-webkit-box-sizing:border-box;}
 #viewWrapper .wp-color-result:after	{	content:"Color"; line-height: 26px; background:#eee; border:1px solid #ddd !important; height:26px; top:-1px; right:-1px; border-radius:0px 5px 5px 0px;-moz-border-radius:0px 5px 5px 0px;; -webkit-border-radius:0px 5px 5px 0px;box-shadow: none;-webkit-box-shadow: none; -moz-box-shadow:none; outline:none; box-sizing:border-box;-moz-box-sizing:border-box;-webkit-box-sizing:border-box;}
 #viewWrapper .wp-color-result.wp-picker-open:after { content:"Set"}
-#viewWrapper .wp-picker-input-wrap					{	position: absolute; top:225px; left:-61px; width:245px; background:#eee; height:30px;padding:5px; display:none;}
+#viewWrapper .wp-picker-input-wrap					{	z-index:10;position: absolute; top:227px; left:-61px; width:245px; background:#eee; height:30px;padding:5px; display:none; border:1px solid #f5f5f5 !important; border-top:none !important;}
 #viewWrapper .pickerisopen .wp-picker-input-wrap	{	display: block; text-align: right}
 #viewWrapper .pickerisopen .my-color-field			{	margin-right:7px; width:185px; }
 #viewWrapper .pickerisopen  .wp-picker-clear {
@@ -1029,7 +1029,7 @@ div.star_red:before { content: '\f155'; font-family: "dashicons"; color:#e03301;
 																}
 #viewWrapper .wp-picker-holder		{	position: absolute; top:30px;left:-61px;}
 
-#viewWrapper .iris-picker 			{	background:#eee !important; border:none !important; margin:0px ;}
+#viewWrapper .iris-picker 			{	background:#eee !important; border:1px solid #f5f5f5 !important; border-bottom:none !important;  margin:0px;box-shadow: 0px 10px 40px 0px rgba(0,0,0,0.25); z-index:5;}
 
 
 #viewWrapper .placeholder-single-wrapper .wp-picker-holder {	left:auto !important; right:0px !important;}
@@ -1134,6 +1134,7 @@ div.star_red:before { content: '\f155'; font-family: "dashicons"; color:#e03301;
 	background-repeat: no-repeat;
 	vertical-align: top;
 	margin:0;
+	z-index: 1;
 }
 
 #template_area .template_title	{
@@ -1164,7 +1165,7 @@ div.star_red:before { content: '\f155'; font-family: "dashicons"; color:#e03301;
 .revolution-customer-templates,
 .revolution-all-slides-templates	{	display:none;}
 
-#template_area .template_thumb_title {	font-size:13px; color:#444; font-weight:400; background:#fff; line-height:40px;margin-bottom:20px; border-top:1px solid #eee; padding:0px 12px;}
+#template_area .template_thumb_title {	font-size:13px; color:#444; font-weight:400; background:#fff; line-height:40px;margin-bottom:20px; border-top:1px solid #eee; padding:0px 12px; position: relative;z-index: 2}
 
 #viewWrapper					{	font-family: "Open Sans",sans-serif; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;}
 
@@ -1229,7 +1230,33 @@ div.star_red:before { content: '\f155'; font-family: "dashicons"; color:#e03301;
 #template_area .template_group_wrappers	{	display:inline-block;margin-right:15px;position: relative;}
 
 
+
 #template_area .template_group_wrappers.template_package 			{	display:inline-block;}
+#template_area .template_group_wrappers.template_package_parent:after {
+	content: " ";
+    position: absolute;
+    top: -5px;
+    left: 5px;
+    width: 100%;
+    height: 215px;
+    background: #d5d5d5;
+    z-index: 0;
+    
+    
+}
+
+#template_area .template_group_wrappers.template_package_parent:before {
+	content: " ";
+    position: absolute;
+    top: -10px;
+    left: 10px;
+    width: 100%;
+    height: 215px;
+    background: #bbb;
+    z-index: 0;
+    
+    
+}
 
 #leave_selected_template_package,
 #selected_template_package_title,
@@ -1286,7 +1313,7 @@ span.template_filter_button.template_local_filter.selected {
 
 .rs-visit-store	{	background:url(../images/visitstore.png); width:267px; height:50px; display:inline-block;}
 
-.template_meta_line {	background:#fff; line-height:18px; padding:6px 6px; box-sizing: border-box; display: block;}
+.template_meta_line {	background:#fff; line-height:18px; padding:6px 6px; box-sizing: border-box; display: block; position: relative; z-index: 2;}
 .template_meta_line .template_new,
 .template_meta_line .template_local,
 .template_meta_line .template_free,
@@ -1392,6 +1419,7 @@ z-index: 10000;
 .rs-premium-benefits-dialogsubtitle		{	font-size:14px; font-weight: 600; color:#00263b;opacity:0.4; display:block;}
 
 .rs-premium-benefits-dialogtitles .oppps-icon { vertical-align: top; background:url(../images/oops/oopps_blue.png); width:60px;height:60px; display: inline-block; }
+.rs-premium-benefits-dialogtitles .oppps-icon-red { vertical-align: top; background:url(../images/oops/oopps.png); width:60px;height:60px; display: inline-block; }
 
 .rs-open-premium-benefits-dialog-container .ui-dialog-titlebar-close { height:22px; width:20px; background:url(../images/oops/close_cross_x.png); top:30px; right:30px; }
 .rs-open-premium-benefits-dialog-container .ui-dialog-titlebar-close:before { display:none; }
@@ -1400,10 +1428,13 @@ z-index: 10000;
 #rs-premium-benefits-dialog 			{	min-height:715px !important; padding:0px; background: #f5f5f5;  background-image:url(../images/oops/getpurchasecode_deko.png);background-position: bottom -50px center; background-repeat: no-repeat;}
 
 #rs-premium-benefits-dialog.nomainbg 	{	background:#fff !important;}
+#rs-premium-benefits-dialog.cachbg 		{	background: url(../images/oops/cachemodalbg.jpg) center bottom;   background-repeat: no-repeat; max-height: 650px !important; min-height: 650px !important;  }
+
 
 .rs-premium-benefits-block  			{	padding: 20px 30px 30px; }
 .rs-premium-benefits-block .big_present { 	vertical-align: top; background:url(../images/oops/gift_big.png); width:48px;height:52px; display: inline-block; margin-right: 25px; } 
 .rs-premium-benefits-block .big_diamond { 	vertical-align: top; background:url(../images/oops/diamond_big.png); width:52px;height:48px; display: inline-block; margin-right: 25px; } 
+.rs-premium-benefits-block .big_light { 	vertical-align: top; background:url(../images/oops/light_big.png); width:40px;height:58px; display: inline-block; margin-right: 25px; } 
 .rs-premium-benefits-block h3 			{	font-size:20px; line-height:52px; font-weight:600; color:#00263b; margin-top:10px;margin-bottom:10px;}
 
 
@@ -2551,7 +2582,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00252525', e
 .rs-listview li.tls-addnewslider:hover .tls-title a	{	color:#333 !important;}
 
 
-#slide_selector			{	z-index: 2500}
+#slide_selector			{	z-index: 4992}
 
 
 
@@ -2649,7 +2680,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00252525', e
 
 .template_package_parent .template_group_opener {	display:inline-block !important;}
 
-.template_thumb_overview 			 	{	opacity:0;transition:all 0.5s;-webkit-transition:all 0.5s;background:rgba(0,0,0,0.75); position:absolute;top:0px;left:0px; width:100%; height:100%;}
+.template_thumb_overview 			 	{	z-index:2;opacity:0;transition:all 0.5s;-webkit-transition:all 0.5s;background:rgba(0,0,0,0.75); position:absolute;top:0px;left:0px; width:100%; height:100%;}
 
 .template_group_wrappers:hover .template_preview_add_wrapper,
 .template_group_wrappers:hover .template_thumb_overview {	opacity: 1}
@@ -2988,12 +3019,14 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00252525', e
 }
 
 .alpha-color-picker-container {
-	border: 1px solid #dfdfdf;
+	border: 1px solid #f5f5f5;
 	border-top: none;
+	border-bottom: none;
 	display: none;
 	background: #ddd;
-	padding: 0 11px 10px;
+	padding: 5px 11px 10px;
 	position: relative;
+	z-index: 10;
 }
 
 .alpha-color-picker-container .ui-widget-content,
@@ -3116,6 +3149,46 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00252525', e
 #viewWrapper #slide-nav-settings-content .alpha-color-picker-container	{	 background:#eee;}
 
 #viewWrapper #slide-nav-settings-content .wp-color-picker			{	width:100% !important; left:0px;right:auto;}
+
+
+/*********** IMPORTSLIDER STYLE **************/
+#tp_import_sliders 		  {	border-radius:0px; background:#fff; box-shadow: none; outline: none; border: none; }
+#tp_import_sliders_title  {	display: none !important;}
+#dialog_import_template_slider_info {	padding-bottom:40px;}
+#install-slider-counter-wrapper { width: 230px;height:5px;background: #e5e5e5; position: relative; margin-top: 45px; margin-left: 100px; display:block;}
+#install-slider-counter   {	width:0%; position:absolute;left:0px;top:0px;height:5px; background:#d50000;}
+#nowinstalling_label 	  {	font-size: 13px; text-transform: uppercase; color:#888; margin:25px auto 5px; font-weight: 400; line-height: 15px; display: block; text-align: center}
+
+.revslider_logo_rotating  {	width:120px;height:120px; display:block; background:#d50000; border-radius: 15px; box-shadow: 0px 10px 30px 0px rgba(0,0,0,0.25); margin:60px auto 0px; position: relative}
+
+#import_dialog_box_action,
+#import_dialog_box 	{	text-align: center; font-weight: 300; color:#888; font-size: 12px}
+.import_failure 	{	font-weight: 600; color:#888; font-size: 12px; color:#d50000;}
+
+
+.revslidercycle {
+ position: absolute;
+ background: url(../images/cycle.png);
+ background-position: center center;
+ background-repeat: no-repeat;
+ height: 100px;
+ width: 100px;
+ top: 10px;
+ left: 10px;
+ -webkit-animation: cyclerotate 1.5s linear infinite;
+ animation: cyclerotate 1.5s linear infinite;
+}
+ 
+}
+
+@-webkit-keyframes cyclerotate {
+  100% { -webkit-transform: rotate(360deg); }
+}
+@keyframes cyclerotate {
+  100% { transform: rotate(360deg); }
+}
+
+
 /*************** 	RTL BASED SETTINGS ********************/
 
 .rtl #viewWrapper .title_line #icon-options-general {	float:right;}
@@ -3151,5 +3224,11 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00252525', e
 .rtl .pickerisopen .wp-picker-input-wrap {left: -200px !important;}
 
 .rtl #eg-toolbox-wrapper	{	right:auto !important; left:15px !important;}
+
+.rtl .fullscreen-dialog-window 	{	transform: translate3d(100%,0,0);}
+
+.rtl .fullscreen-dialog-window.show {	    
+    transform: translate3d(0%,0,0);
+ }
 
 

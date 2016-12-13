@@ -258,12 +258,12 @@ if(!isset($rs_disable_template_script)){
 				<td><input type="radio" name="update_animations" value="true" checked="checked"> <?php _e("overwrite",'revslider'); ?></td>
 				<td><input type="radio" name="update_animations" value="false"> <?php _e("append",'revslider'); ?></td>
 			</tr>
-			<tr>
+			<!--tr>
 				<td><?php _e("Static Styles:",'revslider'); ?></td>
 				<td><input type="radio" name="update_static_captions" value="true"> <?php _e("overwrite",'revslider'); ?></td>
 				<td><input type="radio" name="update_static_captions" value="false"> <?php _e("append",'revslider'); ?></td>
 				<td><input type="radio" name="update_static_captions" value="none" checked="checked"> <?php _e("ignore",'revslider'); ?></td>
-			</tr>
+			</tr-->
 		</table>		
 		
 	</form>
@@ -281,6 +281,16 @@ if(!isset($rs_disable_template_script)){
 		<input type="hidden" name="slider_id" class="rs-slider-id" value="">
 		<input type="hidden" name="redirect_id" class="rs-slide-id" value="">
 	</form>
+</div>
+
+<div id="dialog_import_template_slide_info" title="<?php _e('Importing Status','revslider'); ?>" class="dialog_import_template_slider_info" style="display:none;">
+	<!-- ADD INFOS HERE ON DEMAND -->
+	<div class="revslider_logo_rotating"><div class="revslidercycle"></div></div>
+	<div id="install-slider-counter-wrapper"><span id="install-slider-counter"></span></div>
+	<div id="nowinstalling_label"><?php _e('Now Installing','revslider'); ?></div>
+	<div id="import_dialog_box_action"></div>
+	<div id="import_dialog_box"></div>
+	
 </div>
 <?php
 }

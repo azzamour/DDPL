@@ -480,7 +480,7 @@ var tpLayerContextMenu = new function() {
 	* @param {HTMLElement} link The link that was clicked
 	*/
 	function menuItemListener( link ) {
-		var hideAfterAction = true
+		var hideAfterAction = true,
 			objUpdate = {},
 			htmlLayer,
 			updateLayerForm = false,

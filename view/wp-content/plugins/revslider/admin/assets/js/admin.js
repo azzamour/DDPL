@@ -1312,9 +1312,8 @@ var UniteAdminRev = new function(){
 		RevSliderSettings.onoffStatus(jQuery('#input_video_leave_fs_on_pause'));
 		RevSliderSettings.onoffStatus(jQuery('#input_video_show_visibility'));
 		RevSliderSettings.onoffStatus(jQuery('#input_video_play_inline'));
-		
-		
-		if(data.video_type == 'audio'){
+				
+		if(data.video_type === 'audio'){
 			jQuery('#button-video-add').hide();
 			jQuery('#button-audio-add').show();
 		}else{

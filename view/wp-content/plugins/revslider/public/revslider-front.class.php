@@ -117,7 +117,7 @@ class RevSliderFront extends RevSliderBaseFront{
 		if($js_defer!='off') add_filter('clean_url', array('RevSliderFront', 'add_defer_forscript'), 11, 1);
 		
 		add_action('wp_before_admin_bar_render', array('RevSliderFront', 'add_admin_menu_nodes'));
-		add_action('wp_footer', array('RevSliderFront', 'putAdminBarMenus'));
+		add_action('wp_footer', array('RevSliderFront', 'putAdminBarMenus'), 99);
 		
 	}
 	
@@ -137,7 +137,7 @@ class RevSliderFront extends RevSliderBaseFront{
 					jQuery('.rev_slider_wrapper').each(function() {
 						aliases.push(jQuery(this).data('alias'));
 					});								
-					if 	(aliases.length>0)	
+					if(aliases.length>0)
 						jQuery('#wp-admin-bar-revslider-default li').each(function() {
 							var li = jQuery(this),
 								t = jQuery.trim(li.find('.ab-item .rs-label').data('alias')); //text()

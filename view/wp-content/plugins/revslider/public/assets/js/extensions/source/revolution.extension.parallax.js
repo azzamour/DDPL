@@ -1,6 +1,6 @@
 /********************************************
  * REVOLUTION 5.2.6 EXTENSION - PARALLAX
- * @version: 2.0.1 (24.10.2016)
+ * @version: 2.2.0 (16.11.2016)
  * @requires jquery.themepunch.revolution.js
  * @author ThemePunch
 *********************************************/
@@ -11,13 +11,12 @@ var _R = jQuery.fn.revolution,
 	extension = {	alias:"Parallax Min JS",
 					name:"revolution.extensions.parallax.min.js",
 					min_core: "5.3",
-					version:"2.0.1"
+					version:"2.2.0"
 			  };
 
 jQuery.extend(true,_R, {	
 	
-	checkForParallax : function(container,opt) {
-
+	checkForParallax : function(container,opt) {		
 		if (_R.compare_version(extension).check==="stop") return false;
 		var _ = opt.parallax;
 
@@ -25,6 +24,7 @@ jQuery.extend(true,_R, {
 		_.done = true;
 
 		if (_ISM && _.disable_onmobile=="on") return false;
+
 
 		if (_.type=="3D" || _.type=="3d") {			
 			punchgs.TweenLite.set(opt.c,{overflow:_.ddd_overflow});
@@ -267,8 +267,23 @@ jQuery.extend(true,_R, {
 				}			 
 		}
 				
+		// COLLECT ALL ELEMENTS WHICH NEED FADE IN/OUT ON PARALLAX SCROLL
+		var _s = opt.scrolleffect;
+		_s.bgs = new Array();		
+
+		if (_s.on) {		
+			if (_s.on_slidebg==="on")
+				for (var i=0;i<opt.allslotholder.length;i++) {													
+					_s.bgs.push(opt.allslotholder[i]);
+				}
+								
+			_s.multiplicator_layers = parseFloat(_s.multiplicator_layers);
+			_s.multiplicator = parseFloat(_s.multiplicator);	
+		}
+		if (_s.layers!==undefined && _s.layers.length===0) _s.layers = false;
+		if (_s.bgs!==undefined && _s.bgs.length===0) _s.bgs = false;	
+
 		_R.scrollTicker(opt,container);
-		
 
 	},
 	
@@ -335,7 +350,7 @@ jQuery.extend(true,_R, {
 				}
 			}
 		}
-			
+					
 		// SCROLL BASED PARALLAX EFFECT 
 		if (_ISM && _.disable_onmobile=="on") return false;
 
@@ -350,16 +365,76 @@ jQuery.extend(true,_R, {
 							pc.data('parallaxoffset',offsv);		
 							punchgs.TweenLite.set(pc,{overwrite:"auto",force3D:"auto",y:offsv})
 						}
-					}									
+					}											
 			if (_.bgcontainers)
 				for (var i=0;i<_.bgcontainers.length;i++) {
 					var t = _.bgcontainers[i],
 						l = _.bgcontainer_depths[i],			
-						offsv =	proc * -(l*opt.conh) || 0;							
-					punchgs.TweenLite.set(t,{position:"absolute",top:"0px",left:"0px",backfaceVisibility:"hidden",force3D:"true",y:offsv+"px"});
-					
-				}			
+						offsv =	proc * -(l*opt.conh) || 0;					
+					punchgs.TweenLite.set(t,{position:"absolute",top:"0px",left:"0px",backfaceVisibility:"hidden",force3D:"true",y:offsv+"px"});											
+				}							
 		}
+
+		// SCROLL BASED BLUR,FADE,GRAYSCALE EFFECT
+		var _s = opt.scrolleffect;
+		if (_s.on && (_s.disable_on_mobile!=="on" || !_ISM)) { 
+			
+			var _fproc = Math.abs(proc)-(_s.tilt/100);
+			_fproc = _fproc<0 ? 0 : _fproc;			
+			if (_s.layers!==false) {									
+				var fadelevel = 1 - (_fproc *_s.multiplicator_layers),
+					seo = { backfaceVisibility:"hidden",force3D:"true"};
+				if (_s.direction=="top" && proc>=0) fadelevel=1;
+				if (_s.direction=="bottom" && proc<=0) fadelevel=1;
+				fadelevel = fadelevel>1 ? 1 : fadelevel < 0 ? 0 : fadelevel;	
+								
+
+				if (_s.fade==="on")
+					seo.opacity = fadelevel;
+
+				if (_s.blur==="on") {					
+					var blurlevel = (1-fadelevel) * _s.maxblur;
+					seo['-webkit-filter'] = 'blur('+blurlevel+'px)';
+					seo['filter'] = 'blur('+blurlevel+'px)';
+				}
+
+				
+				if (_s.grayscale==="on") {					
+					var graylevel = (1-fadelevel) * 100,
+						gf = 'grayscale('+graylevel+'%)';
+					seo['-webkit-filter'] = seo['-webkit-filter']===undefined ? gf : seo['-webkit-filter']+' '+gf;
+					seo['filter'] = seo['filter']===undefined ? gf: seo['filter']+' '+gf;
+				}				
+				punchgs.TweenLite.set(_s.layers,seo);    								
+			}
+
+			if (_s.bgs!==false) {									
+				var fadelevel = 1 - (_fproc *_s.multiplicator),
+					seo = { backfaceVisibility:"hidden",force3D:"true"};
+				if (_s.direction=="top" && proc>=0) fadelevel=1;
+				if (_s.direction=="bottom" && proc<=0) fadelevel=1;					
+				fadelevel = fadelevel>1 ? 1 : fadelevel < 0 ? 0 : fadelevel;
+
+				if (_s.fade==="on")
+					seo.opacity = fadelevel;
+
+				if (_s.blur==="on") {					
+					var blurlevel = (1-fadelevel) * _s.maxblur;
+					seo['-webkit-filter'] = 'blur('+blurlevel+'px)';
+					seo['filter'] = 'blur('+blurlevel+'px)';
+				}
+
+				
+				if (_s.grayscale==="on") {					
+					var graylevel = (1-fadelevel) * 100,
+						gf = 'grayscale('+graylevel+'%)';
+					seo['-webkit-filter'] = seo['-webkit-filter']===undefined ? gf : seo['-webkit-filter']+' '+gf;
+					seo['filter'] = seo['filter']===undefined ? gf: seo['filter']+' '+gf;
+				}
+
+				punchgs.TweenLite.set(_s.bgs,seo);    								
+			}
+		}		
 		
 		if (_R.callBackHandling)
 			_R.callBackHandling(opt,"parallax","end");		

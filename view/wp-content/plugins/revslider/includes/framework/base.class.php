@@ -568,7 +568,7 @@ class RevSliderBase {
 				}
 				
 				if(!$zimage){
-					echo $image.__(' not found!<br>', 'revslider');
+					//echo $image.__(' not found!<br>', 'revslider');
 				}else{
 					if(!isset($alreadyImported['images/'.$image])){
 						//check if we are object folder, if yes, do not import into media library but add it to the object folder

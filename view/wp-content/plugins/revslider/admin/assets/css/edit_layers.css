@@ -972,9 +972,11 @@ select.rs-layer-input-field										 { 	min-width:0;	height:25px;	line-height:2
 #rs-align-wrapper-ver .eg-icon-arrow-combo:before 	{	color:#000 !important;}
 
 #button_change_image,
+#button_change_image_yt,
 #button_change_image_objlib 						{	vertical-align: top}
 
 #button_change_image i,
+#button_change_image_yt i,
 #button_change_image_objlib i 						{	margin-right:10px;}
 
 
@@ -1344,7 +1346,7 @@ span.show_more_style_txt {
 
 
 
-.inp-deep-wrapper		{	position:relative; display: inline-block;}
+.inp-deep-wrapper		{	position:relative; display: inline-block;line-height: 26px;}
 .inp-deep-wrapper input {	position:relative; z-index: 2}
 .inp-deep-wrapper.selected-deep-wrapper			{	z-index:910;}
 .inp-deep-wrapper.selected-deep-wrapper input 	{	z-index: 911;}
@@ -1853,7 +1855,7 @@ span.show_more_style_txt {
 
 /******************************	-	LIST OF CLASSES STYLES	-********************************/
 
-#tp-thelistofclasses ul                                             { 	max-height:500px;	background:#ddd;	overflow:hidden;	border:none!important;	padding:0!important;z-index:3100;}
+#tp-thelistofclasses ul                                             { 	max-height:500px;	background:#ddd;	overflow:hidden;	border:none!important;	padding:0!important;z-index:4997;}
 #tp-thelistofclasses ul li a                                        { 	line-height:15px;	font-size:13px;	border-radius:0!important;		-moz-border-radius:0!important;	padding:5px!important;	margin:0!important;}
 #tp-thelistofclasses ul li a:hover                                  { 	border:none!important;	background:#ccc!important;}
 #tp-thelistofclasses ul .ps-scrollbar-x-rail,
@@ -1861,7 +1863,7 @@ span.show_more_style_txt {
 #tp-thelistofclasses ul .ps-scrollbar-y-rail > .ps-scrollbar-y,
 #tp-thelistofclasses ul	.ps-scrollbar-y-rail                        { 	width:15px;}
 
-#tp-thelistoffonts ul                                            	 { 	max-height:500px;	background:#ddd;	overflow:hidden;	border:none!important;	padding:0!important;z-index:3100;}
+#tp-thelistoffonts ul                                            	 { 	max-height:500px;	background:#ddd;	overflow:hidden;	border:none!important;	padding:0!important;z-index:4997;}
 #tp-thelistoffonts ul li a                                        { 	line-height:15px;	font-size:13px;	border-radius:0!important;		-moz-border-radius:0!important;	padding:5px!important;	margin:0!important;}
 #tp-thelistoffonts ul li a:hover                                  { 	border:none!important;	background:#ccc!important;}
 #tp-thelistoffonts ul .ps-scrollbar-x-rail,
@@ -1884,9 +1886,9 @@ span.show_more_style_txt {
 
 /******************************	-	ADVANCED STYLES	-********************************/
 
-#dialog_advanced_css .first-css-area .CodeMirror .CodeMirror-scroll { 	background:#eee!important;	height:auto!important;}
+#dialog_advanced_css .first-css-area .CodeMirror .CodeMirror-scroll { 	background:#fff!important;	height:auto!important;}
 #dialog_advanced_css,
-#dialog_advanced_layer_css                                          { 	padding:0;}
+#dialog_advanced_layer_css                                          { 	padding: 0px 20px 0px 0px;}
 span.advanced-css-title                                             { 	background:#2980B9;	display:block;	padding:5px 30px;	color:#FFF;	font-size:12px;	font-weight:400;}
 #rs-save-as-css,
 #rs-rename-css                                                      { 	border:none!important;	outline:none!important;	width:260px;	box-shadow:none!important;		-moz-box-shadow:none!important;	line-height:25px;}
@@ -1907,6 +1909,73 @@ span.advanced-css-title                                             { 	backgroun
 .close_extra_settings:before                                        { 	position:absolute;	content:'\e819';	color:#FFF;	left:0;	top:50%;	margin-top:-9px;	margin-left:0px;	width:18px;	height:18px;	background:#3498D8;	border-radius:50%;	-moz-border-radius:50%;		text-align:center;	font-family:"eg-font";	line-height:18px;	font-size:9px;	cursor:pointer;}
 
 
+.tp-css-editor-dialog {
+	background: #f5f5f5 !important;
+	font-family: "Open Sans",sans-serif;
+	-webkit-font-smoothing: antialiased; 
+	-moz-osx-font-smoothing: grayscale;
+}
+
+
+
+.tp-css-editor-dialog .cbi-title{
+	font-weight: 600;
+	margin-left: 25px;
+}
+
+
+.tp-css-editor-dialog .ui-dialog-titlebar{
+	background: #36485f !important;
+    padding: 0px 0px;
+    line-height: 55px;
+    height: 55px;
+    color: #fff;    
+    padding: 0px 15px;
+    vertical-align: top;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.tp-depricated-dialog.tp-css-editor-dialog .ui-dialog-titlebar {
+	background:#e74c3c !important;
+}
+
+.tp-css-editor-dialog .ui-button.ui-widget.ui-dialog-titlebar-close {
+    width: 55px !important;
+    height: 55px !important;
+    font-size: 30px !important;
+}
+
+.tp-css-editor-dialog .ui-button.ui-widget.ui-dialog-titlebar-close:before {
+    font: 400 20px/1 dashicons;
+    vertical-align: top;
+    speak: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 36px;
+    font-size: 30px;
+    width: 36px;
+    height: 36px;
+    content: '\f158';
+    color: #fff;
+}
+
+.tp-css-editor-dialog .revblue.button-primary {	
+	outline: none !important;
+	border-radius: 0px !important;
+	box-shadow: none !important;
+	text-shadow: none !important;
+	border: none !important;
+	font-weight: 600;
+}
+
+#show_global_styles,
+#change_ace_wrappers,
+#change_acea_wrappers {
+	position: absolute;
+	bottom: 16px;
+	left: 15px;
+}
 /* THE STYLES FOR HOVER AND IDLE STATES EXTRA ADD ONS */
 
 .advanced-copy-button,
@@ -2031,6 +2100,7 @@ input[name="shape_height"]:disabled,
 input[name="shape_padding[]"]:disabled									{	opacity: 0.5}
 
 form[name="form_layers"].form_layers								{	z-index: 2099;position: relative;}
+#layer_text_holder 													{	z-index: 2099;position: relative}
 
 .slide_layer_type_video .tp-mask-wrap,
 .slide_layer_type_shape .tp-mask-wrap 								{	width:100%;height:100%;}
@@ -2653,6 +2723,8 @@ select.object_library_type_list {	display:inline-block; width:145px !important;h
 
 .slide_layer_type_column .slide_layer_type_image {	 height:auto !important;}
 
+.slide_layer_col_sizer .innerslide_layer > .tp_layer_group_inner_wrapper { white-space: normal !important }
+
 /*********** LAYER GROUP EXTENSIONS *********************/
 
 .slide_layer_type_group 							{	box-sizing: border-box; border:1px dashed rgba(0, 130, 132, 0.7); }
@@ -2815,5 +2887,20 @@ select.object_library_type_list {	display:inline-block; width:145px !important;h
 #ken_burn_example 													{	position: relative;  width:320px; border:2px solid #eee;overflow: hidden;}
 #ken_burn_slot_example 												{	position: absolute; top: 0px; left: 0px; z-index: 0; width: 100%; height: 100%; background-size:cover;background-position: center center; background-repeat: no-repeat;}
 
+/* SOME BUG FIXES*/
+#slide_main_settings_wrapper { z-index:4990; max-width:100% !important; min-width:1200px !important }
 
+/* STICKY MENU MAGIC */
+#nls-wrapper			{	width:100%; z-index:4980; background-color: #fff; }
+#nls-wrapper.isfixed    {  box-shadow: 0px 10px 40px 0px rgba(0,0,0,0.25); }
+
+#sticky_layersettings_toggle 	   { line-height: 46px; height: 46px;width: 45px;position: absolute; right: 0px;top: 0px;text-align: center; cursor: pointer; border-left: 1px solid #e5e5e5; color:#333;}
+#sticky_layersettings_toggle i 	{	font-size: 18px}
+#sticky_layersettings_toggle:hover,
+#sticky_layersettings_toggle.selected { background:#7f8c8d;color:#fff;}
+
+
+#video_dialog_form .button-primary.revblue {
+	background: #3498db; border: none; outline:none; text-shadow: none; box-shadow: none; border-radius: 0px; font-weight: 400;
+}
 

@@ -45,8 +45,12 @@
 			$plugins = get_plugins();
 
 			foreach($addons as $addon){
+				if(version_compare(RevSliderGlobals::SLIDER_REVISION, $addon->version_from, '<') || version_compare(RevSliderGlobals::SLIDER_REVISION, $addon->version_to, '>')){
+					continue;
+				}
+				if( empty($addon->title) ) continue;
+				
 				$rs_dash_background_style = !empty($addon->background) ? 'style="background-image: url('.$addon->background.');"' : "";
-				if( empty($addon->title) ) exit;
 				?>
 				<!-- <?php echo $addon->slug; ?> WIDGET -->
 					<div class="rs-dash-widget <?php echo $addon->slug; ?>" <?php echo $rs_dash_background_style; ?>>

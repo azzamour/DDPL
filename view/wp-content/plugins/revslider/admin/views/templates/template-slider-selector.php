@@ -272,12 +272,14 @@ $glob_vals = $operations->getGeneralSettingsValues();
 		<?php
 	}
 	?>
+	var slider_package_uids = {};
+	var slider_package_names = {};
 </script>
 
 
 <!-- Import template slider dialog -->
 <div id="dialog_import_template_slider" title="<?php _e("Import Template Slider",'revslider'); ?>" class="dialog_import_template_slider" style="display:none">
-	<form action="<?php echo RevSliderBase::$url_ajax; ?>" enctype="multipart/form-data" method="post">
+	<form id="form-import-online-slider-local" action="<?php echo RevSliderBase::$url_ajax; ?>" enctype="multipart/form-data" method="post">
 		<input type="hidden" name="action" value="revslider_ajax_action">
 		<input type="hidden" name="client_action" value="import_slider_template_slidersview">
 		<input type="hidden" name="nonce" value="<?php echo wp_create_nonce("revslider_actions"); ?>">
@@ -308,12 +310,12 @@ $glob_vals = $operations->getGeneralSettingsValues();
 				<td><input type="radio" name="update_animations" value="true" checked="checked"> <?php _e('Overwrite','revslider'); ?></td>
 				<td><input type="radio" name="update_animations" value="false"> <?php _e('Append','revslider'); ?></td>
 			</tr>
-			<tr>
+			<!--tr>
 				<td><?php _e("Static Styles:",'revslider'); ?></td>
 				<td><input type="radio" name="update_static_captions" value="true"> <?php _e('Overwrite','revslider'); ?></td>
 				<td><input type="radio" name="update_static_captions" value="false"> <?php _e('Append','revslider'); ?></td>
 				<td><input type="radio" name="update_static_captions" value="none" checked="checked"> <?php _e('Ignore','revslider'); ?></td>
-			</tr>
+			</tr-->
 		</table>
 	</form>
 </div>
@@ -329,6 +331,16 @@ $glob_vals = $operations->getGeneralSettingsValues();
 		<input type="hidden" name="package" class="rs-package" value="false">
 		<input type="hidden" name="page-creation" class="rs-page-creation" value="false">
 	</form>
+</div>
+
+<div id="dialog_import_template_slider_info" title="<?php _e('Importing Status','revslider'); ?>" class="dialog_import_template_slider_info" style="display:none">
+	<!-- ADD INFOS HERE ON DEMAND -->
+	<div class="revslider_logo_rotating"><div class="revslidercycle"></div></div>
+	<div id="install-slider-counter-wrapper"><span id="install-slider-counter"></span></div>
+	<div id="nowinstalling_label"><?php _e('Now Installing','revslider'); ?></div>
+	<div id="import_dialog_box_action"></div>
+	<div id="import_dialog_box"></div>
+	
 </div>
 
 <div id="dialog_import_template_slider_page_template" title="<?php _e("Create Blank Page",'revslider'); ?>" class="dialog_import_template_slider_page_template" style="display:none">

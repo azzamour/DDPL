@@ -1,6 +1,6 @@
 /**************************************************************************
  * jquery.themepunch.revolution.js - jQuery Plugin for Revolution Slider
- * @version: 5.3.0.2 (25.10.2016)
+ * @version: 5.3.1.4 (30.11.2016)
  * @requires jQuery v1.7 or later (tested on 1.9)
  * @author ThemePunch
 **************************************************************************/
@@ -8,15 +8,15 @@
 "use strict";
 		
 	var version = {
-					core : "5.3.0.2",
-					"revolution.extensions.actions.min.js":"2.0.2",
-					"revolution.extensions.carousel.min.js":"1.1.0",
-					"revolution.extensions.kenburn.min.js":"1.1.0",
-					"revolution.extensions.layeranimation.min.js":"3.0.6",
-					"revolution.extensions.navigation.min.js":"1.3.1",
-					"revolution.extensions.parallax.min.js":"2.0.1",
-					"revolution.extensions.slideanims.min.js":"1.5.0",
-					"revolution.extensions.video.min.js":"2.0.1"
+					core : "5.3.1.4",
+					"revolution.extensions.actions.min.js":"2.0.4",
+					"revolution.extensions.carousel.min.js":"1.2.1",
+					"revolution.extensions.kenburn.min.js":"1.2.0",
+					"revolution.extensions.layeranimation.min.js":"3.4.4",
+					"revolution.extensions.navigation.min.js":"1.3.2",
+					"revolution.extensions.parallax.min.js":"2.2.0",
+					"revolution.extensions.slideanims.min.js":"1.6",
+					"revolution.extensions.video.min.js":"2.0.2"
 				   }
 
 	jQuery.fn.extend({
@@ -85,11 +85,30 @@
 					ddd_overflow:"visible",
 					ddd_layer_overflow:"visible",
 					ddd_z_correction:65,
-					ddd_path:"mouse"
-					
+					ddd_path:"mouse"								
+				},
+
+				scrolleffect: {
+					fade:"off",
+					blur:"off",
+					grayscale:"off",					
+					maxblur:10,					
+					on_layers:"off",
+					on_slidebg:"off",
+					on_static_layers:"off",
+					on_parallax_layers:"off",
+					on_parallax_static_layers:"off",
+					direction:"both",
+					multiplicator:1.35,
+					multiplicator_layers:0.5,
+					tilt:30,
+					disable_on_mobile:"on"		
 				},
 				
 				carousel : {
+					easing:punchgs.Power3.easeInOut,
+					speed:800,
+					showLayersAllTime : "off",
 					horizontal_align : "center",
 					vertical_align : "center",
 					infinity : "on",
@@ -238,6 +257,9 @@
 				
 				// Prepare maxHeight
 				options.minHeight = options.minHeight!=undefined ? parseInt(options.minHeight,0) : options.minHeight;
+				options.scrolleffect.on = options.scrolleffect.fade==="on" || options.scrolleffect.blur==="on" || options.scrolleffect.grayscale==="on";
+
+				
 
 				//REMOVE SLIDES IF SLIDER IS HERO
 				if (options.sliderType=="hero") {
@@ -297,7 +319,8 @@
 								ref = li.data("index"),
 								nextslideafter = false;
 										
-							opt.slideamount = opt.slideamount-1;										
+							opt.slideamount = opt.slideamount-1;	
+							opt.realslideamount = opt.realslideamount-1;										
 							removeNavWithLiref('.tp-bullet',ref,opt);
 							removeNavWithLiref('.tp-tab',ref,opt);
 							removeNavWithLiref('.tp-thumb',ref,opt);	
@@ -457,8 +480,8 @@
 
 		revstart: function() {
 			//return this.each(function() {
-				var c=jQuery(this);				
-				if (c!=undefined && c.length>0 && jQuery('body').find('#'+c.attr('id')).length>0 && this.opt) {		
+				var c=jQuery(this);								
+				if (c!=undefined && c.length>0 && jQuery('body').find('#'+c.attr('id')).length>0 && c[0].opt!==undefined) {						
 					if (!c[0].opt.sliderisrunning) {
 						runSlider(c,c[0].opt);
 						return true;
@@ -688,8 +711,7 @@ jQuery.extend(true, _R, {
 
 	// 	-	CALLING THE NEW SLIDE 	-	//		
 	callingNewSlide : function(container,direction) {
-		
-		
+				
 		var aindex = container.find('.next-revslide').length>0 ? container.find('.next-revslide').index() : container.find('.processing-revslide').length>0 ? container.find('.processing-revslide').index() : container.find('.active-revslide').index(),
 			nindex = 0,
 			opt = container[0].opt;
@@ -832,10 +854,12 @@ jQuery.extend(true, _R, {
 			opt.waitForCountDown=false;			
 		}
 		// START FIRST SLIDE IF NOT YET STARTED AND VP ENTERED
-		if (opt.waitForFirstSlide) {
-		
+		if (opt.waitForFirstSlide) {			
 			swapSlide(opt.c);		
-			opt.waitForFirstSlide=false;			
+			opt.waitForFirstSlide=false;
+			setTimeout(function() {
+				opt.c.removeClass("tp-waitforfirststart");
+			},500);
 		}			
 
 		if (opt.sliderlaststatus == "playing" || opt.sliderlaststatus==undefined) {
@@ -881,10 +905,10 @@ jQuery.extend(true, _R, {
 	swaptoggleState : function(a) {
 		if (a!=undefined && a.length>0)
 			jQuery.each(a,function(i,layer) {
-				if (layer.hasClass("rs-toggle-content-active"))
-					layer.removeClass("rs-toggle-content-active");
+				if (jQuery(layer).hasClass("rs-toggle-content-active"))
+					jQuery(layer).removeClass("rs-toggle-content-active");
 				else
-					layer.addClass("rs-toggle-content-active");
+					jQuery(layer).addClass("rs-toggle-content-active");
 			});
 	},
 	lastToggleState : function(a) {
@@ -948,9 +972,9 @@ var lAjax = function(s,o) {
 		console.log(" ");
 		o.modulesfailing = true;
 		return false;
-	}
+	}	
 	jQuery.ajax({
-		url:o.jsFileLocation+s+o.extensions_suffix,
+		url:o.jsFileLocation+s+o.extensions_suffix+'?version='+version.core,
 		'dataType':'script',
 		'cache':true,
 		"error":function(e) {
@@ -1032,7 +1056,7 @@ var getNeededScripts = function(o,c) {
 
 		
 
-		if (o.parallax.type!=="off" || o.viewPort.enable || o.viewPort.enable=="true")
+		if (o.parallax.type!=="off" || o.viewPort.enable || o.viewPort.enable=="true" || o.scrolleffect.on==="true" || o.scrolleffect.on)
 			n.parallax = true;
 	}
 	
@@ -1233,6 +1257,7 @@ var initSlider = function (container,opt) {
 	opt.cid = container.attr('id');
 	opt.ul.css({visibility:"visible"});
     opt.slideamount = opt.ul.find('>li').not('.tp-invisible-slide').length;
+    opt.realslideamount = opt.ul.find('>li').length;
     opt.slayers = container.find('.tp-static-layers');
     opt.slayers.data('index','staticlayers');
 
@@ -1463,10 +1488,14 @@ var initSlider = function (container,opt) {
 					
 
 		// PREPARE VIDEO PLAYERS
-		var addedApis = new Object();				
+		var addedApis = new Object();			
 		addedApis.addedyt=0;
 		addedApis.addedvim=0;
 		addedApis.addedvid=0;
+
+		//PREPARING FADE IN/OUT PARALLAX 
+		if (opt.scrolleffect.on) 
+			opt.scrolleffect.layers = new Array();			
 		
 		container.find('.tp-caption, .rs-background-video-layer').each(function(i) {
 			var _nc = jQuery(this),
@@ -1474,18 +1503,30 @@ var initSlider = function (container,opt) {
 				an = _.autoplayonlyfirsttime,
 				ap = _.autoplay,
 				al = _nc.hasClass("tp-audiolayer"),
-				loop = _.videoloop;
+				loop = _.videoloop,
+				addtofadeout = true,
+				addToStaticFadeout = false;
+
+			_.startclasses = _nc.attr('class');
+
+			
+			_.isparallaxlayer = _.startclasses.indexOf("rs-parallax")>=0;
+			
 
 
-			if (_nc.hasClass("tp-static-layer") && _R.handleStaticLayers)
-				_R.handleStaticLayers(_nc,opt);
+			if (_nc.hasClass("tp-static-layer") && _R.handleStaticLayers) {
+				_R.handleStaticLayers(_nc,opt);				
+				if (opt.scrolleffect.on)
+				  if ((opt.scrolleffect.on_parallax_static_layers==="on" && _.isparallaxlayer) || (opt.scrolleffect.on_static_layers==="on" && !_.isparallaxlayer)) addToStaticFadeout = true;				  					  
+				addtofadeout=false;				
+			}
 
 			var pom = _nc.data('noposteronmobile') || _nc.data('noPosterOnMobile') ||  _nc.data('posteronmobile') || _nc.data('posterOnMobile') || _nc.data('posterOnMObile');
 			_nc.data('noposteronmobile',pom);
 
 			// FIX VISIBLE IFRAME BUG IN SAFARI
 			var iff = 0;
-			_nc.find('iframe').each(function() {
+			_nc.find('iframe').each(function() {				
 				punchgs.TweenLite.set(jQuery(this),{autoAlpha:0});
 				iff++;
 			})
@@ -1515,15 +1556,37 @@ var initSlider = function (container,opt) {
 				}
 				var dmode = "",
 					preid = "";
+				
+				
 				if (nctype!=="row" && nctype!=="group" && nctype!=="column"){
 					dmode = "display:"+_nc.css('display')+";";
-					if (_nc.closest('.rev_column').length>0) _nc.addClass("rev_layer_in_column");
-					if (_nc.closest('.rev_group').length>0) _nc.addClass("rev_layer_in_group");
-				}
+					if (_nc.closest('.rev_column').length>0) {
+						_nc.addClass("rev_layer_in_column");
+						addtofadeout=false;
+					} else 
+					if (_nc.closest('.rev_group').length>0) {
+						_nc.addClass("rev_layer_in_group");
+						addtofadeout=false;
+					}
+					
+					
+				} else 
+				if (nctype==="column") addtofadeout = false;
+					
+
 				if (_ndata.wrapper_class!==undefined) preclas = preclas+" "+_ndata.wrapper_class;
 				if (_ndata.wrapper_id!==undefined) preid ='id="'+_ndata.wrapper_id+'"';
 
 				_nc.wrap('<div class="tp-parallax-wrap '+preclas+'" style="'+ec+'position:'+_pos+';'+dmode+';visibility:hidden"><div class="tp-loop-wrap" style="'+ec+'position:'+_pos+';'+dmode+';"><div class="tp-mask-wrap" style="'+ec+'position:'+_pos+';'+dmode+';" ></div></div></div>');
+				
+				
+				// ONLY ADD LAYERS TO FADEOUT DYNAMIC LIST WHC
+				if (addtofadeout && opt.scrolleffect.on) 
+					if ((opt.scrolleffect.on_parallax_layers==="on" && _.isparallaxlayer) || (opt.scrolleffect.on_layers==="on" && !_.isparallaxlayer))
+						opt.scrolleffect.layers.push(_nc.parent());									
+				if (addToStaticFadeout) opt.scrolleffect.layers.push(_nc.parent());
+
+				
 				// Add BG for Columns
 				if (nctype==="column") {
 					_nc.append('<div class="rev_column_bg rev_column_bg_man_sized" style="display:none"></div>');
@@ -1639,8 +1702,8 @@ var initSlider = function (container,opt) {
 			if (opt.lazyType=="all" || (opt.lazyType=="smart" && (i==0 || i == 1 || i == opt.slideamount || i == opt.slideamount-1))) { 								
 				loadImages(li,opt,i);	
 				waitForCurrentImages(li,opt,function() { 
-					if (opt.sliderType=="carousel") 
-						punchgs.TweenLite.to(li,1,{autoAlpha:1,ease:punchgs.Power3.easeInOut});
+					//if (opt.sliderType=="carousel") 
+						//punchgs.TweenLite.to(li,1,{autoAlpha:1,ease:punchgs.Power3.easeInOut});
 				});					
 			}
 
@@ -1678,7 +1741,7 @@ var initSlider = function (container,opt) {
 		// PREPARE THE SLIDES
 		opt.ul.css({'display':'block'});
 		prepareSlides(container,opt);
-		if (opt.parallax.type!=="off" && _R.checkForParallax) _R.checkForParallax(container,opt);
+		if ((opt.parallax.type!=="off" || opt.scrolleffect.on) && _R.checkForParallax) _R.checkForParallax(container,opt);
 
 		
 		// PREPARE SLIDER SIZE			
@@ -1699,17 +1762,22 @@ var initSlider = function (container,opt) {
 				
 			if (_R.scrollTicker) _R.scrollTicker(opt,container);
 		}
+		// MAKE SURE CAROUSEL IS NOT YET VISIBE BEFORE IT COMES INTO GAME
+		if (opt.sliderType==="carousel" && _R.prepareCarousel) {
+			punchgs.TweenLite.set(opt.ul,{opacity:0});
+			_R.prepareCarousel(opt,new punchgs.TimelineLite,undefined,0);
+			opt.onlyPreparedSlide = true;
+		}
 		
 
 
 		// START THE SLIDER
 		setTimeout(function() {
-			if ( opt.sliderType =="carousel" && _R.prepareCarousel) _R.prepareCarousel(opt);				
-			if (!_v.enable || (_v.enable && opt.inviewport) || (_v.enable &&  !opt.inviewport && !_v.outof=="wait")) {
-				swapSlide(container);			
-				
-			}
-			else {
+			 
+			if (!_v.enable || (_v.enable && opt.inviewport) || (_v.enable &&  !opt.inviewport && !_v.outof=="wait")) 
+				swapSlide(container);										
+			else {		
+				opt.c.addClass("tp-waitforfirststart");						
 				opt.waitForFirstSlide = true;
 				if (_v.presize) {
 					var nextli = jQuery(opt.li[0]);
@@ -1944,17 +2012,24 @@ var containerResized = function (c,opt) {
 		} 
 
 		
-		if ( opt.sliderType =="carousel" && opt.lastconw != opt.conw)  {
+		if ( opt.sliderType==="carousel" && opt.lastconw != opt.conw)  {
 			clearTimeout(opt.pcartimer);
 			opt.pcartimer = setTimeout(function() {
-				_R.prepareCarousel(opt,true);		
+				_R.prepareCarousel(opt,true);								
+				// SHOW ALL LAYERS IN ALL SLIDES FOR CAROUSEL
+				if (opt.sliderType=="carousel" && opt.carousel.showLayersAllTime==="on")
+					jQuery.each(opt.li,function(i) {					
+						_R.animateTheCaptions({slide:jQuery(opt.li[i]), opt:opt,recall:true});
+					})					
+
 			},100);
 			opt.lastconw = opt.conw;
 		}
 
+		
 		if (_R.manageNavigation) _R.manageNavigation(opt);
 
-
+		
 		if (_R.animateTheCaptions && c.find('.active-revslide').length>0) _R.animateTheCaptions({slide:c.find('.active-revslide'), opt:opt,recall:true});
 		
 		if (nextsh.data('kenburns')=="on") 				
@@ -1982,8 +2057,7 @@ var containerResized = function (c,opt) {
 var setScale = function(opt) {
 	opt.bw = (opt.width / opt.gridwidth[opt.curWinRange]);
 	opt.bh = (opt.height / opt.gridheight[opt.curWinRange]);
-	
-	
+		
 	if (opt.bh>opt.bw) 
 		opt.bh=opt.bw
 	else
@@ -2058,7 +2132,7 @@ var prepareSlides = function(container,opt) {
 
 		var mediafilter = cli.data('mediafilter');
 		mediafilter = mediafilter==="none" || mediafilter===undefined ? "" : mediafilter;
-		img.wrap('<div class="slotholder '+mediafilter+'" style="position:absolute; top:0px; left:0px; z-index:0;width:100%;height:100%;"></div>');
+		img.wrap('<div class="slotholder" style="position:absolute; top:0px; left:0px; z-index:0;width:100%;height:100%;"></div>');
 		bgvid.appendTo(cli.find('.slotholder'));
 		var dts = img.data();
 		img.closest('.slotholder').data(dts);
@@ -2076,7 +2150,8 @@ var prepareSlides = function(container,opt) {
 		dts.bgposition = dts.bgposition || "center center";
 
 		var pari = img.closest('.slotholder');
-		img.parent().append('<div class="tp-bgimg defaultimg" style="background-color:'+img.css("backgroundColor")+';background-repeat:'+dts.bgrepeat+';background-image:url('+src+');background-size:'+dts.bgfit+';background-position:'+dts.bgposition+';width:100%;height:100%;"></div>');
+		img.parent().append('<div class="tp-bgimg defaultimg '+mediafilter+'" style="background-color:'+img.css("backgroundColor")+';background-repeat:'+dts.bgrepeat+';background-image:url('+src+');background-size:'+dts.bgfit+';background-position:'+dts.bgposition+';width:100%;height:100%;"></div>');
+		img.data('mediafilter',mediafilter)
 		var comment = document.createComment("Runtime Modification - Img tag is Still Available for SEO Goals in Source - " + img.get(0).outerHTML);
 		img.replaceWith(comment);
 		img = pari.find('.tp-bgimg');			
@@ -2088,7 +2163,13 @@ var prepareSlides = function(container,opt) {
 	
 	})
 
-	
+	if (opt.scrolleffect.on &&  opt.scrolleffect.on_slidebg==="on") {
+		opt.allslotholder = new Array();
+		opt.allli.find('.slotholder').each(function() {
+			jQuery(this).wrap('<div style="display:block;position:absolute;top:0px;left:0px;width:100%;height:100%" class="slotholder_fadeoutwrap"></div>')			
+		});
+		opt.allslotholder = opt.c.find('.slotholder_fadeoutwrap');
+	}
 }
 
 
@@ -2397,6 +2478,7 @@ var waitForCurrentImages = function(nextli,opt,callback) {
 /////////////////////////////////////
 var swapSlide = function(container) {	
 
+
 	var opt = container[0].opt;
 	
 	clearTimeout(opt.waitWithSwapSlide);	
@@ -2409,20 +2491,30 @@ var swapSlide = function(container) {
 		return false;
 	}	
 
+
 	var actli = container.find('.active-revslide'),
 		nextli = container.find('.next-revslide'),
 		defimg= nextli.find('.defaultimg');
 	
 	
-	if (nextli.index() === actli.index()) {
+	if (opt.sliderType==="carousel" && !opt.carousel.fadein) {
+		punchgs.TweenLite.to(opt.ul,1,{opacity:1});
+		opt.carousel.fadein=true;
+	}
+
+	if (nextli.index() === actli.index() && opt.onlyPreparedSlide!==true) {		
 		nextli.removeClass("next-revslide");
 		return false;
 	}
 
+	if (opt.onlyPreparedSlide===true) {
+		opt.onlyPreparedSlide=false;
+		jQuery(opt.li[0]).addClass("processing-revslide");
+	}
 	
-
 	nextli.removeClass("next-revslide").addClass("processing-revslide");
-		
+	
+	if (nextli.index()===-1 && opt.sliderType==="carousel") nextli = jQuery(opt.li[0]);
 	nextli.data('slide_on_focus_amount',(nextli.data('slide_on_focus_amount')+1) || 1);
 	// CHECK IF WE ARE ALREADY AT LAST ITEM TO PLAY IN REAL LOOP SESSION
 	if (opt.stopLoop=="on" && nextli.index()==opt.lastslidetoshow-1) {
@@ -2453,7 +2545,7 @@ var swapSlide = function(container) {
 	
 	// WAIT FOR SWAP SLIDE PROGRESS
 	
-
+	
 	waitForCurrentImages(nextli,opt,function() {				 
 
 		
@@ -2486,8 +2578,7 @@ var swapSlideProgress = function(defimg,container) {
 	opt.tonpause=false;
     
     opt.cd=0;    
-    
-    
+            
     
     clearTimeout(opt.loadertimer);
     if (opt.loader!==undefined) opt.loader.css({display:"none"});
@@ -2541,7 +2632,8 @@ var swapSlideProgress = function(defimg,container) {
 
 	
 	if (actli.index() != nextli.index() && opt.firststart!=1) 	
-		if (_R.removeTheCaptions) _R.removeTheCaptions(actli,opt);
+		if (_R.removeTheCaptions) _R.removeTheCaptions(actli,opt);			
+		
     
 	
 	if (!nextli.hasClass('rs-pause-timer-once') && !nextli.hasClass("rs-pause-timer-always")) 	
@@ -2561,12 +2653,13 @@ var swapSlideProgress = function(defimg,container) {
 		
 	// SELECT SLIDER TYPE
 	if ( opt.sliderType =="carousel") {									
-		mtl = new punchgs.TimelineLite();
-		_R.prepareCarousel(opt,mtl);		
+		mtl = new punchgs.TimelineLite();		
+		_R.prepareCarousel(opt,mtl);			
 		letItFree(container,nextsh,actsh,nextli,actli,mtl);
 		opt.transition = 0;
 		opt.firststart = 0;
 	} else {	
+		
 		mtl = new punchgs.TimelineLite({onComplete:function() {				
 			letItFree(container,nextsh,actsh,nextli,actli,mtl);
 		}});	
@@ -2574,7 +2667,7 @@ var swapSlideProgress = function(defimg,container) {
 		mtl.pause();
 
 		if (_R.animateTheCaptions) 
-			_R.animateTheCaptions({slide:nextli,opt:opt,maintimeline:mtl, preset:true});
+			_R.animateTheCaptions({slide:nextli,opt:opt,preset:true});
 
 		if (opt.firststart==1) {
 			punchgs.TweenLite.set(actli,{autoAlpha:0});			
@@ -2642,6 +2735,8 @@ var swapSlideProgress = function(defimg,container) {
 		mtl.pause();
 	}
 
+	
+
 	if (_R.scrollHandling) {
 		_R.scrollHandling(opt, true);
 		mtl.eventCallback("onUpdate",function() {
@@ -2649,6 +2744,8 @@ var swapSlideProgress = function(defimg,container) {
 		});
 	}
 	
+	
+
 	// START PARALLAX IF NEEDED		
 	if (opt.parallax.type!="off" && opt.parallax.firstgo==undefined && _R.scrollHandling) {
 		opt.parallax.firstgo = true;
@@ -2665,14 +2762,31 @@ var swapSlideProgress = function(defimg,container) {
 	}
 	
 	
-	if (_R.animateTheCaptions) {		
-		_R.animateTheCaptions({slide:nextli, opt:opt,maintimeline:mtl,startslideanimat:0});	
+	
+	if (_R.animateTheCaptions) {	
+		if (opt.sliderType==="carousel" && opt.carousel.showLayersAllTime==="on") {
+			// SHOW ALL LAYERS IN ALL SLIDES FOR CAROUSEL				
+				jQuery.each(opt.li,function(i) {					
+					if (!opt.carousel.allLayersStarted) {
+						if (opt.li[i] === nextli)
+							_R.animateTheCaptions({slide:jQuery(opt.li[i]),maintimeline:mtl,opt:opt,startslideanimat:0});	
+						else
+							_R.animateTheCaptions({slide:jQuery(opt.li[i]),opt:opt,startslideanimat:0});
+						}	
+					else
+						_R.animateTheCaptions({slide:jQuery(opt.li[i]),opt:opt,recall:true});
+				});
+				opt.carousel.allLayersStarted = true;
+		} else {
+			_R.animateTheCaptions({slide:nextli, opt:opt,maintimeline:mtl,startslideanimat:0});	
+		}
 	} else {
 		if (mtl != undefined) setTimeout(function() {			
 			mtl.resume();
 		},30);
 	}
 	punchgs.TweenLite.to(nextli,0.001,{autoAlpha:1});
+
 
 	
 	//if (_R.callStaticDDDParallax) _R.callStaticDDDParallax(container,opt,nextli);	
@@ -2704,6 +2818,7 @@ var letItFree = function(container,nextsh,actsh,nextli,actli,mtl) {
 
 
 	container.find('.active-revslide').removeClass("active-revslide");	
+	
 	container.find('.processing-revslide').removeClass("processing-revslide").addClass("active-revslide");
 	opt.act=nextli.index();
 	

@@ -151,6 +151,8 @@ var tpLayerTimelinesRev = new function(){
 			
 		});
 
+		
+
 		jQuery('.slide-trans-checkelement').on("mouseover", function(e) {		
 
 			var inp = jQuery(this).find('input[name="slide_transition[]"]'),
@@ -387,6 +389,7 @@ var tpLayerTimelinesRev = new function(){
 			}
 		});
 
+		t.deepSelection();
 
 		// DEEP LINK INPUT FIELD ADD ONS
 		jQuery('.input-deepselects').each(function() {
@@ -567,6 +570,74 @@ var tpLayerTimelinesRev = new function(){
 			});	
 		});
 		jQuery('body').on('change','.layer-on-timeline-selector',function() { t.checkMultipleSelectedItems() });		
+	}
+
+
+	t.deepSelection = function(extend) {
+		// DEEP LINK INPUT FIELD ADD ONS
+		jQuery('.input-deepselects').each(function() {
+			var inp = jQuery(this);
+			if (!inp.hasClass("deepselection_ready")) {
+				inp.addClass("deepselection_ready");
+				inp.wrap('<span class="inp-deep-wrapper"></span>');
+				inp.parent().append('<span class="inp-deep-list"></span>');
+				var dl = inp.parent().find('.inp-deep-list'),
+					txt = '<span class="inp-deep-listitems">',
+					rev = inp.data('reverse'),
+					minw = inp.data('deepwidth'),
+					list = inp.data('selects') != undefined ? inp.data('selects').split("||") : "",
+					vals = inp.data('svalues') != undefined ? inp.data('svalues').split("||") : "",
+					icos = inp.data('icons') != undefined ? inp.data('icons').split("||") : "",
+					id = inp.attr('id');
+					
+				if (minw!==undefined)
+					punchgs.TweenLite.set(dl,{minWidth:minw+"px"});
+
+				if (rev=="on") {
+					txt = txt+"<span class='reverse_input_wrapper'><span class='reverse_input_text'>Direction Auto Reverse</span><input class='reverse_input_check tp-moderncheckbox' name='"+id+"_reverse' id='"+id+"_reverse' type='checkbox'></span>";
+				}
+				if (list!==undefined && list!="") {							
+					jQuery.each(list,function(i){
+						var v = vals[i] || "",
+							l = list[i] || "",
+							i = icos[i] || "";								
+						txt = txt + "<span class='inp-deep-prebutton' data-val='"+v+"'><i class='eg-icon-"+i+"'></i>"+l+"</span>";
+					});	
+				}
+				txt = txt + "</span>";
+				
+				dl.append(txt);
+				if (rev=="on") {
+					RevSliderSettings.onoffStatus(jQuery('input[name="'+id+'_reverse"]'));
+				}
+
+				inp.parent().on('mouseleave',function() {					
+					jQuery(this).find('.inp-deep-list').removeClass("visible");
+					jQuery(this).removeClass("selected-deep-wrapper");
+				});
+			}
+
+		})
+
+		if (extend!==true) {
+
+			jQuery('body').on('click','.inp-deep-prebutton',function() {
+				var btn = jQuery(this),
+					inp = btn.closest('.inp-deep-wrapper').find('input');
+				inp.val(btn.data('val'));			
+				inp.blur();
+				inp.focus();
+				inp.trigger("change");						
+			});
+
+			jQuery('body').on('click','.input-deepselects',function() {					
+					jQuery(this).closest('.inp-deep-wrapper').find('.inp-deep-list').addClass("visible");
+					jQuery(this).closest('.inp-deep-wrapper').addClass("selected-deep-wrapper");
+			})
+
+
+		}
+
 	}
 
 	t.checkMultipleSelectedItems = function(disableall) {
@@ -1139,6 +1210,7 @@ var tpLayerTimelinesRev = new function(){
 		var inlayer = jQuery(caption[0].getElementsByClassName('innerslide_layer')[0]),
 			deform = params.deformation,
 			deformidle = params.deformation,
+			deformhover = params["deformation-hover"],
 			ss = params["static_styles"],
 			fontcolor = u.getVal(ss,"color"),
 			fonttrans = deform["color-transparency"],
@@ -1159,6 +1231,7 @@ var tpLayerTimelinesRev = new function(){
 		}
 
 
+		//console.log(params)
 
 		if(is_demo && params.alias == 'First'){
 			
@@ -1258,7 +1331,29 @@ var tpLayerTimelinesRev = new function(){
 				
 			break;
 			case 'group':
-			
+				switch(mwidth) {
+					case '#1/1#': mwidth="100%";break;
+					case '#1/2#': mwidth="50%";break;
+					case '#1/3#': mwidth="33.333333%";break;
+					case '#2/3#': mwidth="66.666666%";break;
+					
+					case '#1/4#': mwidth="25%";break;
+					case '#3/4#': mwidth="75%";break;
+					
+					case '#1/5#': mwidth="20%";break;
+					case '#2/5#': mwidth="40%";break;
+					case '#3/5#': mwidth="60%";break;
+					case '#4/5#': mwidth="80%";break;
+
+					case '#1/6#': mwidth="16.666666%";break;
+					case '#4/6#': mwidth="66.666666%";break;
+					case '#5/6#': mwidth="83.333333%";break;
+					
+
+
+				}
+				
+				
 			break;
 			
 		}
@@ -1322,49 +1417,75 @@ var tpLayerTimelinesRev = new function(){
 			inlayer.css({backgroundImage:"", backgroundSize:params.layer_bg_size, backgroundPosition:params.layer_bg_position, backgroundRepeat:params.layer_bg_repeat});
 		
 		
-		punchgs.TweenLite.set(inlayer, {	
-											// overflow:deform.overflow,
-											 z:deform.z,												 
-											 scaleX:parseFloat(deform.scalex),
-											 scaleY:parseFloat(deform.scaley),
-											 textAlign:u.getVal(params,"text-align"),
-											 rotationX:parseFloat(deform.xrotate),
-											 rotationY:parseFloat(deform.yrotate),
-											 rotationZ:parseFloat(params["2d_rotation"]),
+		var inlay_object_anim = {
+									z:deform.z,												 
+									scaleX:parseFloat(deform.scalex),
+									scaleY:parseFloat(deform.scaley),
+									textAlign:u.getVal(params,"text-align"),
+									rotationX:parseFloat(deform.xrotate),
+									rotationY:parseFloat(deform.yrotate),
+									rotationZ:parseFloat(params["2d_rotation"]),
 
-											 skewX:parseFloat(deform.skewx),
-											 skewY:parseFloat(deform.skewy),
+									skewX:parseFloat(deform.skewx),
+									skewY:parseFloat(deform.skewy),
 
-											 transformPerspective:parseFloat(deform.pers),
-											 transformOrigin:params["layer_2d_origin_x"]+"% "+params["layer_2d_origin_y"]+"%",
+									transformPerspective:parseFloat(deform.pers),
+									transformOrigin:params["layer_2d_origin_x"]+"%"+params["layer_2d_origin_y"]+"%",
 
-											 autoAlpha:deform.opacity,
-											 paddingTop:parseInt(u.getVal(params,'padding')[0],0)+"px",
-											 paddingRight:parseInt(u.getVal(params,'padding')[1],0)+"px",
-											 paddingBottom:parseInt(u.getVal(params,'padding')[2],0)+"px",
-											 paddingLeft:parseInt(u.getVal(params,'padding')[3],0)+"px",
-																						
-											 fontSize:parseInt(u.getVal(ss,"font-size"),0)+"px",
-											 lineHeight:parseInt(u.getVal(ss,"line-height"),0)+"px",		
-											 fontWeight:fw,		
-											 color:fontcolor,
-											 backgroundColor:bgcolor,											 
-						
-											 fontFamily:deformidle["font-family"],
-											 fontStyle:deformidle["font-style"],
-											 textDecoration:deform["text-decoration"],
-											 textTransform:deform["text-transform"],
-											 borderColor:bordercolor,
-											 borderRadius:deform["border-radius"][0]+" "+deform["border-radius"][1]+" "+deform["border-radius"][2]+" "+deform["border-radius"][3],
-											 borderWidth:deform["border-width"][0]+" "+deform["border-width"][1]+" "+deform["border-width"][2]+" "+deform["border-width"][3],
-											 //borderWidth:parseInt(deform["border-width"],0)+"px",
-											 borderStyle:deform["border-style"],
-											 whiteSpace:u.getVal(params,"whitespace"),
-											 maxWidth:"100%",
-											 maxHeight:"100%"											 
-							});
-		if (params.type==="group") 
-			punchgs.TweenLite.set(inlayer.find('.tp_layer_group_inner_wrapper').first(),{overflow:deform.overflow});
+									autoAlpha:deform.opacity,
+									paddingTop:parseInt(u.getVal(params,'padding')[0],0)+"px",
+									paddingRight:parseInt(u.getVal(params,'padding')[1],0)+"px",
+									paddingBottom:parseInt(u.getVal(params,'padding')[2],0)+"px",
+									paddingLeft:parseInt(u.getVal(params,'padding')[3],0)+"px",
+																			
+									fontSize:parseInt(u.getVal(ss,"font-size"),0)+"px",
+									lineHeight:parseInt(u.getVal(ss,"line-height"),0)+"px",		
+									fontWeight:fw,		
+									color:fontcolor,
+									backgroundColor:bgcolor,											
+														
+									fontStyle:deformidle["font-style"],
+									textDecoration:deform["text-decoration"],
+									textTransform:deform["text-transform"],
+									borderColor:bordercolor,
+									borderRadius:deform["border-radius"][0]+" "+deform["border-radius"][1]+" "+deform["border-radius"][2]+" "+deform["border-radius"][3],
+									borderWidth:deform["border-width"][0]+" "+deform["border-width"][1]+" "+deform["border-width"][2]+" "+deform["border-width"][3],
+									//borderWidth:parseInt(deform["border-width"],0)+"px",
+									borderStyle:deform["border-style"],
+									whiteSpace:u.getVal(params,"whitespace"),
+									maxWidth:"100%",
+									maxHeight:"100%"		
+								}
+
+		
+		
+		
+		if ((deform.blurfilter!==undefined && parseInt(deform.blurfilter,0)>0) || (deformhover.blurfilter!==undefined && parseInt(deformhover.blurfilter,0)>0)) {
+			var bf = 'blur('+parseInt(deform.blurfilter,0)+'px)';
+			inlay_object_anim['-webkit-filter'] = bf;
+			inlay_object_anim['filter'] = bf;			
+		}
+
+
+		if ((deform.grayscalefilter!==undefined && parseInt(deform.grayscalefilter,0)>0) || (deformhover.grayscalefilter!==undefined && parseInt(deformhover.grayscalefilter,0)>0)) {
+			var gf = 'grayscale('+parseInt(deform.grayscalefilter,0)+'%)';
+			inlay_object_anim['-webkit-filter'] = inlay_object_anim['-webkit-filter']===undefined ? gf : inlay_object_anim['-webkit-filter']+' '+gf;
+			inlay_object_anim['filter'] = inlay_object_anim['filter']===undefined ? gf: inlay_object_anim['filter']+' '+gf;
+		}
+
+		
+		/*if (deform.shadow_idle===true) {
+			var shcolor = UniteAdminRev.convertHexToRGB(deform.ds_color);
+			shcolor="rgba("+shcolor[0]+","+shcolor[1]+","+shcolor[2]+","+deform.ds_opacity+")";
+			var dshadow = "drop-shadow("+parseInt(deform.ds_x,0)+"px "+parseInt(deform.ds_y,0)+"px "+parseInt(deform.ds_blur,0)+"px "+shcolor+")";
+			inlay_object_anim['-webkit-filter'] = inlay_object_anim['-webkit-filter']===undefined ? dshadow : inlay_object_anim['-webkit-filter']+' '+dshadow;
+			inlay_object_anim['filter'] = inlay_object_anim['filter']===undefined ? dshadow: inlay_object_anim['filter']+' '+dshadow;
+		}*/
+		
+		if (deformidle["font-family"]) inlay_object_anim.fontFamily = deformidle["font-family"];
+
+		
+		if (params.type==="group") punchgs.TweenLite.set(inlayer.find('.tp_layer_group_inner_wrapper').first(),{overflow:deform.overflow});
 		
 		if (params.layer_blend_mode!==undefined && jQuery.inArray(params.type,["image","shape","text","svg"]>=0))		
 			punchgs.TweenLite.set(inlayer.closest('.slide_layer'),{mixBlendMode:params.layer_blend_mode});
@@ -1388,16 +1509,15 @@ var tpLayerTimelinesRev = new function(){
 					 borderBottomWidth:parseInt(u.getVal(params,'margin')[2],0)+"px",
 					 borderLeftWidth:parseInt(u.getVal(params,'margin')[3],0)+"px"
 				});
-				// Set Column inner Content Spacing for Column Gap's
-				punchgs.TweenLite.set(inlayer, {	
-					 marginTop:parseInt(u.getVal(params,'margin')[0],0)+"px",
-					 marginRight:parseInt(u.getVal(params,'margin')[1],0)+"px",
-					 marginBottom:parseInt(u.getVal(params,'margin')[2],0)+"px",
-					 marginLeft:parseInt(u.getVal(params,'margin')[3],0)+"px"
-				});
+
+				// Set Column inner Content Spacing for Column Gap's				
+				inlay_object_anim.marginTop=parseInt(u.getVal(params,'margin')[0],0)+"px";
+				inlay_object_anim.marginRight=parseInt(u.getVal(params,'margin')[1],0)+"px";
+				inlay_object_anim.marginBottom=parseInt(u.getVal(params,'margin')[2],0)+"px";
+				inlay_object_anim.marginLeft=parseInt(u.getVal(params,'margin')[3],0)+"px";				
 			break;			
 			default:
-				punchgs.TweenLite.set(inlayer, {	
+				punchgs.TweenLite.set(caption, {	
 					 marginTop:parseInt(u.getVal(params,'margin')[0],0)+"px",
 					 marginRight:parseInt(u.getVal(params,'margin')[1],0)+"px",
 					 marginBottom:parseInt(u.getVal(params,'margin')[2],0)+"px",
@@ -1409,50 +1529,55 @@ var tpLayerTimelinesRev = new function(){
 		if (params.type==="image") {
 			if(params.scaleProportional) {					
 				punchgs.TweenLite.set(inlayer.find('img'),{width:"100%",height:"auto"})
-				punchgs.TweenLite.set(inlayer,{width:"100%",height:"auto"})
+				inlay_object_anim.width="100%";
+				inlay_object_anim.height="auto";
 			} else {					
 				punchgs.TweenLite.set(inlayer.find('img'),{width:"100%",height:"100%"})
-				punchgs.TweenLite.set(inlayer,{width:"100%",height:"100%"})						
+				inlay_object_anim.width="100%";
+				inlay_object_anim.height="100%";				
 			}		
 		}
 
 		if (params.type==="video") {			
-				punchgs.TweenLite.set(inlayer.find('.slide_layer_video'),{width:"100%",height:"100%"})
-				punchgs.TweenLite.set(inlayer,{width:"100%",height:"100%"})									
+				punchgs.TweenLite.set(inlayer.find('.slide_layer_video'),{width:"100%",height:"100%"})				
+				inlay_object_anim.width="100%";
+				inlay_object_anim.height="100%";								
 		}
 		
 		if (params.type==="svg" && params.svg!=undefined) {			
-				var svgstrokecolor = params.svg["svgstroke-color"] || "transparent",
-					svgstroketrans = params.svg["svgstroke-transparency"] || 0,
-					svgstrokewidth = params.svg["svgstroke-width"] || 0,
-					svgstrokedasharray = params.svg["svgstroke-dasharray"] || 0,
-					svgstrokedashoffset = params.svg["svgstroke-dashoffset"] || 0;
+			var svgstrokecolor = params.svg["svgstroke-color"] || "transparent",
+				svgstroketrans = params.svg["svgstroke-transparency"] || 0,
+				svgstrokewidth = params.svg["svgstroke-width"] || 0,
+				svgstrokedasharray = params.svg["svgstroke-dasharray"] || 0,
+				svgstrokedashoffset = params.svg["svgstroke-dashoffset"] || 0;
 
-				// STROKE OPACITY
-				if (Number(svgstroketrans)<1) {
-					var rgb = UniteAdminRev.convertHexToRGB(svgstrokecolor);
-					svgstrokecolor="rgba("+rgb[0]+","+rgb[1]+","+rgb[2]+","+svgstroketrans+")";
-				}
-				
-				punchgs.TweenLite.set(inlayer.find('svg'),{
-																fill:fontcolor,
-																stroke:svgstrokecolor,
-																strokeWidth:svgstrokewidth,
-																strokeDasharray:svgstrokedasharray,
-																strokeDashoffset:svgstrokedashoffset
-															});				
-				punchgs.TweenLite.set(inlayer.find('svg path'),{
-																fill:fontcolor
-															});	
+			// STROKE OPACITY
+			if (Number(svgstroketrans)<1) {
+				var rgb = UniteAdminRev.convertHexToRGB(svgstrokecolor);
+				svgstrokecolor="rgba("+rgb[0]+","+rgb[1]+","+rgb[2]+","+svgstroketrans+")";
+			}
+			
+			punchgs.TweenLite.set(inlayer.find('svg'),{
+															fill:fontcolor,
+															stroke:svgstrokecolor,
+															strokeWidth:svgstrokewidth,
+															strokeDasharray:svgstrokedasharray,
+															strokeDashoffset:svgstrokedashoffset
+														});				
+			punchgs.TweenLite.set(inlayer.find('svg path'),{
+															fill:fontcolor
+														});	
 		}
+
+
+		// SET INLAYER STYLE
+		punchgs.TweenLite.set(inlayer, inlay_object_anim);
+
 
 		if (params.inline !=undefined && params.inline.idle!=undefined)					
 			jQuery.each(params.inline.idle, function(key,value) {
-
 				inlayer.css(key,value);
 			})
-
-		
 		
 		//SET ELEMENT HOVER (IN CASE IT EXISTS)
 		
@@ -1489,36 +1614,61 @@ var tpLayerTimelinesRev = new function(){
 			
 			var hoverspeed = parseFloat(deform.speed)/1000;
 			hoverspeed = hoverspeed === 0 ? 0.001 : hoverspeed;
-			
-			tl.add(punchgs.TweenLite.to(inlayer, hoverspeed,{
-	
-											 scaleX:parseFloat(deform.scalex),
-											 scaleY:parseFloat(deform.scaley),
-	
-											 rotationX:parseFloat(deform.xrotate),
-											 rotationY:parseFloat(deform.yrotate),
-											 rotationZ:parseFloat(deform["2d_rotation"]),
-	
-											 skewX:parseFloat(deform.skewx),
-											 skewY:parseFloat(deform.skewy),
-		
-											 autoAlpha:deform.opacity,
-											 color:fontcolor,
-											 backgroundColor:bgcolor,						
-											 textDecoration:deform["text-decoration"],
-											 borderColor:bordercolor,
-											 borderRadius:parseInt(deform["border-radius"][0],0)+"px "+parseInt(deform["border-radius"][1],0)+"px "+parseInt(deform["border-radius"][2],0)+"px "+parseInt(deform["border-radius"][3],0)+"px",
-											 borderWidth:parseInt(deform["border-width"][0],0)+"px "+parseInt(deform["border-width"][1],0)+"px "+parseInt(deform["border-width"][2],0)+"px "+parseInt(deform["border-width"][3],0)+"px",
-											 //borderWidth:parseInt(deform["border-width"],0)+"px",
-											 borderStyle:deform["border-style"],
-											 onComplete:function() {
-											 	if (params.inline && params.inline.hover!=undefined)					
-													jQuery.each(params.inline.hover, function(key,value) {
-														inlayer.css(key,value);
-													})
-											 },
-											 ease:deform.easing
-							}));
+
+			var hover_object_anim =  {
+									 scaleX:parseFloat(deform.scalex),
+									 scaleY:parseFloat(deform.scaley),
+
+									 rotationX:parseFloat(deform.xrotate),
+									 rotationY:parseFloat(deform.yrotate),
+									 rotationZ:parseFloat(deform["2d_rotation"]),
+
+									 skewX:parseFloat(deform.skewx),
+									 skewY:parseFloat(deform.skewy),
+
+									 autoAlpha:deform.opacity,
+									 color:fontcolor,
+									 backgroundColor:bgcolor,						
+									 textDecoration:deform["text-decoration"],
+									 borderColor:bordercolor,
+									 borderRadius:parseInt(deform["border-radius"][0],0)+"px "+parseInt(deform["border-radius"][1],0)+"px "+parseInt(deform["border-radius"][2],0)+"px "+parseInt(deform["border-radius"][3],0)+"px",
+									 borderWidth:parseInt(deform["border-width"][0],0)+"px "+parseInt(deform["border-width"][1],0)+"px "+parseInt(deform["border-width"][2],0)+"px "+parseInt(deform["border-width"][3],0)+"px",
+									 //borderWidth:parseInt(deform["border-width"],0)+"px",
+									 borderStyle:deform["border-style"],
+									 onComplete:function() {
+									 	if (params.inline && params.inline.hover!=undefined)					
+											jQuery.each(params.inline.hover, function(key,value) {
+												inlayer.css(key,value);
+											})
+									 },
+									 ease:deform.easing
+							}
+
+			if ((deform.blurfilter!==undefined && parseInt(deform.blurfilter,0)>0) || (deformidle.blurfilter!==undefined && parseInt(deformidle.blurfilter,0)>0)) {
+				var bf = 'blur('+parseInt(deform.blurfilter,0)+'px)';
+				hover_object_anim['-webkit-filter'] = bf;
+				hover_object_anim['filter'] = bf;			
+			}
+
+			if ((deform.grayscalefilter!==undefined && parseInt(deform.grayscalefilter,0)>0) || (deformidle.grayscalefilter!==undefined && parseInt(deformidle.grayscalefilter,0)>0)) {
+				var gf = 'grayscale('+parseInt(deform.grayscalefilter,0)+'%)';
+				hover_object_anim['-webkit-filter'] = hover_object_anim['-webkit-filter']===undefined ? gf : hover_object_anim['-webkit-filter']+' '+gf;
+				hover_object_anim['filter'] = hover_object_anim['filter']===undefined ? gf: hover_object_anim['filter']+' '+gf;
+			}
+
+			/*if (deformidle.shadow_idle===true) {
+				var shcolor = UniteAdminRev.convertHexToRGB(deformidle.ds_color);
+				shcolor="rgba("+shcolor[0]+","+shcolor[1]+","+shcolor[2]+","+deformidle.ds_opacity+")";
+				var dshadow = "drop-shadow("+parseInt(deformidle.ds_x,0)+"px "+parseInt(deformidle.ds_y,0)+"px "+parseInt(deformidle.ds_blur,0)+"px "+shcolor+")";
+				hover_object_anim['-webkit-filter'] = inlay_object_anim['-webkit-filter']===undefined ? dshadow : inlay_object_anim['-webkit-filter']+' '+dshadow;
+				hover_object_anim['filter'] = inlay_object_anim['filter']===undefined ? dshadow: inlay_object_anim['filter']+' '+dshadow;
+			}*/
+
+
+			// ANIMATION TO HOVER EFFECT
+			tl.add(punchgs.TweenLite.to(inlayer, hoverspeed,hover_object_anim));
+
+
 			if (params.type==="svg" && params.svg!=undefined) {					
 					var svgstrokecolor = params.svg["svgstroke-hover-color"] || "transparent",
 						svgstroketrans = params.svg["svgstroke-hover-transparency"] || 0,
@@ -1782,10 +1932,10 @@ var tpLayerTimelinesRev = new function(){
 		thesource.skewy = 0;
 		thesource.opac = 0;
 		thesource.tper = parseFloat(params.deformation.pers);
-		thesource.origin = "center,center",
+		thesource.origin = "center,center";
 
 		
-			//parseInt(u.getVal(ss,"font-size"),0)+"px",
+		//parseInt(u.getVal(ss,"font-size"),0)+"px",
 		theresult.transx = 0;
 		theresult.transy = 0;
 		theresult.transz = parseFloat(params.deformation.z);
@@ -1798,7 +1948,32 @@ var tpLayerTimelinesRev = new function(){
 		theresult.skewy = parseFloat(params.deformation.skewy);
 		theresult.opac = parseFloat(params.deformation.opacity);
 		theresult.tper = parseFloat(params.deformation.pers);
+
+		thesource['-webkit-filter'] = "";
+		thesource['filter'] = "";			
+		theresult['-webkit-filter'] = "";
+		theresult['filter'] = "";
 		
+		//FILTERS
+		if ((params.deformation.blurfilter!==undefined && parseInt(params.deformation.blurfilter,0)>0) || (params.blurfilter_start!==undefined && parseInt(params.blurfilter_start,0)>0)) {
+			var bfidle = 'blur('+parseInt(params.deformation.blurfilter,0)+'px)',
+				bf = params.blurfilter_start==="inherit" ? bfidle : 'blur('+parseInt(params.blurfilter_start,0)+'px)';				
+			thesource['-webkit-filter'] = bf;
+			thesource['filter'] = bf;			
+			theresult['-webkit-filter'] = bfidle;
+			theresult['filter'] = bfidle;			
+		}
+
+		if ((params.deformation.grayscalefilter!==undefined && parseInt(params.deformation.grayscalefilter,0)>0) || (params.grayscalefilter_start!==undefined && parseInt(params.grayscalefilter_start,0)>0)) {
+			var gfidle = 'grayscale('+parseInt(params.deformation.grayscalefilter,0)+'%)',
+				gf = params.grayscalefilter_start==="inherit" ? gfidle : 'grayscale('+parseInt(params.grayscalefilter_start,0)+'%)';
+				
+			thesource['-webkit-filter'] = thesource['-webkit-filter']==="" ? gf : thesource['-webkit-filter']+' '+gf;
+			thesource['filter'] = thesource['filter']==="" ? gf: thesource['filter']+' '+gf;
+			theresult['-webkit-filter'] = theresult['-webkit-filter']==="" ? gfidle : theresult['-webkit-filter']+' '+gfidle;
+			theresult['filter'] = theresult['filter']==="" ? gfidle: theresult['filter']+' '+gfidle;
+		}
+
 		
 
 		var originx = params["layer_2d_origin_x"]+"%",
@@ -1851,7 +2026,7 @@ var tpLayerTimelinesRev = new function(){
 			tl.add(punchgs.TweenLite.set(nextcaption, { scaleX:theresult.scalex, scaleY:theresult.scaley,
 						  rotationX:theresult.rotatex, rotationY:theresult.rotatey, rotationZ:theresult.rotatez,
 						  x:theresult.transx, y:theresult.transy, z:theresult.transz+1,
-						  skewX:theresult.skewx, skewY:theresult.skewy,
+						  skewX:theresult.skewx, skewY:theresult.skewy, 
 						  transformPerspective:theresult.tper, transformOrigin:origin,
 						  autoAlpha:theresult.opac,overwrite:"all"}));
 		}
@@ -1887,7 +2062,9 @@ var tpLayerTimelinesRev = new function(){
 						  x:thesource.transx, y:thesource.transy, z:thesource.transz,
 						  skewX:thesource.skewx, skewY:thesource.skewy,
 						  transformPerspective:thesource.tper, transformOrigin:origin,
-						  autoAlpha:thesource.opac
+						  autoAlpha:thesource.opac,
+						  "-webkit-filter":thesource['-webkit-filter'],
+						  filter:thesource['filter'],
 
 						},
 						{ scaleX:theresult.scalex, scaleY:theresult.scaley,
@@ -1897,7 +2074,9 @@ var tpLayerTimelinesRev = new function(){
 						  transformPerspective:theresult.tper, transformOrigin:origin,
 						  ease:easedata,
 						  autoAlpha:theresult.opac,overwrite:"all",
-						  force3D:"auto"
+						  force3D:"auto",
+						  "-webkit-filter":theresult['-webkit-filter'],
+						  filter:theresult['filter'],
 						},mdelay
 						));
 
@@ -2007,6 +2186,33 @@ var tpLayerTimelinesRev = new function(){
 		theresult.opac = parseFloat(params.deformation.opacity);
 		theresult.tper = parseFloat(params.deformation.pers);
 
+		theanim['-webkit-filter'] = "";
+		theanim['filter'] = "";			
+		theresult['-webkit-filter'] = "";
+		theresult['filter'] = "";
+
+		//FILTERS
+		if ((params.deformation.blurfilter!==undefined && parseInt(params.deformation.blurfilter,0)>0) || (params.blurfilter_start!==undefined && parseInt(params.blurfilter_start,0)>0)) {
+			var bfidle = 'blur('+parseInt(params.deformation.blurfilter,0)+'px)',
+				bf = params.blurfilter_end==="inherit" ? bfidle : 'blur('+parseInt(params.blurfilter_end,0)+'px)';	
+
+			theanim['-webkit-filter'] = bf;
+			theanim['filter'] = bf;			
+			theresult['-webkit-filter'] = bfidle;
+			theresult['filter'] = bfidle;			
+		}
+
+		if ((params.deformation.grayscalefilter!==undefined && parseInt(params.deformation.grayscalefilter,0)>0) || (params.grayscalefilter_end!==undefined && parseInt(params.grayscalefilter_end,0)>0)) {
+			var gfidle = 'grayscale('+parseInt(params.deformation.grayscalefilter,0)+'%)',
+				gf = params.grayscalefilter_end==="inherit" ? gfidle : 'grayscale('+parseInt(params.grayscalefilter_end,0)+'%)';
+				
+			theanim['-webkit-filter'] = theanim['-webkit-filter']==="" ? gf : theanim['-webkit-filter']+' '+gf;
+			theanim['filter'] = theanim['filter']==="" ? gf: theanim['filter']+' '+gf;
+			theresult['-webkit-filter'] = theresult['-webkit-filter']==="" ? gfidle : theresult['-webkit-filter']+' '+gfidle;
+			theresult['filter'] = theresult['filter']==="" ? gfidle: theresult['filter']+' '+gfidle;
+		}
+
+
 		switch($split) {
 			case "chars":
 				animobject = nextcaption.data('mySplitText').chars;
@@ -2054,7 +2260,10 @@ var tpLayerTimelinesRev = new function(){
 		
 		
 
-		
+		tl.add(tt.staggerTo(animobject,0.001,
+								{ "-webkit-filter":theresult['-webkit-filter'],
+						  			filter:theresult['filter']
+								 },(mdelay-0.001)));
 		
 		tl.add(tt.staggerTo(animobject,speed,
 								{
@@ -2071,7 +2280,9 @@ var tpLayerTimelinesRev = new function(){
 								  opacity:theanim.opac,
 								  transformPerspective:theanim.tper,
 								  transformOrigin:origin,
-								  ease:easedata
+								  ease:easedata,
+								   "-webkit-filter":theanim['-webkit-filter'],
+						  			filter:theanim['filter'],
 								 },mdelay));
 
 		// COLUMN BG ANIMATION
@@ -3202,13 +3413,13 @@ var tpLayerTimelinesRev = new function(){
 										
 
 		objLayer.frames["frame_"+fi].split_extratime = splitdelay;
-		
-		
+				
 		if (splitdelay!==0) {
 			punchgs.TweenLite.set(speedcont,{width:(speed/10)-splitdelay});
 			punchgs.TweenLite.set(splitcont,{width:splitdelay});
 		} else {
 			punchgs.TweenLite.set(speedcont,{width:speed/10});
+			punchgs.TweenLite.set(splitcont,{width:0});
 		}
 
 		
@@ -3216,7 +3427,7 @@ var tpLayerTimelinesRev = new function(){
 		durcont.innerHTML = speed;
 		
 		
-		if (objLayer.p_uid!==undefined && objLayer.p_uid!==-1 && u.getLayerByUniqueId(objLayer.p_uid).length>0) {
+		if (objLayer.p_uid!==undefined && objLayer.p_uid!==-1 && u.getLayerByUniqueId(objLayer.p_uid) !==undefined && (typeof u.getLayerByUniqueId(objLayer.p_uid)==='object')) {
 			var p_objLayer = u.getLayerByUniqueId(objLayer.p_uid);			
 			trm.style.display="block";
 			trm.style.width = ((p_objLayer.frames["frame_0"].time/10)-1)+"px";		
@@ -3275,12 +3486,15 @@ var tpLayerTimelinesRev = new function(){
 			speed = splitdelay*10;			
 			punchgs.TweenLite.set(frame,{width:(splitdelay)});
 		}
+
+
 				
 		if (splitdelay!==0) {
 			punchgs.TweenLite.set(speedcont,{width:(speed/10)-splitdelay});
 			punchgs.TweenLite.set(splitcont,{width:splitdelay});
 		} else {
 			punchgs.TweenLite.set(speedcont,{width:speed/10});
+			punchgs.TweenLite.set(splitcont,{width:0});
 		}
 		
 		
@@ -3289,12 +3503,14 @@ var tpLayerTimelinesRev = new function(){
 		if ((time == t.mainMaxTimeLeft * 10) || (fi==0 && triggered.in) || (fi==999 && triggered.out))
 			updateTimerText = false;
 
-		// CALCULATE THE DELAYS BETWEEN FRAMES OR PARRENT ELEMENTS		
-		if (objLayer.p_uid!==undefined && objLayer.p_uid!==-1 && u.getLayerByUniqueId(objLayer.p_uid).length>0) {
+		// CALCULATE THE DELAYS BETWEEN FRAMES OR PARRENT ELEMENTS				
+		if (objLayer.p_uid!==undefined && objLayer.p_uid!==-1 && u.getLayerByUniqueId(objLayer.p_uid) !==undefined && (typeof u.getLayerByUniqueId(objLayer.p_uid)==='object')) {
+			
 			var p_objLayer = u.getLayerByUniqueId(objLayer.p_uid);			
 			timedif = time - p_objLayer.frames["frame_0"].time;
 			trm.style.display="block";
 		} else {
+			
 			trm.style.display="none";
 			trm.style.width="0px";		
 			if (fi!==0) {
@@ -3440,8 +3656,9 @@ var tpLayerTimelinesRev = new function(){
 			
 		// LEFT CHECK
 
-		if (pframe.length>0) 
-			fl = Math.max((pframe.position().left+pframe.outerWidth())-1, fl);			
+		if (pframe.length>0) 			
+			fl = Math.max((pframe.position().left+pframe.outerWidth()), fl);			
+		
 		fl = Math.max(0,fl); 					
 		
 		// RIGHT CHECK
@@ -3452,7 +3669,7 @@ var tpLayerTimelinesRev = new function(){
 		// REWRITE TIME INFO'S
 		if (_tc!==undefined && _tc.update) {
 			var timedif = 0;
-			if (objLayer.p_uid!==undefined && fi===0 && objLayer.p_uid!==-1 && u.getLayerByUniqueId(objLayer.p_uid).length>0) {				
+			if (objLayer.p_uid!==undefined && fi===0 && objLayer.p_uid!==-1 && u.getLayerByUniqueId(objLayer.p_uid) !==undefined && (typeof u.getLayerByUniqueId(objLayer.p_uid)==='object')) {				
 				var p_objLayer = u.getLayerByUniqueId(objLayer.p_uid);			
 				timedif = (fl*10) - p_objLayer.frames["frame_0"].time;
 			} else
@@ -3609,8 +3826,7 @@ var tpLayerTimelinesRev = new function(){
 		splitted.c = ht.text().replace(/ /g, "").length;
 		splitted.w = txt.split(" ").length;
 		splitted.l = txt.split('<br').length;
-
-
+		
 		switch (split) {
 			case "chars":
 				w = splitted.c;
@@ -3945,7 +4161,8 @@ var tpLayerTimelinesRev = new function(){
 	 */
 	t.getSortboxText = function(text){
 		sorboxTextSize = 20;
-		var textSortbox = UniteAdminRev.stripTags(text);
+
+		var textSortbox = text===undefined ? "NoText" : UniteAdminRev.stripTags(text);
 
 		//if no content - escape html
 		if(textSortbox.length < 2)
@@ -4001,16 +4218,15 @@ var tpLayerTimelinesRev = new function(){
 		//set the sortlist sortable
 		if (sortable) {
 			jQuery('.layer_sortbox ul').sortable({
-				axis:'y',	
+				//axis:'y',	
 				refreshPositions:true,
 				placeholder:"silent-placeholder",
 				cancel:"#slide_in_sort, input",
 				handle:".mastertimer-timeline-zindex-row",
 				items:".sortable_elements",				
-				toleranceElement: '> div',						
+				//toleranceElement: '> div',						
 				connectWith:"#layers-left-ul, .sortable_groups_wrap, .sortable_layers_in_columns",
-				update: function(evnt,ui){
-
+				update: function(event,ui){					
 					var src = jQuery(ui.item);
 					// CANCEL IF ELEMENT IS A ROW
 					if (src.hasClass("sortable_row")) jQuery(this).sortable("cancel");
@@ -4046,9 +4262,9 @@ var tpLayerTimelinesRev = new function(){
 			});
 		}
 
-		
+	
 
-		jQuery('.droppable_sortable_group,.droppable_sortable_row, .droppable_sortable_column').droppable({
+	jQuery('.droppable_sortable_group,.droppable_sortable_row, .droppable_sortable_column').droppable({
 			tolerance:"intersect",
 			greedy:true,	
 			over:function(ui) {
@@ -4057,8 +4273,8 @@ var tpLayerTimelinesRev = new function(){
 			out:function(ui) {
 				jQuery(ui.target).removeClass("readytodrop")
 			},
-			drop:function(ui) {
-				
+			drop:function(ui,a) {				
+				var ul = jQuery('#layers-left-ul');				
 				jQuery(ui.target).removeClass("readytodrop");
 				var cl = jQuery(ui.target).attr('class'),
 					src = jQuery(ui.srcElement).closest('.sortable_elements.sortable_layers'),

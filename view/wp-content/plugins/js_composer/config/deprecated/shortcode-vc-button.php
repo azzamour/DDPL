@@ -1,4 +1,8 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 $colors_arr = vc_colors_arr();
 $size_arr = vc_size_arr();
 $icons_arr = vc_icons_arr();

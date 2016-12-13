@@ -1,6 +1,6 @@
 /********************************************
  * REVOLUTION 5.2.5.1 EXTENSION - VIDEO FUNCTIONS
- * @version: 2.0.1 (18.10.2016)
+ * @version: 2.0.2 (25.11.2016)
  * @requires jquery.themepunch.revolution.js
  * @author ThemePunch
 *********************************************/
@@ -11,7 +11,7 @@ var _R = jQuery.fn.revolution,
 	extension = {	alias:"Video Min JS",
 					name:"revolution.extensions.video.min.js",
 					min_core: "5.3",
-					version:"2.0.1"
+					version:"2.0.2"
 			  };
 
 
@@ -57,7 +57,7 @@ jQuery.extend(true,_R, {
 			});
 	},
 
-	resetVideo : function(_nc,opt) {	
+	resetVideo : function(_nc,opt,preset) {	
 		var _ = _nc.data();	
 		switch (_.videotype) {
 			case "youtube":
@@ -77,7 +77,7 @@ jQuery.extend(true,_R, {
 						}
 					}					
 				} catch(e) {}
-				if (_nc.find('.tp-videoposter').length==0 && _.bgvideo!==1) 
+				if (_nc.find('.tp-videoposter').length==0 && _.bgvideo!==1 && preset!==true) 
 					punchgs.TweenLite.to(_nc.find('iframe'),0.3,{autoAlpha:1,display:"block",ease:punchgs.Power3.easeInOut});	
 				
 			break;
@@ -97,7 +97,7 @@ jQuery.extend(true,_R, {
 						}					
 					}					
 				} catch(e) {}
-				if (_nc.find('.tp-videoposter').length==0 && _.bgvideo!==1)
+				if (_nc.find('.tp-videoposter').length==0 && _.bgvideo!==1 && preset!==true)
 					punchgs.TweenLite.to(_nc.find('iframe'),0.3,{autoAlpha:1,display:"block",ease:punchgs.Power3.easeInOut});
 			break;
 
@@ -563,13 +563,13 @@ jQuery.extend(true,_R, {
 			 	}	
 			 	
 			 	var yafv = videoafs==="true" ||  videoafs===true ? "allowfullscreen" : "";		 	
-			 	_nc.data('videomarkup','<iframe style="visible:hidden" type="text/html" src="'+httpprefix+'://www.youtube.com/embed/'+vidytid+'?'+vida_new+'" '+yafv+' width="100%" height="100%" style="width:100%;height:100%"></iframe>');
+			 	_nc.data('videomarkup','<iframe type="text/html" src="'+httpprefix+'://www.youtube.com/embed/'+vidytid+'?'+vida_new+'" '+yafv+' width="100%" height="100%" style="opacity:0;visibility:hidden;width:100%;height:100%"></iframe>');
 			break;
 
 			case "vimeo":
 			//	if (location.protocol === 'https:')
 				httpprefix = "https";												
-				_nc.data('videomarkup','<iframe style="visible:hidden" src="'+httpprefix+'://player.vimeo.com/video/'+vimeoid+'?autoplay=0&'+vida+'" webkitallowfullscreen mozallowfullscreen allowfullscreen width="100%" height="100%" style="100%;height:100%"></iframe>');
+				_nc.data('videomarkup','<iframe src="'+httpprefix+'://player.vimeo.com/video/'+vimeoid+'?autoplay=0&'+vida+'" webkitallowfullscreen mozallowfullscreen allowfullscreen width="100%" height="100%" style="opacity:0;visibility:hidden;100%;height:100%"></iframe>');
 				
 			break;
 		}

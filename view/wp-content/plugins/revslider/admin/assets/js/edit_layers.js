@@ -267,7 +267,7 @@ var UniteLayersRev = new function(){
 	t.sortFontTypesByUsage = function(){
 		for(var skey in sgfamilies){
 			for(var key in initArrFontTypes){
-				
+				if (initArrFontTypes[key]!==undefined && initArrFontTypes[key]['label']!==undefined && sgfamilies[skey]!==undefined)
 				if(initArrFontTypes[key]['label'].replace(/\ /g,'+') == sgfamilies[skey].replace(/\ /g,'+')){
 					//add to front
 					if(typeof(initArrFontTypes[key]['top']) == 'undefined'){ //push to top and define top
@@ -340,11 +340,11 @@ var UniteLayersRev = new function(){
 	 */
 	t.getVal = function(obj, handle,forcelayout){
 		forcelayout = forcelayout===undefined ? layout : forcelayout;
-
 		if(typeof(obj) === 'undefined') return;
 		
 		if(jQuery.inArray(handle, transSettings) !== -1){ //handle is in the list, so save only on the current choosen size
 			if(typeof(obj[handle]) !== 'undefined' && typeof(obj[handle][forcelayout]) !== 'undefined'){				
+
 				return obj[handle][forcelayout];
 			}else{
 				if(typeof(obj[handle]) !== 'undefined' && typeof(obj[handle]) !== 'object'){
@@ -562,6 +562,7 @@ var UniteLayersRev = new function(){
 		u.init(g_slideTime);
 		
 		container = jQuery(containerID);
+		var demoRows = new Array();
 					
 		//add all layers from init
 		if(initDemoLayers){
@@ -570,8 +571,12 @@ var UniteLayersRev = new function(){
 				for(var i=0;i<len;i++){
 					for(var key in initDemoLayers[i]){
 						curDemoSlideID = i;
-						
-						addLayer(initDemoLayers[i][key],true,true,true);
+						if (initDemoLayers[i][key].type==="row" || initDemoLayers[i][key].type==="column") {
+							demoRows.push(initDemoLayers[i][key].unique_id)
+						} else {
+							if (jQuery.inArray(initDemoLayers[i][key].p_uid,demoRows)==-1)
+								addLayer(initDemoLayers[i][key],true,true,true);
+						}
 						
 					}
 				}
@@ -579,31 +584,138 @@ var UniteLayersRev = new function(){
 				for(var i in initDemoLayers){
 					for(var key in initDemoLayers[i]){
 						curDemoSlideID = i;
-						
-						addLayer(initDemoLayers[i][key],true,true,true);
+						if (initDemoLayers[i][key].type==="row" || initDemoLayers[i][key].type==="column") {
+							demoRows.push(initDemoLayers[i][key].unique_id)
+						} else {
+							if (jQuery.inArray(initDemoLayers[i][key].p_uid,demoRows)==-1)
+								addLayer(initDemoLayers[i][key],true,true,true);
+						}
 					
 					}
 				}
 			}
 		}
 
-		u.organiseGroupsAndLayer(false,true)
+		u.organiseGroupsAndLayer(false,true);
 
-		
-		//add all layers from init
-		if(initLayers){
-			var len = initLayers.length;
-			if(len){
-				for(var i=0;i<len;i++) {							
-					addLayer(initLayers[i],true,false,true);										
+		var len = initLayers.length;		
+		if(initLayers){			
+			if(len){				
+				for(var i=0;i<len;i++) {
+					initLayers[i].addedToStage=false;
 				}
-			}else{				
-				for(var key in initLayers) {										
-					addLayer(initLayers[key],true,false,true);										
+
+				// ADD GROUPS AND LAYERS WITHOUT GROUPS BEFORE THE ROWS							
+				for(var i=0;i<len;i++) {		
+					if (initLayers[i].type==="row") break;
+					if (initLayers[i].type!=="row" && initLayers[i].type!=="column") {
+						if (initLayers[i].type!=="group" || initLayers[i].p_uid===-1) {	
+							initLayers[i].addedToStage=true;
+							addLayer(initLayers[i],true,false,true);
+						}
+					}
+				}
+				t.add_missing_unique_ids();
+				
+
+				
+				//ADD ROOT LAYERS BEFORE ROWS
+				for(var i=0;i<len;i++) {	
+					if (initLayers[i].type=="row") break;		
+					if (initLayers[i].addedToStage!==true && initLayers[i].type!=="row" && initLayers[i].type!=="column" && initLayers[i].type!=="group" ) {						
+						initLayers[i].addedToStage=true;						
+						addLayer(initLayers[i],true,false,true);										
+					}
+				}
+				
+				
+				// ADD GROUPS AND ROWS	
+				t.add_missing_unique_ids();				
+				for(var i=0;i<len;i++) {										
+					if (initLayers[i].addedToStage!==true && (initLayers[i].type==="group" || initLayers[i].type==="row"))  {						
+						initLayers[i].addedToStage=true;
+						addLayer(initLayers[i],true,false,true);										
+					}
+				}
+				
+
+				// ADD COLUMNS INTO ROWS	
+				t.add_missing_unique_ids();					
+				for(var i=0;i<len;i++) {							
+					if (initLayers[i].type==="column") {							
+						initLayers[i].addedToStage=true;
+						addLayer(initLayers[i],true,false,true);										
+					}
+				}
+					
+
+				//ADD ROOT LAYERS AFTER ROWS
+				t.add_missing_unique_ids();				
+				for(var i=0;i<len;i++) {	
+					if (initLayers[i].addedToStage!==true) {						
+						addLayer(initLayers[i],true,false,true);										
+					}
+				}
+
+			}else{		
+				for(var i in initLayers) {
+					initLayers[i].addedToStage=false;
+				}
+
+				// ADD GROUPS AND LAYERS WITHOUT GROUPS BEFORE THE ROWS							
+				for(var i in initLayers) {		
+					if (initLayers[i].type==="row") break;
+					if (initLayers[i].type!=="row" && initLayers[i].type!=="column") {
+						if (initLayers[i].type!=="group" || initLayers[i].p_uid===-1) {	
+							initLayers[i].addedToStage=true;
+							addLayer(initLayers[i],true,false,true);
+						}
+					}
+				}
+				t.add_missing_unique_ids();
+								
+				//ADD ROOT LAYERS BEFORE ROWS
+				for(var i in initLayers) {	
+					if (initLayers[i].type=="row") break;		
+					if (initLayers[i].addedToStage!==true && initLayers[i].type!=="row" && initLayers[i].type!=="column" && initLayers[i].type!=="group" ) {						
+						initLayers[i].addedToStage=true;						
+						addLayer(initLayers[i],true,false,true);										
+					}
+				}
+				
+				
+				// ADD GROUPS AND ROWS	
+				t.add_missing_unique_ids();				
+				for(var i in initLayers) {										
+					if (initLayers[i].addedToStage!==true && (initLayers[i].type==="group" || initLayers[i].type==="row"))  {						
+						initLayers[i].addedToStage=true;
+						addLayer(initLayers[i],true,false,true);										
+					}
+				}
+				
+
+				// ADD COLUMNS INTO ROWS	
+				t.add_missing_unique_ids();					
+				for(var i in initLayers) {							
+					if (initLayers[i].type==="column") {							
+						initLayers[i].addedToStage=true;
+						addLayer(initLayers[i],true,false,true);										
+					}
+				}
+					
+
+				//ADD ROOT LAYERS AFTER ROWS
+				t.add_missing_unique_ids();				
+				for(var i in initLayers) {	
+					if (initLayers[i].addedToStage!==true) {						
+						addLayer(initLayers[i],true,false,true);										
+					}
 				}
 			}			
-			t.add_missing_unique_ids();								
+			t.add_missing_unique_ids();																
 		}
+
+
 		
 		// IF LAYERS ADDED, WE CAN CALCULATE THE SCROLLER
 		u.timeLineTableDimensionUpdate();
@@ -633,7 +745,7 @@ var UniteLayersRev = new function(){
 		
 		scaleAndResetLayerInit();
 		
-		positionChanged();
+		positionChanged_Core();
 		
 		initBackgroundFunctions();
 
@@ -811,9 +923,11 @@ var UniteLayersRev = new function(){
 			
 			var minheight = 0;
 			jQuery('.row-zone-container').each(function() {
+				
 				minheight=minheight + jQuery(this).height();
 			});
 
+			
 			minheight = minheight <rev_sizes[changeto][1] ? rev_sizes[changeto][1] : minheight;
 
 			jQuery('.tp-bgimg.defaultimg, #divLayers').css({
@@ -835,6 +949,8 @@ var UniteLayersRev = new function(){
 				jQuery('.slotholder .tp-bgimg.defaultimg').css({minWidth:rev_sizes[changeto][0], maxWidth:rev_sizes[changeto][0] })
 
 			}			
+
+
 			
 			jQuery('#divLayers-wrapper').css('height', minheight + 1);
 
@@ -2178,6 +2294,17 @@ var UniteLayersRev = new function(){
 		return list;
 	}
 	
+	t.getHighestGroupOrder = function(zone) {
+		var hgroup = 0;
+		for (key in t.arrLayers) {
+			var layer = t.arrLayers[key];			
+			if (layer.type==="row" && t.getVal(layer, 'align_vert')===zone) 				
+				if (hgroup<=layer.groupOrder) hgroup = layer.groupOrder+1;
+			
+		}
+		return hgroup;
+	}
+
 	t.makeRowSortableDroppable = function() {
 		
 		//Dropable and Sortable Elements in Rows and Columns
@@ -3093,7 +3220,7 @@ var UniteLayersRev = new function(){
 							"" 
 							: forcesuffix 
 						: suffix;		
-
+		
 		result = jQuery.inArray(putin,possiblevalues)>=0 ? putin : putin===undefined || !jQuery.isNumeric(parseInt(putin)) || putin.length===0 ? "" : parseInt(putin)+newsuffix;				
 		return result;
 	}
@@ -3476,7 +3603,9 @@ var UniteLayersRev = new function(){
 		
 
 		jQuery('#layer_speed, #layer_endspeed, #layer_splitdelay, #layer_endsplitdelay, #layer_split, #layer_endsplit').on("change blur", function() {
+			t.updateLayerFromFields();
 			u.updateCurrentLayerTimeline();
+
 		});
 		
 
@@ -3651,6 +3780,35 @@ var UniteLayersRev = new function(){
 			t.callObjectLibraryDialog("background");			
 		});	//change image click.
 
+		jQuery("#button_change_image_yt").click(function(){		
+			var bgimg = "https://img.youtube.com/vi/"+jQuery('#slide_bg_youtube').val()+"/sddefault.jpg";
+			
+			switchYTBGObject(bgimg);
+			//bgimg = rs_plugin_url+'public/assets/assets/sources/yt.png';
+			
+		});
+		
+		// SWITCH THE MAIN BG FROM OBJECT LIBRARY
+		function switchYTBGObject(urlImage) {
+			
+			
+			//set visual image
+			jQuery("#divbgholder").css("background-image","url("+urlImage+")");
+			jQuery('#slide_selector .list_slide_links li.selected .slide-media-container ').css("background-image","url("+urlImage+")")
+
+			//update setting input
+			jQuery("#image_url").val(urlImage);
+			jQuery("#image_id").val("");
+			
+			t.changeSlotBGs();
+			
+			jQuery('.bgsrcchanger:checked').click();
+
+			if(jQuery('input[name="kenburn_effect"]').is(':checked')){
+				jQuery('input[name="kb_start_fit"]').change();
+			}
+		}
+		
 		// SWITCH THE MAIN BG FROM OBJECT LIBRARY
 		function switchMainBGObject(urlImage) {
 			
@@ -4057,6 +4215,7 @@ var UniteLayersRev = new function(){
 							//remove actions of first layer that are connected to other layers
 							layers_to_add[lta] = t.remove_import_layer_actions(layers_to_add[lta]);
 							layers_to_add[lta].createdOnInit = false;
+							layers_to_add[lta]['p_uid'] = -1;
 							addLayer(layers_to_add[lta], true);
 							li.addClass("layerimported");
 							btn.find('i').addClass("eg-icon-ok").removeClass("eg-icon-plus");
@@ -4769,6 +4928,8 @@ var UniteLayersRev = new function(){
 			customAnim['skewx'] = jQuery('input[name="layer_skew_xstart"]').val();
 			customAnim['skewy'] = jQuery('input[name="layer_skew_ystart"]').val();
 			customAnim['captionopacity'] = jQuery('input[name="layer_opacity_start"]').val();
+			customAnim['blurfilter'] = jQuery('input[name="blurfilter_start"]').val();
+			customAnim['grayscalefilter'] = jQuery('input[name="grayscalefilter_start"]').val();
 			customAnim['mask'] = jQuery('#masking-start')[0].checked;
 			customAnim['mask_x'] = jQuery('input[name="mask_anim_xstart"]').val();
 			customAnim['mask_y'] = jQuery('input[name="mask_anim_ystart"]').val();
@@ -4849,6 +5010,8 @@ var UniteLayersRev = new function(){
 			if(obj_v['skewx'] !== undefined) { jQuery('input[name="layer_skew_xstart"]').val(obj_v['skewx']); }else{ jQuery('input[name="layer_skew_xstart"]').val(0); }
 			if(obj_v['skewy'] !== undefined) { jQuery('input[name="layer_skew_ystart"]').val(obj_v['skewy']); }else{ jQuery('input[name="layer_skew_ystart"]').val(0); }
 			if(obj_v['captionopacity'] !== undefined) { jQuery('input[name="layer_opacity_start"]').val(obj_v['captionopacity']); }else{ jQuery('input[name="layer_opacity_start"]').val(0); }
+			if(obj_v['blurfilter'] !== undefined) { jQuery('input[name="blurfilter_start"]').val(obj_v['blurfilter']); }else{ jQuery('input[name="blurfilter_start"]').val(0); }
+			if(obj_v['grayscalefilter'] !== undefined) { jQuery('input[name="grayscalefilter_start"]').val(obj_v['grayscalefilter']); }else{ jQuery('input[name="grayscalefilter_start"]').val(0); }
 			if(obj_v['mask'] !== undefined && (obj_v['mask'] == 'true' || obj_v['mask'] == true)) { jQuery('#masking-start').attr('checked', true); }else{ jQuery('#masking-start').attr('checked', false); }
 			if(obj_v['mask_x'] !== undefined) { jQuery('input[name="mask_anim_xstart"]').val(obj_v['mask_x']); }else{ jQuery('input[name="mask_anim_xstart"]').val(0); }
 			if(obj_v['mask_y'] !== undefined) { jQuery('input[name="mask_anim_ystart"]').val(obj_v['mask_y']); }else{ jQuery('input[name="mask_anim_ystart"]').val(0); }
@@ -5109,6 +5272,8 @@ var UniteLayersRev = new function(){
 						t.arrLayers[key].scale_x_start = animObj['params']['scalex'];
 						t.arrLayers[key].scale_y_start = animObj['params']['scaley'];
 						t.arrLayers[key].opacity_start = animObj['params']['captionopacity'];
+						t.arrLayers[key].blurfilter_start = animObj['params']['blurfilter'];
+						t.arrLayers[key].grayscalefilter_start = animObj['params']['grayscalefilter'];
 						t.arrLayers[key].skew_x_start = animObj['params']['skewx'];
 						t.arrLayers[key].skew_y_start = animObj['params']['skewy'];
 						t.arrLayers[key].mask_start = animObj['params']['mask'];
@@ -5297,7 +5462,7 @@ var UniteLayersRev = new function(){
 			var layer = t.arrLayers[serial];
 			if(layer.type == "image"){
 				var htmlLayer = layer.references.htmlLayer;
-				var objUpdate = {};
+				var objUpdate = {};				
 				objUpdate = t.setVal(objUpdate, 'width', htmlLayer.width());
 				objUpdate = t.setVal(objUpdate, 'height', htmlLayer.height());
 				t.updateLayer(serial,objUpdate);
@@ -6753,7 +6918,9 @@ var UniteLayersRev = new function(){
 		objLayer.mask_end = objLayer.mask_end		 		|| false;
 
 		// Hover Force
-		objLayer.force_hover = objLayer.force_hover===undefined ? true : objLayer.force_hover;
+		//objLayer.force_hover = objLayer.force_hover===undefined ? true : objLayer.force_hover;
+
+		
 		
 		// Column Break At
 		if (objLayer.type==="row")
@@ -7067,7 +7234,6 @@ var UniteLayersRev = new function(){
 				objLayer = t.setVal(objLayer, 'margin', objLayer['margin'], true);
 			}			
 		}
-
 		if(objLayer['padding'] == undefined){
 			//check if we have in deformation
 			if(objLayer['deformation'] !== undefined && objLayer['deformation']['padding'] !== undefined){ //fallback
@@ -7081,8 +7247,10 @@ var UniteLayersRev = new function(){
 				objLayer = t.setVal(objLayer, 'padding' ,cur_pad, true);
 			}
 		}else{
-			if(typeof(objLayer['padding']) !== 'object'){
-				objLayer = t.setVal(objLayer, 'padding', objLayer['padding'], true);
+			if(jQuery.type(objLayer['padding']) !== 'object'){
+				var a = objLayer['padding'];
+				delete(objLayer['padding']);
+				objLayer = t.setVal(objLayer, 'padding', a, true);
 			}
 		}
 		
@@ -7094,7 +7262,7 @@ var UniteLayersRev = new function(){
 				objLayer = t.setVal(objLayer, 'text-align', 'inherit', true);
 			}
 		}else{
-			if(typeof(objLayer['text-align']) !== 'object'){
+			if(jQuery.type(objLayer['text-align']) !== 'object'){
 				objLayer = t.setVal(objLayer, 'text-align', objLayer['text-align'], true);
 			}			
 		}
@@ -7131,11 +7299,44 @@ var UniteLayersRev = new function(){
 			}
 		}
 
+		
 		if(objLayer.opacity_end == undefined){
 			if(isInit == false){
 				objLayer.opacity_end = "0";
 			}else{
 				objLayer.opacity_end = "inherit";
+			}
+		}
+
+		if(objLayer.blurfilter_start == undefined){
+			if(isInit == false){
+				objLayer.blurfilter_start = "0";
+			}else{
+				objLayer.blurfilter_start = "0";
+			}
+		}
+
+		if(objLayer.blurfilter_end == undefined){
+			if(isInit == false){
+				objLayer.blurfilter_end = "0";
+			}else{
+				objLayer.blurfilter_end = "0";
+			}
+		}
+
+		if(objLayer.grayscalefilter_start == undefined){
+			if(isInit == false){
+				objLayer.grayscalefilter_start = "0";
+			}else{
+				objLayer.grayscalefilter_start = "0";
+			}
+		}
+
+		if(objLayer.grayscalefilter_end == undefined){
+			if(isInit == false){
+				objLayer.grayscalefilter_end = "0";
+			}else{
+				objLayer.grayscalefilter_end = "0";
 			}
 		}
 
@@ -7193,7 +7394,7 @@ var UniteLayersRev = new function(){
 		if(objLayer.deformation == undefined || jQuery.isEmptyObject(objLayer['deformation']))
 			objLayer.deformation = {};
 
-		if(objLayer['deformation']['font-family'] == undefined){
+		if(objLayer['deformation']['font-family'] == undefined && (objLayer.type == 'text' || objLayer.type == 'button')){
 			objLayer['deformation']['font-family'] = "Open Sans";
 			sgfamilies.push('Open Sans');
 		}else{
@@ -7210,7 +7411,9 @@ var UniteLayersRev = new function(){
 			objLayer['deformation']['padding'] = cur_pad; //4 []
 		}*/
 
-		
+		// Shadow Idle
+		//objLayer['deformation'].shadow_idle = objLayer['deformation'].shadow_idle===undefined ? true : objLayer['deformation'].shadow_idle;
+		//objLayer['deformation-hover'].shadow_hover = objLayer['deformation-hover'].shadow_hover===undefined ? true : objLayer['deformation-hover'].shadow_hover;
 
 		if(objLayer['deformation']['font-style'] == undefined){
 			objLayer['deformation']['font-style'] = 'normal'; // checkbox
@@ -7354,6 +7557,14 @@ var UniteLayersRev = new function(){
 
 		if(objLayer['deformation']['parallax'] == undefined)
 			objLayer['deformation']['parallax'] = '-';
+
+		if (objLayer['deformation']['blurfilter'] == undefined) objLayer['deformation']['blurfilter'] = 0;
+		if (objLayer['deformation']['grayscalefilter'] == undefined) objLayer['deformation']['grayscalefilter'] = 0;
+		//if (objLayer['deformation']['ds_x'] == undefined) objLayer['deformation']['ds_x'] = 0;
+		//if (objLayer['deformation']['ds_y'] == undefined) objLayer['deformation']['ds_y'] = 0;
+		//if (objLayer['deformation']['ds_blur'] == undefined) objLayer['deformation']['ds_blur'] = 0;		
+		//if (objLayer['deformation']['ds_color'] == undefined) objLayer['deformation']['ds_color'] = "#000000";
+		//if (objLayer['deformation']['ds_opacity'] == undefined) objLayer['deformation']['ds_opacity'] = 0;
 		
 		//deformation part end
 		
@@ -7362,6 +7573,14 @@ var UniteLayersRev = new function(){
 			objLayer['deformation-hover'] = {};
 		}
 				
+
+		if (objLayer['deformation-hover']['blurfilter'] == undefined) objLayer['deformation-hover']['blurfilter'] = 0;
+		if (objLayer['deformation-hover']['grayscalefilter'] == undefined) objLayer['deformation-hover']['grayscalefilter'] = 0;
+		//if (objLayer['deformation-hover']['ds_x'] == undefined) objLayer['deformation-hover']['ds_x'] = 0;
+		//if (objLayer['deformation-hover']['ds_y'] == undefined) objLayer['deformation-hover']['ds_y'] = 0;
+		//if (objLayer['deformation-hover']['ds_blur'] == undefined) objLayer['deformation-hover']['ds_blur'] = 0;		
+		//if (objLayer['deformation-hover']['ds_color'] == undefined) objLayer['deformation-hover']['ds_color'] = "#000000";
+		//if (objLayer['deformation-hover']['ds_opacity'] == undefined) objLayer['deformation-hover']['ds_opacity'] = 0;
 
 		if(objLayer['deformation-hover']['color'] == undefined)
 			objLayer['deformation-hover']['color'] = "#ffffff";
@@ -7664,7 +7883,6 @@ var UniteLayersRev = new function(){
 		var obj2 = jQuery.extend(true, {}, obj);	//duplicate object
 		
 		//t.getVal(obj, 'top');
-
 		obj2 = t.setVal(obj2, 'left', t.getVal(obj2, 'left')+5);
 		obj2 = t.setVal(obj2, 'top', t.getVal(obj2, 'top')+5);
 		obj2.order = undefined;
@@ -7675,31 +7893,32 @@ var UniteLayersRev = new function(){
 		unique_layer_id++;
 		obj2.unique_id = unique_layer_id;
 
-		
+		if (obj2.groupOrder!==undefined && obj2.type==="row") 			
+			obj2.groupOrder = t.getHighestGroupOrder(t.getVal(obj2, 'align_vert'));
 		
 		addLayer(obj2, true);
-		initDisallowCaptionsOnClick();		
+		initDisallowCaptionsOnClick();
 		u.timeLineTableDimensionUpdate();
 				
 		// DUPLICATE GROUP
-		if ((obj.type==="group") && t.getLayersInGroup(obj.unique_id).layers.length>0) {			
+		if ((obj.type==="group") && t.getLayersInGroup(obj.unique_id).layers.length>0) {
 			jQuery.each(t.getLayersInGroup(obj.unique_id).layers,function(j,layer) {
-				var newobj = jQuery.extend(true, {}, layer);				
-				newobj.p_uid = obj2.unique_id;	
+				var newobj = jQuery.extend(true, {}, layer);
+				newobj.p_uid = obj2.unique_id;
 				duplicateLayerIntoNewGroup(newobj);
 			});
 			t.makeRowSortableDroppable();
 		}
 
 		// DUPLICATE COLUMN
-		if ((obj.type==="row") && t.getLayersInGroup(obj.unique_id).layers.length>0) {			
-			jQuery.each(t.getLayersInGroup(obj.unique_id).columns,function(j,column) {						
+		if ((obj.type==="row") && t.getLayersInGroup(obj.unique_id).layers.length>0) {
+			jQuery.each(t.getLayersInGroup(obj.unique_id).columns,function(j,column) {
 				var newcolumn = jQuery.extend(true, {}, column);
 				newcolumn.p_uid = obj2.unique_id;
 				newcolumn.ref_group = obj2.unique_id;
 				var column_uid = duplicateLayerIntoNewGroup(newcolumn);
 				jQuery.each(t.getLayersInGroup(column.unique_id).layers,function(j,layer) {
-					var newobj = jQuery.extend(true, {}, layer);				
+					var newobj = jQuery.extend(true, {}, layer);
 					newobj.p_uid = column_uid;	
 					duplicateLayerIntoNewGroup(newobj);
 				});
@@ -7712,8 +7931,8 @@ var UniteLayersRev = new function(){
 		jQuery.each(t.getLayers(),function(k,layer) {
 			key = k;
 		});		
-		t.setLayerSelected(key);	
-		if (obj2.p_uid!==-1 && t.getObjLayerType(obj2.p_uid)!=="group") 			
+		t.setLayerSelected(key);
+		if (obj2.p_uid!==-1 && t.getObjLayerType(obj2.p_uid)!=="group")
 			t.setInnerGroupOrders(obj2.references.htmlLayer.parent());
 	}
 
@@ -7996,13 +8215,28 @@ var UniteLayersRev = new function(){
 	/**
 	 THE CHANGE OF POSITION FIELD TRIGGERS THE REPOSITIONINNG OF THE LAYER
 	**/
-	var positionChanged = function() {
-		
-		jQuery("#layer_top, #layer_left").change(function() {			
-			setTimeout(function() {
+	var positionChanged = function(force) {		
+		jQuery("#layer_top, #layer_left").change(function() {
+			setTimeout(function() {				
 				updateHtmlLayersFromObject(t.getSerialFromID(jQuery('.layer_selected').attr('id')),true);
 			},19);
 		});
+	}
+
+	var positionChanged_Core = function() {
+		try {
+			jQuery.each(t.arrLayers,function(i,layer) {								
+				try {					
+					t.updateHtmlLayerPosition(false,layer,t.getVal(layer, 'top'),t.getVal(layer, 'left'),t.getVal(layer,'align_hor'),t.getVal(layer,'align_vert'));
+				}  catch(e) {				
+					console.log("Position Changed Core Internal Function Error:");
+					console.log(e);
+				}
+			});	
+		} catch(e) {
+			console.log("Position Changed Core Function Error:");
+			console.log(e);
+		}
 	}
 	
 	
@@ -8086,7 +8320,8 @@ var UniteLayersRev = new function(){
 
 		objUpdate.style = document.getElementById("layer_caption").value;			
 		objUpdate['hover'] = document.getElementById("hover_allow").checked;
-		objUpdate['force_hover'] = document.getElementById("force_hover").checked;
+		//objUpdate['force_hover'] = document.getElementById("force_hover").checked;
+		
 		objUpdate['toggle'] = document.getElementById("toggle_allow").checked;
 
 		objUpdate['toggle_use_hover'] = document.getElementById("toggle_use_hover").checked;
@@ -8127,7 +8362,7 @@ var UniteLayersRev = new function(){
 		objUpdate = t.setVal(objUpdate, 'whitespace', jQuery("#layer_whitespace option:selected").val());
 		objUpdate = t.setVal(objUpdate, 'display', jQuery("#layer_display option:selected").val());
 		objUpdate = t.setVal(objUpdate, 'max_height', document.getElementById("layer_max_height").value);
-		objUpdate = t.setVal(objUpdate, 'min_height', document.getElementById("layer_min_height").value);
+		objUpdate = t.setVal(objUpdate, 'min_height', document.getElementById("layer_min_height").value);		
 		objUpdate = t.setVal(objUpdate, 'max_width', document.getElementById("layer_max_width").value);
 		
 		objUpdate = t.setVal(objUpdate, 'video_height', document.getElementById("layer_video_height").value);
@@ -8240,6 +8475,10 @@ var UniteLayersRev = new function(){
 		objUpdate.z_end =  document.getElementById("layer_anim_zend").value;
 		objUpdate.opacity_start = document.getElementById("layer_opacity_start").value;
 		objUpdate.opacity_end = document.getElementById("layer_opacity_end").value;
+		objUpdate.blurfilter_start = document.getElementById("blurfilter_start").value;
+		objUpdate.blurfilter_end = document.getElementById("blurfilter_end").value;
+		objUpdate.grayscalefilter_start = document.getElementById("grayscalefilter_start").value;
+		objUpdate.grayscalefilter_end = document.getElementById("grayscalefilter_end").value;
 		objUpdate.x_rotate_start =  document.getElementById("layer_anim_xrotate").value;
 		objUpdate.y_rotate_start =  document.getElementById("layer_anim_yrotate").value;
 		objUpdate.z_rotate_start =  document.getElementById("layer_anim_zrotate").value;
@@ -8291,6 +8530,7 @@ var UniteLayersRev = new function(){
 		objUpdate.attrClasses = document.getElementById("layer_classes").value;
 		objUpdate.attrWrapperClasses = document.getElementById("layer_wrapper_classes").value;
 		objUpdate.attrTitle = document.getElementById("layer_title").value;
+		objUpdate.attrTabindex = document.getElementById("layer_tabindex").value;
 		objUpdate.attrRel = document.getElementById("layer_rel").value;
 		//objUpdate.link = document.getElementById("layer_image_link").value;
 		//objUpdate.link_open_in = document.getElementById("layer_link_open_in").value;
@@ -8331,6 +8571,8 @@ var UniteLayersRev = new function(){
 		
 		if (objUpdate["deformation"]["border-radius"] == undefined) objUpdate["deformation"]["border-radius"]=["0","0","0","0"];
 
+		// SHADOW FILTER
+		///objUpdate['deformation']['shadow_idle'] = document.getElementById("shadow_idle").checked;
 
 
 		
@@ -8404,14 +8646,34 @@ var UniteLayersRev = new function(){
 		objUpdate['deformation']['corner_right'] = jQuery('#layer_cornerright option:selected').val();
 		objUpdate['deformation']['parallax'] = jQuery('#parallax_level option:selected').val();
 		
+		//FILTERS
+		objUpdate['deformation']['blurfilter'] =  document.getElementById('blurfilter_idle').value;
+		objUpdate['deformation']['grayscalefilter'] =  document.getElementById('grayscalefilter_idle').value;
+		//objUpdate['deformation']['ds_x'] =  document.getElementById('ds_x_idle').value;
+		//objUpdate['deformation']['ds_y'] =  document.getElementById('ds_y_idle').value;
+		//objUpdate['deformation']['ds_blur'] =  document.getElementById('ds_blur_idle').value;		
+		//objUpdate['deformation']['ds_color'] =  document.getElementById('ds_color_idle').value;
+		//objUpdate['deformation']['ds_opacity'] =  document.getElementById('ds_opacity_idle').value;
+
+		
+
 		//deformation hover part start
 		if(objUpdate['deformation-hover'] == undefined || jQuery.isEmptyObject(objUpdate['deformation-hover'])) objUpdate['deformation-hover'] = {};		
+		//objUpdate['deformation-hover']['shadow_hover'] = document.getElementById("shadow_hover").checked;
 		objUpdate['deformation-hover']['color'] = document.getElementById('hover_layer_color_s').value;
 		objUpdate['deformation-hover']['color-transparency'] = document.getElementById('hover_css_font-transparency').value;
 		objUpdate['deformation-hover']['text-decoration'] = jQuery('#hover_css_text-decoration option:selected').val();
 		objUpdate['deformation-hover']['background-color'] = document.getElementById('hover_css_background-color').value;
 		objUpdate['deformation-hover']['background-transparency'] = document.getElementById('hover_css_background-transparency').value;
 		
+		//FILTERS
+		objUpdate['deformation-hover']['blurfilter'] =  document.getElementById('blurfilter_hover').value;
+		objUpdate['deformation-hover']['grayscalefilter'] =  document.getElementById('grayscalefilter_hover').value;
+		//objUpdate['deformation-hover']['ds_x'] =  document.getElementById('ds_x_hover').value;
+		//objUpdate['deformation-hover']['ds_y'] =  document.getElementById('ds_y_hover').value;
+		//objUpdate['deformation-hover']['ds_blur'] =  document.getElementById('ds_blur_hover').value;		
+		//objUpdate['deformation-hover']['ds_color'] =  document.getElementById('ds_color_hover').value;
+		//objUpdate['deformation-hover']['ds_opacity'] =  document.getElementById('ds_opacity_hover').value;
 
 
 		objUpdate['deformation-hover']['border-color'] = document.getElementById('hover_css_border-color-show').value;
@@ -8645,6 +8907,7 @@ var UniteLayersRev = new function(){
 		} catch(e) { 
 		}
 		
+		
 		// INSERT STANDART SETTINGS FROM TEMPLATE STYLE
 		if(objLayer.deformation != undefined && styles !== undefined){
 			// COLOR TRANSPARENCY
@@ -8673,8 +8936,13 @@ var UniteLayersRev = new function(){
 			
 			if(nix(objLayer['padding']) || reset){
 				if(!nix(styles["padding"])){
+					if(objLayer['padding'] != undefined){
+						delete(objLayer['padding']);
+					}
+						
 					if((typeof styles["padding"] === "object") && (styles["padding"] !== null)){
-						objLayer = t.setVal(objLayer, 'padding', styles["padding"], true);
+						objLayer['padding'] = styles["padding"];
+						//objLayer = t.setVal(objLayer, 'padding', styles["padding"], true);
 					}else{
 						objLayer = t.setVal(objLayer, 'padding', styles["padding"].split(' '), true);
 					}
@@ -8696,8 +8964,13 @@ var UniteLayersRev = new function(){
 			
 			if(nix(objLayer['margin']) || reset){
 				if(!nix(styles["margin"])){
+					if(objLayer['margin'] != undefined){
+						delete(objLayer['margin']);
+					}
+					
 					if((typeof styles["margin"] === "object") && (styles["margin"] !== null)){
-						objLayer = t.setVal(objLayer, 'margin', styles["margin"], true);
+						objLayer['margin'] = styles["margin"];
+						//objLayer = t.setVal(objLayer, 'margin', styles["margin"], true);
 					}else{
 						objLayer = t.setVal(objLayer, 'margin', styles['margin'].split(' '), true);
 					}
@@ -8724,6 +8997,10 @@ var UniteLayersRev = new function(){
 			
 			if(nix(objLayer['text-align']) || reset){
 				if(!nix(styles["text-align"])){
+					if(objLayer['text-align'] != undefined){
+						delete(objLayer['text-align']);
+					}
+					
 					if((typeof styles["text-align"] === "object") && (styles["text-align"] !== null)){
 						objLayer['text-align'] = styles["text-align"];
 					}else{
@@ -8831,6 +9108,15 @@ var UniteLayersRev = new function(){
 			if (nix(objLayer['deformation']['2d_origin_x']) || reset) objLayer['deformation']['2d_origin_x'] = !nix(styles['2d_origin_x']) ? styles['2d_origin_x'] : 50;
 			if (nix(objLayer['deformation']['2d_origin_y']) || reset) objLayer['deformation']['2d_origin_y'] = !nix(styles['2d_origin_y']) ? styles['2d_origin_y'] : 50;
 			if (nix(objLayer['deformation']['pers']) || reset) objLayer['deformation']['pers'] = !nix(styles['pers']) ? styles['pers'] : 600;
+
+			//FILTERS 
+			if (nix(objLayer['deformation']['blurfilter']) || reset) objLayer['deformation']['blurfilter'] =  !nix(styles['blurfilter']) ?  styles['blurfilter'] : 0;
+			if (nix(objLayer['deformation']['grayscalefilter']) || reset) objLayer['deformation']['grayscalefilter'] =  !nix(styles['grayscalefilter']) ?  styles['grayscalefilter'] : 0;
+			//if (nix(objLayer['deformation']['ds_x']) || reset) objLayer['deformation']['ds_x'] =  !nix(styles['ds_x']) ?  styles['ds_x'] : 0;
+			//if (nix(objLayer['deformation']['ds_y']) || reset) objLayer['deformation']['ds_y'] =  !nix(styles['ds_y']) ?  styles['ds_y'] : 0;
+			//if (nix(objLayer['deformation']['ds_blur']) || reset) objLayer['deformation']['ds_blur'] =  !nix(styles['ds_blur']) ?  styles['ds_blur'] : 0;			
+			//if (nix(objLayer['deformation']['ds_color']) || reset) objLayer['deformation']['ds_color'] =  !nix(styles['ds_color']) ?  styles['ds_color'] : 0;
+			//if (nix(objLayer['deformation']['ds_opacity']) || reset) objLayer['deformation']['ds_opacity'] =  !nix(styles['ds_opacity']) ?  styles['ds_opacity'] : 0;
 			
 			
 		}
@@ -8878,10 +9164,22 @@ var UniteLayersRev = new function(){
 		}
 
 
-		if (objLayer.force_hover === true)
+		/*if (objLayer.force_hover === true)
 			jQuery('#force_hover').attr('checked', true);
 		else
-			jQuery('#force_hover').attr('checked', false);
+			jQuery('#force_hover').attr('checked', false);*/
+
+		/*if (objLayer['deformation'].shadow_idle === true)
+			jQuery('#shadow_idle').attr('checked', true);
+		else
+			jQuery('#shadow_idle').attr('checked', false);
+
+		if (objLayer['deformation-hover'].shadow_hover === true)
+			jQuery('#shadow_hover').attr('checked', true);
+		else
+			jQuery('#shadow_hover').attr('checked', false);
+		*/
+
 		if(reset){
 			if(is_hover === 'true' || is_hover === true){
 				jQuery('#hover_allow').attr('checked', true);
@@ -8896,7 +9194,9 @@ var UniteLayersRev = new function(){
 		RevSliderSettings.onoffStatus(jQuery('#toggle_allow'));
 		RevSliderSettings.onoffStatus(jQuery('#toggle_use_hover'));
 		RevSliderSettings.onoffStatus(jQuery('#toggle_inverse_content'));
-		RevSliderSettings.onoffStatus(jQuery('#force_hover'));
+		//RevSliderSettings.onoffStatus(jQuery('#force_hover'));
+		//RevSliderSettings.onoffStatus(jQuery('#shadow_idle'));
+		//RevSliderSettings.onoffStatus(jQuery('#shadow_hover'));
 		
 		
 		jQuery('#css_layer_selectable option[value="'+objLayer['layer-selectable']+'"]').attr('selected', true);
@@ -8968,6 +9268,26 @@ var UniteLayersRev = new function(){
 			jQuery('#layer_2d_origin_x').val(objLayer['deformation']['2d_origin_x']);//
 			jQuery('#layer_2d_origin_y').val(objLayer['deformation']['2d_origin_y']);//
 			jQuery('#layer__pers').val(objLayer['deformation']['pers']);
+
+			//FILTERS
+			jQuery('#blurfilter_idle').val(objLayer['deformation']['blurfilter']);
+			jQuery('#grayscalefilter_idle').val(objLayer['deformation']['grayscalefilter']);
+			//jQuery('#ds_x_idle').val(objLayer['deformation']['ds_x']);
+			//jQuery('#ds_y_idle').val(objLayer['deformation']['ds_y']);
+			//jQuery('#ds_blur_idle').val(objLayer['deformation']['ds_blur']);			
+			//jQuery('#ds_color_idle').val(objLayer['deformation']['ds_color']);
+			//jQuery('#ds_opacity_idle').val(objLayer['deformation']['ds_opacity']);
+
+			//FILTERS
+			jQuery('#blurfilter_hover').val(objLayer['deformation-hover']['blurfilter']);
+			jQuery('#grayscalefilter_hover').val(objLayer['deformation-hover']['grayscalefilter']);
+			//jQuery('#ds_x_hover').val(objLayer['deformation-hover']['ds_x']);
+		//	jQuery('#ds_y_hover').val(objLayer['deformation-hover']['ds_y']);
+		//	jQuery('#ds_blur_hover').val(objLayer['deformation-hover']['ds_blur']);			
+		//	jQuery('#ds_color_hover').val(objLayer['deformation-hover']['ds_color']);
+		//	jQuery('#ds_opacity_hover').val(objLayer['deformation-hover']['ds_opacity']);
+
+
 			jQuery('#layer_cornerleft option[value="'+objLayer['deformation']['corner_left']+'"]').attr('selected', true);
 			jQuery('#layer_blend_mode option[value="'+objLayer['layer_blend_mode']+'"]').attr('selected', true);
 			
@@ -9042,6 +9362,18 @@ var UniteLayersRev = new function(){
 				objLayer['deformation-hover']['2d_rotation'] = !nix(hover_styles['2d_rotation']) ? hover_styles['2d_rotation'] : 0;
 			if (nix(objLayer['deformation-hover']['css_cursor']) || reset)
 				objLayer['deformation-hover']['css_cursor'] = !nix(hover_styles['css_cursor']) ? hover_styles['css_cursor'] : 'auto';
+
+			
+			//FILTERS 
+			if (nix(objLayer['deformation-hover']['blurfilter']) || reset) objLayer['deformation-hover']['blurfilter'] =  !nix(hover_styles['blurfilter']) ?  hover_styles['blurfilter'] : 0;
+			if (nix(objLayer['deformation-hover']['grayscalefilter']) || reset) objLayer['deformation-hover']['grayscalefilter'] =  !nix(hover_styles['grayscalefilter']) ?  hover_styles['grayscalefilter'] : 0;
+			//if (nix(objLayer['deformation-hover']['ds_x']) || reset) objLayer['deformation-hover']['ds_x'] =  !nix(styles['ds_x']) ?  styles['ds_x'] : 0;
+		//	if (nix(objLayer['deformation-hover']['ds_y']) || reset) objLayer['deformation-hover']['ds_y'] =  !nix(styles['ds_y']) ?  styles['ds_y'] : 0;
+			//if (nix(objLayer['deformation-hover']['ds_blur']) || reset) objLayer['deformation-hover']['ds_blur'] =  !nix(styles['ds_blur']) ?  styles['ds_blur'] : 0;			
+			//if (nix(objLayer['deformation-hover']['ds_color']) || reset) objLayer['deformation-hover']['ds_color'] =  !nix(styles['ds_color']) ?  styles['ds_color'] : 0;
+			//if (nix(objLayer['deformation-hover']['ds_opacity']) || reset) objLayer['deformation-hover']['ds_opacity'] =  !nix(styles['ds_opacity']) ?  styles['ds_opacity'] : 0;
+
+
 			
 			/* not included yet, missing values */
 			if (nix(objLayer['deformation-hover']['speed']) || reset)
@@ -9145,11 +9477,21 @@ var UniteLayersRev = new function(){
 			jQuery('#idle-hover-swapper').hide();
 		}
 
-		if (objLayer['force_hover'] == 'true' || objLayer['force_hover'] == true) 
+		/*if (objLayer['force_hover'] == 'true' || objLayer['force_hover'] == true) 
 			jQuery('#force_hover').prop("checked",true);
 		else
-			jQuery('#force_hover').prop("checked",false);
+			jQuery('#force_hover').prop("checked",false);*/
 
+		/*if (objLayer['deformation']['shadow_idle'] == 'true' || objLayer['deformation']['shadow_idle'] == true) 
+			jQuery('#shadow_idle').prop("checked",true);
+		else
+			jQuery('#shadow_idle').prop("checked",false);
+
+		if (objLayer['deformation-hover']['shadow_hover'] == 'true' || objLayer['deformation']['shadow_hover'] == true) 
+			jQuery('#shadow_hover').prop("checked",true);
+		else
+			jQuery('#shadow_hover').prop("checked",false);
+		*/
 
 		if(objLayer['toggle'] == 'true' || objLayer['toggle'] == true){
 			jQuery('#toggle_allow').prop("checked", true);			
@@ -9201,7 +9543,9 @@ var UniteLayersRev = new function(){
 		jQuery('#layer-css-position option[value="'+objLayer['css-position']+'"]').attr('selected', 'selected');
 		
 		RevSliderSettings.onoffStatus(jQuery('#hover_allow'));
-		RevSliderSettings.onoffStatus(jQuery('#force_hover'));
+		//RevSliderSettings.onoffStatus(jQuery('#force_hover'));
+		//RevSliderSettings.onoffStatus(jQuery('#shadow_idle'));
+		//RevSliderSettings.onoffStatus(jQuery('#shadow_hover'));
 		RevSliderSettings.onoffStatus(jQuery('#toggle_allow'));
 		RevSliderSettings.onoffStatus(jQuery('#toggle_use_hover'));
 		RevSliderSettings.onoffStatus(jQuery('#toggle_inverse_content'));
@@ -9211,17 +9555,17 @@ var UniteLayersRev = new function(){
 		RevSliderSettings.onoffStatus(jQuery('#visible-mobile'));
 		RevSliderSettings.onoffStatus(jQuery('#layer_on_slider_hover'));
 		
-		jQuery("#layer_scaleX").val(specOrVal(t.getVal(objLayer,'scaleX'),["auto"],"px"));
-		jQuery("#layer_scaleY").val(specOrVal(t.getVal(objLayer,'scaleY'),["auto"],"px"));
+		jQuery("#layer_scaleX").val(specOrVal(t.getVal(objLayer,'scaleX'),["auto",'#1/1#','#1/2#','#1/3#','#1/4#','#1/5#','#1/6#','#2/3#','#3/4#','#2/5#','#3/5#','#4/5#','#4/6#','#5/6#'],"px"));
+		jQuery("#layer_scaleY").val(specOrVal(t.getVal(objLayer,'scaleY'),["auto",'#1/1#','#1/2#','#1/3#','#1/4#','#1/5#','#1/6#','#2/3#','#3/4#','#2/5#','#3/5#','#4/5#','#4/6#','#5/6#'],"px"));
 		
 		jQuery('#layer_cover_mode option[value="'+objLayer['cover_mode']+'"]').attr('selected', 'selected');
 		
-		jQuery("#layer_max_height").val(specOrVal(t.getVal(objLayer,'max_height'),["auto"],"px"));
-		jQuery("#layer_min_height").val(specOrVal(t.getVal(objLayer,'min_height'),["auto"],"px"));
-		jQuery("#layer_max_width").val(specOrVal(t.getVal(objLayer,'max_width'),["auto"],"px"));
+		jQuery("#layer_max_height").val(specOrVal(t.getVal(objLayer,'max_height'),["auto",'#1/1#','#1/2#','#1/3#','#1/4#','#1/5#','#1/6#','#2/3#','#3/4#','#2/5#','#3/5#','#4/5#','#4/6#','#5/6#'],"px"));
+		jQuery("#layer_min_height").val(specOrVal(t.getVal(objLayer,'min_height'),["auto",'#1/1#','#1/2#','#1/3#','#1/4#','#1/5#','#1/6#','#2/3#','#3/4#','#2/5#','#3/5#','#4/5#','#4/6#','#5/6#'],"px"));
+		jQuery("#layer_max_width").val(specOrVal(t.getVal(objLayer,'max_width'),["auto",'#1/1#','#1/2#','#1/3#','#1/4#','#1/5#','#1/6#','#2/3#','#3/4#','#2/5#','#3/5#','#4/5#','#4/6#','#5/6#'],"px"));
 		
-		jQuery("#layer_video_height").val(specOrVal(t.getVal(objLayer,'video_height'),["auto"],"px"));
-		jQuery("#layer_video_width").val(specOrVal(t.getVal(objLayer,'video_width'),["auto"],"px"));
+		jQuery("#layer_video_height").val(specOrVal(t.getVal(objLayer,'video_height'),["auto",'#1/1#','#1/2#','#1/3#','#1/4#','#1/5#','#1/6#','#2/3#','#3/4#','#2/5#','#3/5#','#4/5#','#4/6#','#5/6#'],"px"));
+		jQuery("#layer_video_width").val(specOrVal(t.getVal(objLayer,'video_width'),["auto",'#1/1#','#1/2#','#1/3#','#1/4#','#1/5#','#1/6#','#2/3#','#3/4#','#2/5#','#3/5#','#4/5#','#4/6#','#5/6#'],"px"));
 		
 		jQuery("#layer_2d_rotation").val(objLayer['2d_rotation']);
 		jQuery("#layer_2d_origin_x").val(objLayer['2d_origin_x']);
@@ -9417,6 +9761,10 @@ var UniteLayersRev = new function(){
 		jQuery("#layer_anim_zend").val(objLayer.z_end);
 		jQuery("#layer_opacity_start").val(objLayer.opacity_start);
 		jQuery("#layer_opacity_end").val(objLayer.opacity_end);
+		jQuery("#blurfilter_start").val(objLayer.blurfilter_start);
+		jQuery("#blurfilter_end").val(objLayer.blurfilter_end);
+		jQuery("#grayscalefilter_start").val(objLayer.grayscalefilter_start);
+		jQuery("#grayscalefilter_end").val(objLayer.grayscalefilter_end);
 		jQuery("#layer_anim_xrotate").val(objLayer.x_rotate_start);
 		jQuery("#layer_anim_yrotate").val(objLayer.y_rotate_start);
 		jQuery("#layer_anim_zrotate").val(objLayer.z_rotate_start);
@@ -9434,6 +9782,11 @@ var UniteLayersRev = new function(){
 		
 		jQuery("#layer_pers_start").val(objLayer.pers_start);
 		jQuery("#layer_pers_end").val(objLayer.pers_end);
+
+		jQuery("#blurfilter_start").val(objLayer.blurfilter_start);
+		jQuery("#blurfilter_end").val(objLayer.blurfilter_end);
+		jQuery("#grayscalefilter_start").val(objLayer.grayscalefilter_start);
+		jQuery("#grayscalefilter_end").val(objLayer.grayscalefilter_end);
 		
 		if(typeof(objLayer['layer-selectable']) !== 'undefined'){
 			jQuery('#css_layer_selectable option[value="'+objLayer['layer-selectable']+'"]').attr('selected', true);
@@ -9519,6 +9872,7 @@ var UniteLayersRev = new function(){
 		jQuery("#layer_wrapper_classes").val(objLayer.attrWrapperClasses);
 		
 		jQuery("#layer_title").val(objLayer.attrTitle);
+		jQuery("#layer_tabindex").val(objLayer.attrTabindex);
 		jQuery("#layer_rel").val(objLayer.attrRel);
 
 		//show / hide go under slider offset row
@@ -10189,7 +10543,9 @@ var UniteLayersRev = new function(){
 			jQuery('#idle-hover-swapper').hide();
 		}
 
-		RevSliderSettings.onoffStatus(jQuery('#force_hover'));
+		//RevSliderSettings.onoffStatus(jQuery('#force_hover'));
+		//RevSliderSettings.onoffStatus(jQuery('#shadow_idle'));
+		//RevSliderSettings.onoffStatus(jQuery('#shadow_hover'));
 		RevSliderSettings.onoffStatus(jQuery('#hover_allow'));
 		RevSliderSettings.onoffStatus(jQuery('#toggle_allow'));
 		RevSliderSettings.onoffStatus(jQuery('#toggle_use_hover'));
@@ -10419,9 +10775,7 @@ var UniteLayersRev = new function(){
 //				HTML LAYER POSITION UPDATE
 //======================================================
 	t.updateHtmlLayerPosition = function(isInit,objLayer,top,left,align_hor,align_vert){
-		
-		
-
+				
 		if (objLayer===undefined || objLayer===false) return;
 		//update positions by align
 		var width = objLayer.references.htmlLayer.outerWidth(),
@@ -10434,9 +10788,11 @@ var UniteLayersRev = new function(){
 		var _tw = totalWidth,
 			_th = totalHeight;
 
+
 		if (objLayer.p_uid!==-1 && t.getObjLayerType(objLayer.p_uid)==="group") {
 			_tw = t.getLayerByUniqueId(objLayer.p_uid).references.htmlLayer.width();
 			_th = t.getLayerByUniqueId(objLayer.p_uid).references.htmlLayer.height();
+			
 		}
 
 		//get sizes from saved if on get
@@ -10466,6 +10822,8 @@ var UniteLayersRev = new function(){
 		
 		objCss["position"] = _makrerelative || objLayer.type==="row" ? "relative" : "absolute";
 
+
+		
 		//handle horizontal
 		switch(align_hor){
 			default:
@@ -10478,7 +10836,7 @@ var UniteLayersRev = new function(){
 				objCss["right"] = _makrerelative ? "auto" :  left+"px";
 			break;
 			case "center":				
-				var realLeft = (_tw - width)/2;
+				var realLeft = (_tw - width)/2;				
 				realLeft = Math.round(realLeft) + left;
 				objCss["left"] = _makrerelative ? "auto" : realLeft + "px";
 				objCss["right"] = "auto";
@@ -10504,8 +10862,14 @@ var UniteLayersRev = new function(){
 			break;
 		}
 		
-
+		
 		punchgs.TweenLite.set(objLayer.references.htmlLayer,objCss);
+		// REFRESH POSITIONS OF CHILD NOW
+		if (objLayer.type==="group") {			
+			jQuery.each(t.getLayersInGroup(objLayer.unique_id).layers,function(i,layer) {				
+				t.updateHtmlLayerPosition(false,layer,t.getVal(layer, 'top'),t.getVal(layer, 'left'),t.getVal(layer,'align_hor'),t.getVal(layer,'align_vert'));
+			});					
+		}
 		
 	}
 
@@ -10877,7 +11241,7 @@ var UniteLayersRev = new function(){
 				t.updateLayerFromFields();
 			}
 
-		var resetCurrentElementSize = function() {
+		var resetCurrentElementSize = function() {			
 			var objLayer = t.getLayer(t.selectedLayerSerial);
 			
 				if (objLayer.type == "shape") {
@@ -10925,7 +11289,7 @@ var UniteLayersRev = new function(){
 				t.updateLayerFromFields();			
 		}
 
-		var scaleProportional = function(useX){
+		var scaleProportional = function(useX){			
 			var serial = t.selectedLayerSerial;
 
 			resetImageDimensions();
@@ -10969,8 +11333,7 @@ var UniteLayersRev = new function(){
 			jQuery("#layer_scaleY").val(y+suffixY);
 		}
 		
-		var scaleNormal = function(){
-
+		var scaleNormal = function(){			
 			var serial = t.selectedLayerSerial,
 				imgdims = resetImageDimensions(),
 				layer = jQuery("#slide_layer_" + serial),
@@ -10993,6 +11356,7 @@ var UniteLayersRev = new function(){
 		 * @since: 5.0
 		 **/
 		var scaleProportionalVideo = function(useX){
+			
 			var serial = t.selectedLayerSerial,
 				cur_video = jQuery("#slide_layer_" + serial).find('.slide_layer_video');
 
@@ -11018,6 +11382,7 @@ var UniteLayersRev = new function(){
 		}
 
 		var scaleNormalVideo = function(){
+			
 			var serial = t.selectedLayerSerial,
 				cur_video = jQuery("#slide_layer_" + serial).find('.slide_layer_video'),
 				ww = jQuery("#layer_video_width").val(),
@@ -11036,6 +11401,7 @@ var UniteLayersRev = new function(){
 		
 		
 		var resetImageDimensions = function(){
+			
 			var imgObj = new Image();
 			imgObj.src = jQuery("#slide_layer_" + t.selectedLayerSerial + " img").attr("src");
 			jQuery("#slide_layer_" + t.selectedLayerSerial).css("width", imgObj.width + "px");

@@ -1,4 +1,8 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 return array(
 	'name' => __( 'Old Button', 'js_composer' ) . ' 2',
 	'base' => 'vc_button2',
@@ -6,7 +10,7 @@ return array(
 	'deprecated' => '4.5',
 	'content_element' => false,
 	'category' => array(
-		__( 'Content', 'js_composer' )
+		__( 'Content', 'js_composer' ),
 	),
 	'description' => __( 'Eye catching button', 'js_composer' ),
 	'params' => array(

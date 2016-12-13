@@ -12,6 +12,11 @@
 	<link rel="profile" href="http://gmpg.org/xfn/11">
 	<link rel="pingback" href="<?php bloginfo( 'pingback_url' ); ?>">
 	<?php wp_head(); ?>
+	<style type="text/css">
+		body:before { display:none !important}
+		body:after { display:none !important}
+		body { background:transparent}
+	</style>
 </head>
 
 <body <?php body_class(); ?>>

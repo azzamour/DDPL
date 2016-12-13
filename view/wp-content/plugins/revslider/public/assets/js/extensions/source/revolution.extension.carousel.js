@@ -1,6 +1,6 @@
 /********************************************
  * REVOLUTION 5.0 EXTENSION - CAROUSEL
- * @version: 1.1 (25.10.2015)
+ * @version: 1.2.1 (18.11.2016)
  * @requires jquery.themepunch.revolution.js
  * @author ThemePunch
 *********************************************/
@@ -9,8 +9,8 @@
 var _R = jQuery.fn.revolution,
 	extension = {	alias:"Carousel Min JS",
 					name:"revolution.extensions.carousel.min.js",
-					min_core: "5.0",
-					version:"1.1.0"
+					min_core: "5.3.0",
+					version:"1.2.1"
 			  };
 
 	///////////////////////////////////////////
@@ -19,19 +19,24 @@ var _R = jQuery.fn.revolution,
 jQuery.extend(true,_R, {
 
 	// CALCULATE CAROUSEL POSITIONS
-	prepareCarousel : function(opt,a,direction) {	
+	prepareCarousel : function(opt,a,direction,speed) {	
 
 		if (_R.compare_version(extension).check==="stop") return false;
 
 		direction = opt.carousel.lastdirection = dircheck(direction,opt.carousel.lastdirection);		
+		
 		setCarouselDefaults(opt);	
 			
 		opt.carousel.slide_offset_target = getActiveCarouselOffset(opt);
-		
-		if (a==undefined) 	
-			_R.carouselToEvalPosition(opt,direction);		
-		else 	
-			animateCarousel(opt,direction,false);	
+
+		if (speed!==undefined) {
+				animateCarousel(opt,direction,false,0);
+		} else {
+			if (a==undefined) 	
+				_R.carouselToEvalPosition(opt,direction);		
+			else 	
+				animateCarousel(opt,direction,false);	
+		}
 			
 	},
 
@@ -282,16 +287,23 @@ var dircheck = function(d,b) {
 }
 
 // ANIMATE THE CAROUSEL WITH OFFSETS
-var animateCarousel = function(opt,direction,nsae) {
+var animateCarousel = function(opt,direction,nsae,speed) {
+
 	var _ = opt.carousel;
 	direction = _.lastdirection = dircheck(direction,_.lastdirection);		
 	
-	var animobj = new Object();	
+	var animobj = new Object(),
+		_ease = nsae ? punchgs.Power2.easeOut : _.easing;
+
 	animobj.from = 0;
 	animobj.to = _.slide_offset_target;
+	speed = speed===undefined ? _.speed/1000 : speed;
+	speed = nsae ? 0.4 : speed; 
+	
+
 	if (_.positionanim!==undefined)
 		_.positionanim.pause();
-	_.positionanim = punchgs.TweenLite.to(animobj,1.2,{from:animobj.to,
+	_.positionanim = punchgs.TweenLite.to(animobj,speed,{from:animobj.to,
 		onUpdate:function() {					
 			_.slide_offset = _.slide_globaloffset + animobj.from;
 			_.slide_offset = _R.simp(_.slide_offset , _.maxwidth);
@@ -306,7 +318,7 @@ var animateCarousel = function(opt,direction,nsae) {
 			var li = jQuery(opt.li[_.focused]);	
 			opt.c.find('.next-revslide').removeClass("next-revslide");
 			if (nsae) _R.callingNewSlide(opt.c,li.data('index'));
-		}, ease:punchgs.Expo.easeOut});	
+		}, ease:_ease});	
 }
 
 

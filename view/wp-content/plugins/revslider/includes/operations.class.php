@@ -853,7 +853,7 @@ class RevSliderOperations extends RevSliderElementsBase{
 	 * get contents of the static css file
 	 */
 	public static function getStaticCss(){
-		if ( is_multisite() ){
+		/*if ( is_multisite() ){
 			if(!get_site_option('revslider-static-css')){
 				if(file_exists(RS_PLUGIN_PATH.'public/assets/css/static-captions.css')){
 					$contentCSS = @file_get_contents(RS_PLUGIN_PATH.'public/assets/css/static-captions.css');
@@ -861,7 +861,7 @@ class RevSliderOperations extends RevSliderElementsBase{
 				}
 			}
 			$contentCSS = get_site_option('revslider-static-css', '');
-		}else{
+		}else{*/
 			if(!get_option('revslider-static-css')){
 				if(file_exists(RS_PLUGIN_PATH.'public/assets/css/static-captions.css')){
 					$contentCSS = @file_get_contents(RS_PLUGIN_PATH.'public/assets/css/static-captions.css');
@@ -869,7 +869,7 @@ class RevSliderOperations extends RevSliderElementsBase{
 				}
 			}
 			$contentCSS = get_option('revslider-static-css', '');
-		}
+		//}
 
 		return($contentCSS);
 	}
@@ -881,13 +881,13 @@ class RevSliderOperations extends RevSliderElementsBase{
 	public static function updateStaticCss($content){
 		$content = str_replace(array("\'", '\"', '\\\\'),array("'", '"', '\\'), trim($content));
 
-		if ( is_multisite() ){
+		/*if ( is_multisite() ){
 			$c = get_site_option('revslider-static-css', '');
 			$c = update_site_option('revslider-static-css', $content);
-		}else{
+		}else{*/
 			$c = get_option('revslider-static-css', '');
 			$c = RevSliderFunctionsWP::update_option('revslider-static-css', $content, 'off');
-		}
+		//}
 
 		return $content;
 	}
@@ -1316,12 +1316,46 @@ class RevSliderOperations extends RevSliderElementsBase{
 
 					$custom_css = RevSliderOperations::getStaticCss();
 					echo '<style type="text/css">'.RevSliderCssParser::compress_css($custom_css).'</style>';
+					
+					$gfonts = '';
+					$googleFont = $slider->getParam("google_font");
+					if(is_array($googleFont)){
+						foreach($googleFont as $key => $font){
+							
+						}
+					}else{
+						$gfonts .= RevSliderOperations::getCleanFontImport($googleFont);
+					}
+					//add all google fonts of layers
+					$gfsubsets = $slider->getParam("subsets",array());
+					$gf = $slider->getUsedFonts(false);
+					
+					foreach($gf as $gfk => $gfv){
+						$variants = array();
+						if(!empty($gfv['variants'])){
+							foreach($gfv['variants'] as $mgvk => $mgvv){
+								$variants[] = $mgvk;
+							}
+						}
+						
+						$subsets = array();
+						if(!empty($gfv['subsets'])){
+							foreach($gfv['subsets'] as $ssk => $ssv){
+								if(array_search(esc_attr($gfk.'+'.$ssv), $gfsubsets) !== false){
+									$subsets[] = $ssv;
+								}
+							}
+						}
+						$gfonts .= RevSliderOperations::getCleanFontImport($gfk, '', '', $variants, $subsets);
+					}
+					
+					echo $gfonts;
 					?>
 
 					<script type='text/javascript' src='<?php echo $setBase; ?>code.jquery.com/jquery-latest.min.js'></script>
 
-					<script type='text/javascript' src='<?php echo $urlPlugin?>js/jquery.themepunch.tools.min.js?rev=<?php echo RevSliderGlobals::SLIDER_REVISION; ?>'></script>
-					<script type='text/javascript' src='<?php echo $urlPlugin?>js/jquery.themepunch.revolution.min.js?rev=<?php echo RevSliderGlobals::SLIDER_REVISION; ?>'></script>
+					<script type='text/javascript' src='<?php echo $urlPlugin; ?>js/jquery.themepunch.tools.min.js?rev=<?php echo RevSliderGlobals::SLIDER_REVISION; ?>'></script>
+					<script type='text/javascript' src='<?php echo $urlPlugin; ?>js/jquery.themepunch.revolution.min.js?rev=<?php echo RevSliderGlobals::SLIDER_REVISION; ?>'></script>
 					
 					<?php
 					do_action('revslider_preview_slider_head');
@@ -1584,6 +1618,18 @@ class RevSliderOperations extends RevSliderElementsBase{
 			</article>
 		</section>
 		<div class="bottom-history-wrap" style="margin-top:150px">
+		<?php		
+		if($slider_type == 'fullscreen'){
+		?>
+
+		  <article class="small-history bottom-history" style="background:#f5f7f9;"> 
+            <h2 class="textaligncenter" style="margin-bottom:25px;">Your Slider Revolution jQuery Plugin</h2>
+            <p>Slider Revolution is an innovative, responsive Slider Plugin that displays your content the beautiful way. Whether it's a <strong>Slider, Carousel, Hero Scene</strong> or even a whole <strong>Front Page</strong>.<br>The <a href="https://codecanyon.net/item/slider-revolution-jquery-visual-editor-addon/13934907" target="_blank">visual drag &amp; drop editor</a> will help you to create your Sliders and tell your own stories in no time!</p>
+          </article>
+		<?php
+		}
+		?>
+		
         <article class="small-history bottom-history">
             <i class="fa-icon-question tp-headicon"></i>
             <h2 class="textaligncenter" style="margin-bottom:25px;">Find the Documentation ?</h2>
@@ -1778,7 +1824,8 @@ ob_end_clean();
 						$added[$_file] = true; //set as added
 						//replace file with new path
 						if($add !== '') $_file = $__file; //set the different path here
-						$slider_html = str_replace($o, '"'.$use_path.'/'.$repl_to.'"', $slider_html);
+						$re = (strpos($o, "'") !== false) ? "'" : '"';
+						$slider_html = str_replace($o, $re.$use_path.'/'.$repl_to.$re, $slider_html);
 					}
 				}
 				
@@ -2093,7 +2140,7 @@ ob_end_clean();
 			}
 			if(strpos($font, "href=") === false){ //fallback for old versions
 				$url = RevSliderFront::modify_punch_url($setBase . 'fonts.googleapis.com/css?family=');
-				$ret = '<link href="'.$url.urlencode($font.$tcf).'"'.$class.' rel="stylesheet" property="stylesheet" type="text/css" media="all" />'; //id="rev-google-font"
+				$ret = '<link href="'.$url.urlencode($font.$tcf).'"'.$class.' rel="stylesheet" property="stylesheet" type="text/css" media="all">'; //id="rev-google-font"
 			}else{
 				$font = str_replace(array('http://', 'https://'), array($setBase, $setBase), $font);
 				$ret = html_entity_decode(stripslashes($font));
@@ -2850,7 +2897,7 @@ ob_end_clean();
 			$css_size += $fs;
 		}
 
-		$custom_css = RevSliderOperations::getStaticCss();
+		/*$custom_css = RevSliderOperations::getStaticCss();
 		$custom_css = RevSliderCssParser::compress_css($custom_css);
 
 		$_li = '<li class="tp-monitor-listli">';
@@ -2869,14 +2916,14 @@ ob_end_clean();
 		
 		$_li .= '</li>';
 
-		if (strlen($custom_css)>49999)
-				$issues .=$_li;
+		if(strlen($custom_css)>49999)
+			$issues .=$_li;
 
 			echo $_li;
 
 		$total_size += strlen($custom_css);
 		$css_size += strlen($custom_css);
-		
+		*/
 		
 		
 		if(!empty($used_captions)){
@@ -6772,7 +6819,7 @@ $presets[] = array (
 				$title = $slider->getTitle();
 			}*/
 			if($alias !== ''){
-				$content = '[rev_slider alias="'.$alias.'"][/rev_slider]'.$content; //this way we will reorder as last comes first
+				$content .= '[rev_slider alias="'.$alias.'"][/rev_slider]'; //this way we will reorder as last comes first
 			}
 		}
 		
@@ -6796,6 +6843,66 @@ $presets[] = array (
 		return apply_filters('revslider_create_slider_page', $new_page_id, $added);
 	}
 	
+	
+	/**
+	 * @since: 5.3.1
+	 * get cache plugins
+	 **/
+	public function get_installed_cache_plugins(){
+		//get all plugins
+		$plugins = get_plugins();
+
+		//arrays for found cache related plugins
+		$known_cache_plugins = array();
+		$unknown_cache_plugins = array();
+
+		//run through all plugins
+		foreach ($plugins as $plugin_key => $plugin_values) {
+			switch($plugin_key){
+				//check if W3TC or WP Super Cache or WP Rocket
+				//add to known plugins
+				case "wp-rocket/wp-rocket.php":
+					$known_cache_plugins[$plugin_values['Name']] = "https://www.themepunch.com/faq/updating-make-sure-clear-caches/#wprocket"; 
+					break;
+				case "wp-super-cache/wp-cache.php":
+					$known_cache_plugins[$plugin_values['Name']] = "https://www.themepunch.com/faq/updating-make-sure-clear-caches/#wpsc";
+					break;
+				case "w3-total-cache/w3-total-cache.php":
+					$known_cache_plugins[$plugin_values['Name']] = "https://www.themepunch.com/faq/updating-make-sure-clear-caches/#w3tc";
+					break;
+				//check if cache in slug
+				default:
+					if(strpos($plugin_key,"cache")){
+						//add to unknown plugins
+						$unknown_cache_plugins[$plugin_values['Name']] = $plugin_values['PluginURI'];
+					}
+					break; 
+			}
+		}
+		
+		$all = array_merge($known_cache_plugins, $unknown_cache_plugins);
+		
+		return apply_filters('revslider_get_installed_cache_plugins', $all);
+		
+	}
+	
+	
+	/**
+	 * @since: 5.3.1
+	 * show failed import HTML
+	 **/
+	public static function import_failed_message($message, $link = false){
+		
+		echo '<div style="font-family:arial; width:100%;height:100%;position:absolute;top:0px;left:0px;background-image:url('.RS_PLUGIN_URL.'admin/assets/images/errorbg.jpg); background-position:center center; background-size:cover;">';
+		echo '<div style="width:100%;height:250px;text-align:center; line-height:25px; position:absolute;top:50%;left:0;padding:40px;box-sizing:border-box;margin-top:-165px;">';
+		echo '<div style="font-size:30px; font-weight:600; line-height:50px; white-space:nowrap;margin-bottom:10px">Error: '.$message.'</div>';		
+		if($link !== false){
+			echo '<a style="padding:10px 25px; color:#fff; border-radius:4px; text-decoration:none !important; background:#2980b9; font-weight:400; font-size:14px; line-height:30px; vertical-align:middle;" href="'.$link.'">Go Back</a>';					
+		}
+		echo '</div>';
+		echo '</div>';
+						
+	}
 }
 
 

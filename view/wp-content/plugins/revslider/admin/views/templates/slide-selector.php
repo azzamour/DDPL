@@ -356,9 +356,7 @@ if($the_slidertype == 'hero'){
 
 		// OPEN THE TEMPLATE LIST ON CLICK OF ADD SLIDE TEMPLATE
 		jQuery('#rs_copy_slide_from_slider').click(function() {
-			
 			RevSliderAdmin.load_slide_template_html();
-
 		});
 
 	});

@@ -1405,6 +1405,7 @@ class RevSliderOutput {
 		$classes = RevSliderFunctions::getVal($layer, 'attrClasses');
 		$wrapper_classes = RevSliderFunctions::getVal($layer, 'attrWrapperClasses');
 		$title = RevSliderFunctions::getVal($layer, 'attrTitle');
+		$tabindex = RevSliderFunctions::getVal($layer, 'attrTabindex');
 		$rel = RevSliderFunctions::getVal($layer, 'attrRel');
 		$frames = RevSliderFunctions::getVal($layer, 'frames', false);
 		$frame_start = RevSliderFunctions::getVal($frames, 'frame_0', false);
@@ -1429,6 +1430,34 @@ class RevSliderOutput {
 			$frame_end['frame'] = '999';
 		}
 		
+		
+		//add new filters options
+		//$frame_start['to']
+		$blurfilter = RevSliderFunctions::getVal($layer['deformation'], 'blurfilter', 0);
+		$grayscalefilter = RevSliderFunctions::getVal($layer['deformation'], 'grayscalefilter', 0);
+
+		//$frame_hover
+		$hover_blurfilter = RevSliderFunctions::getVal($layer['deformation-hover'], 'blurfilter', 0);
+		$hover_grayscalefilter = RevSliderFunctions::getVal($layer['deformation-hover'], 'grayscalefilter', 0);
+
+		//$frame_start['from']
+		$anim_blurfilter_start = RevSliderFunctions::getVal($layer, 'blurfilter_start', 0);
+		$anim_grayscalefilter_start = RevSliderFunctions::getVal($layer, 'grayscalefilter_start', 0);
+
+		//$frame_end
+		$anim_blurfilter_end = RevSliderFunctions::getVal($layer, 'blurfilter_end', 0);
+		$anim_grayscalefilter_end = RevSliderFunctions::getVal($layer, 'grayscalefilter_end', 0);
+
+		$blur_write_all = ($blurfilter != 0 && $blurfilter != '0px' ||
+							$hover_blurfilter != 0 && $hover_blurfilter != '0px' ||
+							$anim_blurfilter_start != 0 && $anim_blurfilter_start != '0px' ||
+							$anim_blurfilter_end != 0 && $anim_blurfilter_end != '0px') ? true : false;
+
+		$grayscale_write_all = ($grayscalefilter != 0 && $grayscalefilter != '0%' ||
+							$hover_grayscalefilter != 0 && $hover_grayscalefilter != '0%' ||
+							$anim_grayscalefilter_start != 0 && $anim_grayscalefilter_start != '0%' ||
+							$anim_grayscalefilter_end != 0 && $anim_grayscalefilter_end != '0%') ? true : false;
+							
 		$isFullWidthVideo = false;
 		switch($type){
 			case 'video':
@@ -1550,6 +1579,13 @@ class RevSliderOutput {
 		}
 		
 		$tcin = RevSliderOperations::parseCustomAnimationByArray($layer, 'start', $frame_start);
+		if($anim_blurfilter_start != 0 && $anim_blurfilter_start != '0px' || $blur_write_all){
+			$tcin .= 'fb:'.$anim_blurfilter_start.';';
+		}
+		if($anim_grayscalefilter_start != 0 && $anim_grayscalefilter_start != '0%' || $grayscale_write_all){
+			$tcin .= 'fg:'.$anim_grayscalefilter_start.';';
+		}
+		
 		if($tcin !== ''){
 			$frame_start['from'] = $tcin;
 		}
@@ -1589,6 +1625,7 @@ class RevSliderOutput {
 		//$speed = RevSliderFunctions::getVal($frame_start, 'speed',RevSliderFunctions::getVal($layer, 'speed', 300));
 		$time = RevSliderFunctions::getVal($frame_start, 'time', RevSliderFunctions::getVal($layer, 'time', 0));
 		$time_relative = RevSliderFunctions::getVal($frame_start, 'time_relative', RevSliderFunctions::getVal($layer, 'timedelay', 'none'));
+		
 		if($time_relative !== 'none'){
 			$time = ($time_relative !== $time) ? '+'.$time_relative : $time_relative;
 		}
@@ -1600,7 +1637,8 @@ class RevSliderOutput {
 		$randomRotate = RevSliderFunctions::boolToStr($randomRotate);
 
 		$splitin = RevSliderFunctions::getVal($frame_start, 'split', RevSliderFunctions::getVal($layer, 'split', 'none'));
-		$splitout = RevSliderFunctions::getVal($frame_end, 'endsplit', RevSliderFunctions::getVal($layer, 'endsplit', 'none'));
+		$splitout = RevSliderFunctions::getVal($frame_end, 'split', RevSliderFunctions::getVal($layer, 'endsplit', 'none'));
+		
 		$elementdelay = intval(RevSliderFunctions::getVal($frame_start, 'splitdelay', RevSliderFunctions::getVal($layer, 'splitdelay', 0)));
 		$endelementdelay = intval(RevSliderFunctions::getVal($frame_end, 'splitdelay', RevSliderFunctions::getVal($layer, 'endsplitdelay', 0)));
 		
@@ -1640,6 +1678,7 @@ class RevSliderOutput {
 		$classes = ($classes != '') ? ' '.$classes : '';
 		$title = ($title != '') ? ' title="'.$title.'"' : '';
 		$rel = ($rel != '') ? ' rel="'.$rel.'"' : '';
+		$tabindex = ($tabindex != '') ? ' tabindex="'.$tabindex.'"' : '';
 
 		$inline_styles = '';
 		$do_rotation = false;
@@ -2672,6 +2711,13 @@ class RevSliderOutput {
 		$frame_end['speed'] = $es;
 		$frame_end['easing'] = $ee;
 		
+		if($anim_blurfilter_end != 0 && $anim_blurfilter_end != '0px' || $blur_write_all){
+			$tcout .= 'fb:'.$anim_blurfilter_end.';';
+		}
+		if($anim_grayscalefilter_end != 0 && $anim_grayscalefilter_end != '0%' || $grayscale_write_all){
+			$tcout .= 'fg:'.$anim_grayscalefilter_end.';';
+		}
+		
 		if($tcout !== ''){
 			$frame_end['to'] = $tcout;
 		}
@@ -3173,10 +3219,10 @@ class RevSliderOutput {
 		}
 		
 		//get hover stuff, because of css_cursor
-		$def_val = (array) RevSliderFunctions::getVal($layer, 'deformation-hover', array());
+		$def_val_h = (array) RevSliderFunctions::getVal($layer, 'deformation-hover', array());
 		
 		//add the css_cursor to the idle styles
-		$css_cursor = RevSliderFunctions::getVal($def_val, 'css_cursor', 'auto');
+		$css_cursor = RevSliderFunctions::getVal($def_val_h, 'css_cursor', 'auto');
 		
 		if(trim($css_cursor) !== '' && $css_cursor !== 'auto'){
 			if($css_cursor == 'zoom-in') $css_cursor = '-webkit-zoom-in; cursor: -moz-zoom-in';
@@ -3189,6 +3235,12 @@ class RevSliderOutput {
 			if(trim($value[0]) == '' || $value[0] == $value[1]) continue;
 			if(str_replace('px', '', $value[0]) == str_replace('px', '', $value[1])) continue;
 			$def_string .= $key.':'.$value[0].';';
+		}
+		if($blurfilter != 0 && $blurfilter != '0px' || $blur_write_all){
+			$def_string .= 'fb:'.$blurfilter.';';
+		}
+		if($grayscalefilter != 0 && $grayscalefilter != '0%' || $grayscale_write_all){
+			$def_string .= 'fg:'.$grayscalefilter.';';
 		}
 		
 		foreach($st_idle as $key => $value){
@@ -3213,60 +3265,60 @@ class RevSliderOutput {
 		
 		if($is_hover_active){
 			
-			$def['o'] = array(RevSliderFunctions::getVal($def_val, 'opacity', '0'), '0');
-			$def['sX'] = array(RevSliderFunctions::getVal($def_val, 'scalex', '1'), '1');
-			$def['sY'] = array(RevSliderFunctions::getVal($def_val, 'scaley', '1'), '1');
-			$def['skX'] = array(RevSliderFunctions::getVal($def_val, 'skewx', '0'), '0');
-			$def['skY'] = array(RevSliderFunctions::getVal($def_val, 'skewy', '0'), '0');
-			$def['rX'] = array(RevSliderFunctions::getVal($def_val, 'xrotate', '0'), '0');
-			$def['rY'] = array(RevSliderFunctions::getVal($def_val, 'yrotate', '0'), '0');
-			$def['rZ'] = array(RevSliderFunctions::getVal($def_val, '2d_rotation', '0'), 'inherit');
-			$def['z'] = array(RevSliderFunctions::getVal($def_val, 'z', '0'), '0');
+			$def['o'] = array(RevSliderFunctions::getVal($def_val_h, 'opacity', '0'), '0');
+			$def['sX'] = array(RevSliderFunctions::getVal($def_val_h, 'scalex', '1'), '1');
+			$def['sY'] = array(RevSliderFunctions::getVal($def_val_h, 'scaley', '1'), '1');
+			$def['skX'] = array(RevSliderFunctions::getVal($def_val_h, 'skewx', '0'), '0');
+			$def['skY'] = array(RevSliderFunctions::getVal($def_val_h, 'skewy', '0'), '0');
+			$def['rX'] = array(RevSliderFunctions::getVal($def_val_h, 'xrotate', '0'), '0');
+			$def['rY'] = array(RevSliderFunctions::getVal($def_val_h, 'yrotate', '0'), '0');
+			$def['rZ'] = array(RevSliderFunctions::getVal($def_val_h, '2d_rotation', '0'), 'inherit');
+			$def['z'] = array(RevSliderFunctions::getVal($def_val_h, 'z', '0'), '0');
 			
 			$frame_hover['frame'] = 'hover';
-			$frame_hover['speed'] = RevSliderFunctions::getVal($def_val, 'speed', '300');
-			$frame_hover['ease'] = RevSliderFunctions::getVal($def_val, 'easing', 'easeOutExpo');
+			$frame_hover['speed'] = RevSliderFunctions::getVal($def_val_h, 'speed', '300');
+			$frame_hover['ease'] = RevSliderFunctions::getVal($def_val_h, 'easing', 'easeOutExpo');
 			
-			$fr_force_hover = RevSliderFunctions::getVal($layer, 'force_hover', '');
+			/*$fr_force_hover = RevSliderFunctions::getVal($layer, 'force_hover', '');
 			if($fr_force_hover !== ''){
 				$frame_hover['force'] = $fr_force_hover;
-			}
+			}*/
 			
 			//style
 			$st_hover = array();
-			$font_color = RevSliderFunctions::getVal($def_val, 'color', '#000');
+			$font_color = RevSliderFunctions::getVal($def_val_h, 'color', '#000');
 			if($font_color !== 'transparent'){
-				$font_trans = RevSliderFunctions::getVal($def_val, 'color-transparency', 1);
+				$font_trans = RevSliderFunctions::getVal($def_val_h, 'color-transparency', 1);
 				if($font_trans > 0) $font_trans *= 100;
 				$font_trans = intval($font_trans);
 				$st_hover['c'] = array(RevSliderFunctions::hex2rgba($font_color, $font_trans), 'ALWAYS');
 			}else{
 				$st_hover['c'] = array($font_color, 'ALWAYS');
 			}
-			$mfs = RevSliderFunctions::getVal($def_val, 'font-style', 'off');
+			$mfs = RevSliderFunctions::getVal($def_val_h, 'font-style', 'off');
 			$font_style = ($mfs == 'on' || $mfs == 'italic') ? 'italic' : 'normal';
 			$st_hover['fs'] = array($font_style, 'normal');
-			$st_hover['td'] = array(RevSliderFunctions::getVal($def_val, 'text-decoration', 'none'), 'none');
-			$bg_color = RevSliderFunctions::getVal($def_val, 'background-color', 'transparent');
+			$st_hover['td'] = array(RevSliderFunctions::getVal($def_val_h, 'text-decoration', 'none'), 'none');
+			$bg_color = RevSliderFunctions::getVal($def_val_h, 'background-color', 'transparent');
 			if($bg_color !== 'transparent'){
-				$bg_trans = RevSliderFunctions::getVal($def_val, 'background-transparency', 1);
+				$bg_trans = RevSliderFunctions::getVal($def_val_h, 'background-transparency', 1);
 				if($bg_trans > 0) $bg_trans *= 100;
 				$bg_trans = intval($bg_trans);
 				$st_hover['bg'] = array(RevSliderFunctions::hex2rgba($bg_color, $bg_trans), 'ALWAYS');
 			}
 			
-			$st_hover['zi'] = array(RevSliderFunctions::getVal($def_val, 'zindex', 'auto'), 'auto'); 
+			$st_hover['zi'] = array(RevSliderFunctions::getVal($def_val_h, 'zindex', 'auto'), 'auto'); 
 			
-			$border_color = RevSliderFunctions::getVal($def_val, 'border-color', 'transparent');
+			$border_color = RevSliderFunctions::getVal($def_val_h, 'border-color', 'transparent');
 			if($border_color !== 'transparent'){
-				$border_trans = RevSliderFunctions::getVal($def_val, 'border-transparency', 1);
+				$border_trans = RevSliderFunctions::getVal($def_val_h, 'border-transparency', 1);
 				if($border_trans > 0) $border_trans *= 100;
 				$border_trans = intval($border_trans);
 				$st_hover['bc'] = array(RevSliderFunctions::hex2rgba($border_color, $border_trans), 'ALWAYS');
 			}
 			
-			$st_hover['bs'] = array(RevSliderFunctions::getVal($def_val, 'border-style', 'none'), 'none');
-			$my_border_width = RevSliderFunctions::getVal($def_val, 'border-width', array('0px','0px','0px','0px'));
+			$st_hover['bs'] = array(RevSliderFunctions::getVal($def_val_h, 'border-style', 'none'), 'none');
+			$my_border_width = RevSliderFunctions::getVal($def_val_h, 'border-width', array('0px','0px','0px','0px'));
 			if(!empty($my_border_width) && is_array($my_border_width)){
 				$my_border_width = implode(' ', $my_border_width);
 				
@@ -3281,7 +3333,7 @@ class RevSliderOutput {
 			}
 			
 			
-			$my_border = RevSliderFunctions::getVal($def_val, 'border-radius', array('0px','0px','0px','0px'));
+			$my_border = RevSliderFunctions::getVal($def_val_h, 'border-radius', array('0px','0px','0px','0px'));
 			if(!empty($my_border)){
 				$my_border = implode(' ', $my_border);
 				
@@ -3335,7 +3387,12 @@ class RevSliderOutput {
 				if(trim($value[0]) == '' || $value[0] === $value[1]) continue;
 				$def_string .= $key.':'.$value[0].';';
 			}
-			
+			if($hover_blurfilter != 0 && $hover_blurfilter != '0px' || $blur_write_all){
+				$def_string .= 'fb:'.$hover_blurfilter.';';
+			}
+			if($hover_grayscalefilter != 0 && $hover_grayscalefilter != '0%' || $grayscale_write_all){
+				$def_string .= 'fg:'.$hover_grayscalefilter.';';
+			}
 			
 			foreach($st_hover as $key => $value){
 				if(trim($value[0]) == '' || $value[0] === $value[1]) continue;
@@ -3501,6 +3558,17 @@ class RevSliderOutput {
 								
 								$html_simple_link = ' href="'.$a_image_link[$num].'"';
 								$html_simple_link .=' target="'.$a_link_open_in[$num].'"';
+								
+								//write textdecoration always, even if none
+								$def_val = (array) RevSliderFunctions::getVal($layer, 'deformation', array());
+								$te_de = RevSliderFunctions::getVal($def_val, 'text-decoration', 'none');
+								if($dtd === $te_de){ //was not written before, so write it now
+									$idle_style .= 'text-decoration: '.$te_de.';';
+								}
+								$te_de_h = RevSliderFunctions::getVal($def_val_h, 'text-decoration', 'none');
+								if($te_de_h === 'none'){
+									$st_h_string .= 'text-decoration: '.$te_de_h.';';
+								}
 							}
 						}
 					break;
@@ -3755,7 +3823,11 @@ class RevSliderOutput {
 				}
 
 				// Filter the Actions
-				$a_events = apply_filters( 'rs_action_output_layer_action', $a_events, $action, $all_actions, $num, $this->slide);
+                $a_events = apply_filters('rs_action_output_layer_action', $a_events, $action, $all_actions, $num, $this->slide);
+                if(!isset($html_simple_link)){
+                    $html_simple_link = ""; 
+                }
+                $html_simple_link = apply_filters('rs_action_output_layer_simple_link', $html_simple_link, $action, $all_actions, $num, $this->slide, $this->slider, $a_events);
 
 			}
 			if(!empty($a_events)){
@@ -3836,6 +3908,7 @@ class RevSliderOutput {
 		echo $html_simple_link;
 		echo ($ids != '') ? '			'.$ids." \n" : '';
 		echo ($title != '') ? '			'.$title." \n" : '';
+		echo ($tabindex != '') ? '			'.$tabindex." \n" : '';
 		echo ($rel != '') ? '			'.$rel." \n" : '';
 		if($htmlPosX != '') echo '			'.$htmlPosX." \n";
 		if($htmlPosY != '') echo '			'.$htmlPosY." \n";
@@ -4723,9 +4796,13 @@ class RevSliderOutput {
 				$car_inf = $this->slider->getParam('carousel_infinity','off');
 				$car_space = $this->slider->getParam('carousel_space',0,RevSlider::FORCE_NUMERIC);
 				$car_stretch = $this->slider->getParam('carousel_stretch','off');
+				$car_all_layers = $this->slider->getParam('showalllayers_carousel','off');
 				$car_maxitems = $this->slider->getParam('carousel_maxitems',5,RevSlider::FORCE_NUMERIC);
 				$car_fadeout = $this->slider->getParam('carousel_fadeout','on');
 				$car_varyfade = $this->slider->getParam('carousel_varyfade','off');
+				
+				$car_easing = $this->slider->getParam('carousel_easing','Power3.easeInOut');
+				$car_speed = $this->slider->getParam('carousel_speed','800',RevSlider::FORCE_NUMERIC);
 				
 				$car_hpos = $this->slider->getParam('carousel_hposition','center');
 				$car_vpos = $this->slider->getParam('carousel_vposition','center');
@@ -4772,7 +4849,11 @@ class RevSliderOutput {
 				echo '							maxVisibleItems: '. esc_attr($car_maxitems).','."\n";
 				echo '							infinity: "'. esc_attr($car_inf).'",'."\n";
 				echo '							space: '. esc_attr($car_space).','."\n";
-				echo '							stretch: "'. esc_attr($car_stretch).'"'."\n";
+				echo '							stretch: "'. esc_attr($car_stretch).'",'."\n";
+				echo ' 							showLayersAllTime: "'.esc_attr($car_all_layers).'",'."\n";
+				echo ' 							easing: "'.esc_attr($car_easing).'",'."\n";
+				echo ' 							speed: "'.esc_attr($car_speed).'"'."\n";
+				
 				echo '						},'."\n";
 			}
 			
@@ -4813,6 +4894,57 @@ class RevSliderOutput {
 			if($minHeight > 0){
 				echo '						minHeight:"'. $minHeight.'",'."\n";
 			}
+
+			$use_scrolleffect = $this->slider->getParam('fade_scrolleffect','off') !== 'off' || $this->slider->getParam('blur_scrolleffect','off') !== 'off' || $this->slider->getParam('grayscale_scrolleffect','off') !== 'off' ? 'on' : 'off';
+
+			if($use_scrolleffect =='on') {
+				echo '						scrolleffect: {'."\n";
+				if($this->slider->getParam('fade_scrolleffect','off') !== 'off')
+					echo '							fade:"'. esc_attr($this->slider->getParam('fade_scrolleffect','off')) .'",'."\n";				
+
+				if($this->slider->getParam('blur_scrolleffect','off') !== 'off')
+					echo '							blur:"'. esc_attr($this->slider->getParam('blur_scrolleffect','off')) .'",'."\n";				
+
+				if($this->slider->getParam('grayscale_scrolleffect','off') !== 'off')
+					echo '							grayscale:"'. esc_attr($this->slider->getParam('grayscale_scrolleffect','off')) .'",'."\n";		
+
+				
+				if($this->slider->getParam('scrolleffect_maxblur','10') !== '10')
+				echo '							maxblur:"'. esc_attr($this->slider->getParam('scrolleffect_maxblur','10')) .'",'."\n";
+				
+				if($this->slider->getParam('scrolleffect_bg','off') !== 'off')
+					echo '							on_slidebg:"'. esc_attr($this->slider->getParam('scrolleffect_bg','off')) .'",'."\n";
+
+
+				if($this->slider->getParam('scrolleffect_layers','off') !== 'off')
+					echo '							on_layers:"'. esc_attr($this->slider->getParam('scrolleffect_layers','off')) .'",'."\n";
+
+				if($this->slider->getParam('scrolleffect_parallax_layers','off') !== 'off')
+					echo '							on_parallax_layers:"'. esc_attr($this->slider->getParam('scrolleffect_parallax_layers','off')) .'",'."\n";
+								
+				
+				if($this->slider->getParam('scrolleffect_static_layers','off') !== 'off')
+					echo '							on_static_layers:"'. esc_attr($this->slider->getParam('scrolleffect_static_layers','off')) .'",'."\n";
+				
+				if($this->slider->getParam('scrolleffect_static_parallax_layers','off') !== 'off')
+					echo '							on_parallax_static_layers:"'. esc_attr($this->slider->getParam('scrolleffect_static_parallax_layers','off')) .'",'."\n";
+				
+				if($this->slider->getParam('scrolleffect_direction','both') !== 'both')
+					echo '							direction:"'. esc_attr($this->slider->getParam('scrolleffect_direction','both')) .'",'."\n";
+				
+				if($this->slider->getParam('scrolleffect_multiplicator','1.3') !== '1.3')
+					echo '							multiplicator:"'. esc_attr($this->slider->getParam('scrolleffect_multiplicator','1.3')) .'",'."\n";
+				
+				if($this->slider->getParam('scrolleffect_multiplicator_layers','1.3') !== '1.3')
+					echo '							multiplicator_layers:"'. esc_attr($this->slider->getParam('scrolleffect_multiplicator_layers','1.3')) .'",'."\n";
+				
+				if($this->slider->getParam('scrolleffect_tilt','30') !== '30')
+					echo '							tilt:"'. esc_attr($this->slider->getParam('scrolleffect_tilt','30')) .'",'."\n";
+
+				if($this->slider->getParam('scrolleffect_off_mobile','on') !== 'on')
+					echo '							disable_on_mobile:"'. esc_attr($this->slider->getParam('scrolleffect_off_mobile','on')) .'",'."\n";
+				echo '						},'."\n";
+			}
 			
 			if($use_parallax == 'on'){
 				echo '						parallax: {'."\n";
@@ -4820,7 +4952,7 @@ class RevSliderOutput {
 				echo '							origo:"'. esc_attr($parallax_origo) .'",'."\n";
 				echo '							speed:'. esc_attr($parallax_speed) .','."\n";
 				echo '							levels:['. esc_attr($parallax_level) .'],'."\n";
-				echo '							type:"'. esc_attr($parallax_type) .'",'."\n";
+				
 				if ($parallax_type == '3D') {
 					echo '							ddd_shadow:"'. esc_attr($parallax_ddd_shadow) .'",'."\n";
 					echo '							ddd_bgfreeze:"'. esc_attr($parallax_ddd_bgfreeze) .'",'."\n";
@@ -4828,7 +4960,7 @@ class RevSliderOutput {
 					echo '							ddd_layer_overflow:"'. esc_attr($parallax_ddd_layer_overflow) .'",'."\n";
 					echo '							ddd_z_correction:'. esc_attr($parallax_ddd_zcorrection) .','."\n";
 					//echo '							ddd_path:"'. esc_attr($parallax_ddd_path) .'",'."\n";
-				}				
+				}
 
 				if($disable_parallax_mobile == 'on'){
 					echo '							disable_onmobile:"on"'."\n";
@@ -5042,18 +5174,7 @@ class RevSliderOutput {
 		
 		if(!$markup_export){ //not needed for html markup export
 			if(has_action('wp_footer', array($this, 'add_inline_double_jquery_error')) === false){
-				
 				add_action('wp_footer', array($this, 'add_inline_double_jquery_error'));
-				
-				/*if(isset($_GET['pk'])){
-					echo '<pre>';
-					//global $wp_filter;
-					//print_r($wp_filter['wp_footer']);
-					var_dump(_wp_filter_build_unique_id('wp_footer', array($this, 'add_inline_double_jquery_error'), false));
-					var_dump(has_action('wp_footer', array($this, 'add_inline_double_jquery_error')));
-					var_dump((has_action('wp_footer', array($this, 'add_inline_double_jquery_error')) === false));
-					echo '</pre>';
-				}*/
 			}
 		}
 	}

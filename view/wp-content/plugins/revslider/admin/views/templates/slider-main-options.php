@@ -884,6 +884,11 @@ if(!isset($linksEditSlides)) $linksEditSlides = '';
 								jQuery('.rs-slidertype').removeClass("selected");
 								bt.addClass("selected").find('input[name="slider-type"]').attr('checked', 'checked');
 								
+								if (jQuery('input[name="slider-type"]:checked').val()!=="hero" || jQuery('#ddd_parallax').attr('checked')==="checked") 
+									jQuery('#fadeinoutparallax').hide();
+								else								
+									jQuery('#fadeinoutparallax').show();
+								
 								updateSliderPresets();
 							});
 
@@ -3812,11 +3817,65 @@ if(!isset($linksEditSlides)) $linksEditSlides = '';
 									<span class="label" id="label_carousel_stretch" origtitle="<?php _e("Stretch carousel element width to the wrapping container width.  Using this you can see only 1 item in same time.", 'revslider');?>"><?php _e("Stretch Element", 'revslider');?> </span>
 									<input type="checkbox" class="tp-moderncheckbox withlabel" id="carousel_stretch" name="carousel_stretch" data-unchecked="off" <?php checked(RevSliderFunctions::getVal($arrFieldsParams, 'carousel_stretch', 'off'), 'on');?>>
 									<div class="clearfix"></div>
+
+									<!-- Carousel Show All Lyers -->
+									<span class="label" id="label_showalllayers_carousel" origtitle="<?php _e("Show All Layers for all the Time with one Start Animation only.", 'revslider');?>"><?php _e("Show All Layers 1 Time", 'revslider');?> </span>
+									<input type="checkbox" class="tp-moderncheckbox withlabel" id="showalllayers_carousel" name="showalllayers_carousel" data-unchecked="off" <?php checked(RevSliderFunctions::getVal($arrFieldsParams, 'showalllayers_carousel', 'off'), 'on');?>>
+									<div class="clearfix"></div>
 									
 									<div class="clear"></div>
 								</div>
 
-
+								<!-- Carousel Easing -->
+								<?php
+								$car_easing = RevSliderFunctions::getVal($arrFieldsParams, 'carousel_easing', 'Power3.easeInOut');
+								?>
+								<span class="label" id="label_carousel_easing" origtitle="<?php _e("The carousel easing", 'revslider');?>"><?php _e("Easing", 'revslider');?> </span>
+								<select id="carousel_easing" class="withlabel"  name="carousel_easing" style="width: 106px;">
+									<option <?php selected($car_easing, 'Linear.easeNone');?> value="Linear.easeNone">Linear.easeNone</option>
+									<option <?php selected($car_easing, 'Power0.easeIn');?> value="Power0.easeIn">Power0.easeIn  (linear)</option>
+									<option <?php selected($car_easing, 'Power0.easeInOut');?> value="Power0.easeInOut">Power0.easeInOut  (linear)</option>
+									<option <?php selected($car_easing, 'Power0.easeOut');?> value="Power0.easeOut">Power0.easeOut  (linear)</option>
+									<option <?php selected($car_easing, 'Power1.easeIn');?> value="Power1.easeIn">Power1.easeIn</option>
+									<option <?php selected($car_easing, 'Power1.easeInOut');?> value="Power1.easeInOut">Power1.easeInOut</option>
+									<option <?php selected($car_easing, 'Power1.easeOut');?> value="Power1.easeOut">Power1.easeOut</option>
+									<option <?php selected($car_easing, 'Power2.easeIn');?> value="Power2.easeIn">Power2.easeIn</option>
+									<option <?php selected($car_easing, 'Power2.easeInOut');?> value="Power2.easeInOut">Power2.easeInOut</option>
+									<option <?php selected($car_easing, 'Power2.easeOut');?> value="Power2.easeOut">Power2.easeOut</option>
+									<option <?php selected($car_easing, 'Power3.easeIn');?> value="Power3.easeIn">Power3.easeIn</option>
+									<option <?php selected($car_easing, 'Power3.easeInOut');?> value="Power3.easeInOut">Power3.easeInOut</option>
+									<option <?php selected($car_easing, 'Power3.easeOut');?> value="Power3.easeOut">Power3.easeOut</option>
+									<option <?php selected($car_easing, 'Power4.easeIn');?> value="Power4.easeIn">Power4.easeIn</option>
+									<option <?php selected($car_easing, 'Power4.easeInOut');?> value="Power4.easeInOut">Power4.easeInOut</option>
+									<option <?php selected($car_easing, 'Power4.easeOut');?> value="Power4.easeOut">Power4.easeOut</option>
+									<option <?php selected($car_easing, 'Back.easeIn');?> value="Back.easeIn">Back.easeIn</option>
+									<option <?php selected($car_easing, 'Back.easeInOut');?> value="Back.easeInOut">Back.easeInOut</option>
+									<option <?php selected($car_easing, 'Back.easeOut');?> value="Back.easeOut">Back.easeOut</option>
+									<option <?php selected($car_easing, 'Bounce.easeIn');?> value="Bounce.easeIn">Bounce.easeIn</option>
+									<option <?php selected($car_easing, 'Bounce.easeInOut');?> value="Bounce.easeInOut">Bounce.easeInOut</option>
+									<option <?php selected($car_easing, 'Bounce.easeOut');?> value="Bounce.easeOut">Bounce.easeOut</option>
+									<option <?php selected($car_easing, 'Circ.easeIn');?> value="Circ.easeIn">Circ.easeIn</option>
+									<option <?php selected($car_easing, 'Circ.easeInOut');?> value="Circ.easeInOut">Circ.easeInOut</option>
+									<option <?php selected($car_easing, 'Circ.easeOut');?> value="Circ.easeOut">Circ.easeOut</option>
+									<option <?php selected($car_easing, 'Elastic.easeIn');?> value="Elastic.easeIn">Elastic.easeIn</option>
+									<option <?php selected($car_easing, 'Elastic.easeInOut');?> value="Elastic.easeInOut">Elastic.easeInOut</option>
+									<option <?php selected($car_easing, 'Elastic.easeOut');?> value="Elastic.easeOut">Elastic.easeOut</option>
+									<option <?php selected($car_easing, 'Expo.easeIn');?> value="Expo.easeIn">Expo.easeIn</option>
+									<option <?php selected($car_easing, 'Expo.easeInOut');?> value="Expo.easeInOut">Expo.easeInOut</option>
+									<option <?php selected($car_easing, 'Expo.easeOut');?> value="Expo.easeOut">Expo.easeOut</option>
+									<option <?php selected($car_easing, 'Sine.easeIn');?> value="Sine.easeIn">Sine.easeIn</option>
+									<option <?php selected($car_easing, 'Sine.easeInOut');?> value="Sine.easeInOut">Sine.easeInOut</option>
+									<option <?php selected($car_easing, 'Sine.easeOut');?> value="Sine.easeOut">Sine.easeOut</option>
+									<option <?php selected($car_easing, 'SlowMo.ease');?> value="SlowMo.ease">SlowMo.ease</option>
+								</select>
+								<div class="clear"></div>
+								
+								<!-- Carousel Easing Speed -->
+								<span class="label" id="label_carousel_speed" origtitle="<?php _e("The easing speed", 'revslider');?>"><?php _e("Easing Speed", 'revslider');?> </span>
+								<input type="text" class="text-sidebar withlabel"   id="carousel_speed" name="carousel_speed" value="<?php echo intval(RevSliderFunctions::getVal($arrFieldsParams, 'carousel_speed', '800'));?>">
+								<span><?php _e("ms", 'revslider');?></span>
+								<div class="clear"></div>
+								
 								<div id="carousel-trans" style="display:none">
 									<!-- Carousel Fade Out -->
 									<span class="label" id="label_carousel_fadeout" origtitle="<?php _e("All elements out of focus will get some Opacity value based on the Distance to the current focused element, or only the coming/leaving elements.", 'revslider');?>"><?php _e("Fade All Elements", 'revslider');?> </span>
@@ -3829,8 +3888,7 @@ if(!isset($linksEditSlides)) $linksEditSlides = '';
 										<input type="checkbox" class="tp-moderncheckbox withlabel" id="carousel_varyfade" name="carousel_varyfade" data-unchecked="off" <?php checked(RevSliderFunctions::getVal($arrFieldsParams, 'carousel_varyfade', 'off'), "on");?>>
 										<div class="clearfix"></div>
 									</div>
-
-
+									
 									<!-- Carousel Rotation  -->
 									<span class="label label-with-subsection" id="label_carousel_rotation" origtitle="<?php _e("Rotation enabled/disabled for not focused elements.", 'revslider');?>"><?php _e("Rotation", 'revslider');?> </span>
 									<input type="checkbox" class="tp-moderncheckbox withlabel" id="carousel_rotation" name="carousel_rotation" data-unchecked="off" <?php checked(RevSliderFunctions::getVal($arrFieldsParams, 'carousel_rotation', 'off'), "on");?>>
@@ -4113,6 +4171,7 @@ if(!isset($linksEditSlides)) $linksEditSlides = '';
 											
 										</div>
 									</div>
+									
 								</div>
 							</div>
 
@@ -4135,9 +4194,11 @@ if(!isset($linksEditSlides)) $linksEditSlides = '';
 									if (sbi.attr("checked") === "checked" && jQuery('#use_parallax').attr("checked")=== "checked") {
 											jQuery('.hide_on_ddd_parallax').hide();
 											jQuery('.show_on_ddd_parallax').show();
+											jQuery('#fadeinoutparallax').hide();
 										} else {
 											jQuery('.hide_on_ddd_parallax').show();
 											jQuery('.show_on_ddd_parallax').hide();
+											if (jQuery('input[name="slider-type"]:checked').val()==="hero") jQuery('#fadeinoutparallax').show();
 										}									
 								});
 
@@ -4149,6 +4210,95 @@ if(!isset($linksEditSlides)) $linksEditSlides = '';
 
 						</div>
 
+
+						<!-- Scroll Effects -->
+						<div class="setting_box" id="fadeinoutparallax">
+							<h3 class="box_closed"><i class="rs-rp-accordion-icon eg-icon-camera-alt"></i>
+
+							<div class="setting_box-arrow"></div>
+
+							<span><?php _e('Scroll Effects', 'revslider');?></span>
+							</h3>
+							<div class="inside" style="display:none">								
+								<!-- FADE EFFECT ON SCROLL -->
+								<span class="label" id="label_fade_scrolleffect" origtitle="<?php _e("Endable / Disable Fade Effect on Scroll:", 'revslider');?>"><?php _e("Fade Effect", 'revslider');?> </span>
+								<input type="checkbox" class="tp-moderncheckbox withlabel" id="fade_scrolleffect" name="fade_scrolleffect" data-unchecked="off" <?php checked(RevSliderFunctions::getVal($arrFieldsParams, "fade_scrolleffect", "off"), "on");?>>
+								<div class="clear"></div>
+
+								<!-- BLUR EFFECT ON SCROLL -->
+								<span class="label" id="label_blur_scrolleffect" origtitle="<?php _e("Endable / Disable Blur Effect on Scroll", 'revslider');?>"><?php _e("Blur Effect", 'revslider');?> </span>
+								<input type="checkbox" class="tp-moderncheckbox withlabel" id="blur_scrolleffect" name="blur_scrolleffect" data-unchecked="off" <?php checked(RevSliderFunctions::getVal($arrFieldsParams, "blur_scrolleffect", "off"), "on");?>>
+								<div class="clear"></div>
+
+								<!-- GRAYSCALE EFFECT ON SCROLL -->
+								<span class="label" id="label_grayscale_scrolleffect" origtitle="<?php _e("Enable / Disable grayscale Effect on Scroll", 'revslider');?>"><?php _e("Grayscale Effect", 'revslider');?> </span>
+								<input type="checkbox" class="tp-moderncheckbox withlabel" id="grayscale_scrolleffect" name="grayscale_scrolleffect" data-unchecked="off" <?php checked(RevSliderFunctions::getVal($arrFieldsParams, "grayscale_scrolleffect", "off"), "on");?>>
+								<div class="clear"></div>
+
+								<h4><?php _e("Effect Levels:", 'revslider');?></h4>
+								<div class="withsublabels">
+									
+									<!-- MAX BLUR EFFECT -->
+									<span class="label" id="label_scrolleffect_maxblur" origtitle="<?php _e("Maximum Blur Level on Elements by Maximal Scroll. Optimal Values between 0-100", 'revslider');?>"><?php _e("Max. Blur Effect", 'revslider');?> </span>
+									<input type="text" class="text-sidebar withlabel" id="scrolleffect_maxblur" name="scrolleffect_maxblur" value="<?php echo RevSliderFunctions::getVal($arrFieldsParams, "scrolleffect_maxblur", "10");?>">
+									<span ><?php _e("px", 'revslider');?></span>
+									<div class="clear"></div>
+									
+								</div>
+
+								<h4><?php _e("Effects on Elements:", 'revslider');?></h4>
+								<div class="withsublabels">
+									<span class="label" id="label_scrolleffect_bg" origtitle="<?php _e("Effects enabled on Slide BG", 'revslider');?>"><?php _e("On Slider BG's", 'revslider');?> </span>
+									<input type="checkbox" class="tp-moderncheckbox withlabel" id="scrolleffect_bg" name="scrolleffect_bg" data-unchecked="off" <?php checked(RevSliderFunctions::getVal($arrFieldsParams, "scrolleffect_bg", "off"), "on");?>>
+									<div class="clear"></div>
+
+									<span class="label" id="label_scrolleffect_layers" origtitle="<?php _e("Effects on Layers without Parallax Effect", 'revslider');?>"><?php _e("None Parallax Layers", 'revslider');?> </span>
+									<input type="checkbox" class="tp-moderncheckbox withlabel" id="scrolleffect_layers" name="scrolleffect_layers" data-unchecked="off" <?php checked(RevSliderFunctions::getVal($arrFieldsParams, "scrolleffect_layers", "off"), "on");?>>
+									<div class="clear"></div>
+
+									<span class="label" id="label_scrolleffect_parallax_layers" origtitle="<?php _e("Effects on Layers with Parallax Effect", 'revslider');?>"><?php _e("Parallax Layers", 'revslider');?> </span>
+									<input type="checkbox" class="tp-moderncheckbox withlabel" id="scrolleffect_parallax_layers" name="scrolleffect_parallax_layers" data-unchecked="off" <?php checked(RevSliderFunctions::getVal($arrFieldsParams, "scrolleffect_parallax_layers", "off"), "on");?>>
+									<div class="clear"></div>
+
+									<span class="label" id="label_scrolleffect_static_layers" origtitle="<?php _e("Effects on Static Layers without Parallax Effect", 'revslider');?>"><?php _e("None Parallax Static L.", 'revslider');?> </span>
+									<input type="checkbox" class="tp-moderncheckbox withlabel" id="scrolleffect_static_layers" name="scrolleffect_static_layers" data-unchecked="off" <?php checked(RevSliderFunctions::getVal($arrFieldsParams, "scrolleffect_static_layers", "off"), "on");?>>
+									<div class="clear"></div>
+
+									<span class="label" id="label_scrolleffect_static_parallax_layers" origtitle="<?php _e("Effects on Static Layers with Parallax Effect", 'revslider');?>"><?php _e("Parallax Static Layers", 'revslider');?> </span>
+									<input type="checkbox" class="tp-moderncheckbox withlabel" id="scrolleffect_static_parallax_layers" name="scrolleffect_static_parallax_layers" data-unchecked="off" <?php checked(RevSliderFunctions::getVal($arrFieldsParams, "scrolleffect_static_parallax_layers", "off"), "on");?>>
+									<div class="clear"></div>
+
+								</div>
+								<h4><?php _e("Scroll Dependencies:", 'revslider');?></h4>
+								<div class="withsublabels">
+									<span class="label" id="label_scrolleffect_direction" origtitle="<?php _e("Select the Direction where the Elements should be Fade In/Out from/to", 'revslider');?>"><?php _e("Effect Directions", 'revslider');?> </span>
+									<select id="scrolleffect_direction" class="withlabel"  name="scrolleffect_direction" style="max-width:110px">
+										<option value="top" <?php selected(RevSliderFunctions::getVal($arrFieldsParams, 'scrolleffect_direction', 'both'), "top");?>><?php _e("Top Direction", 'revslider');?></option>
+										<option value="bottom" <?php selected(RevSliderFunctions::getVal($arrFieldsParams, 'scrolleffect_direction', 'both'), "bottom");?>><?php _e("Bottom Direction", 'revslider');?></option>
+										<option value="both" <?php selected(RevSliderFunctions::getVal($arrFieldsParams, 'scrolleffect_direction', 'both'), "both");?>><?php _e("Both Direction", 'revslider');?></option>												
+									</select>
+									<div class="clear"></div>
+
+									<span class="label" id="label_scrolleffect_tilt" origtitle="<?php _e("Offset the Effect with % of Screen. Best Values between 0% and 100%", 'revslider');?>"><?php _e("Offset Effect", 'revslider');?> </span>
+									<input type="text" class="text-sidebar withlabel" id="scrolleffect_tilt" name="scrolleffect_tilt" value="<?php echo RevSliderFunctions::getVal($arrFieldsParams, "scrolleffect_tilt", "30");?>">
+									<span ><?php _e("%", 'revslider');?></span>
+									<div class="clear"></div>
+
+									<span class="label" id="label_scrolleffect_multiplicator" origtitle="<?php _e("Parallax Speed Multiplicator For Background. Best Values between 0.2 and 2", 'revslider');?>"><?php _e("Effect Factor BG", 'revslider');?> </span>
+									<input type="text" class="text-sidebar withlabel" id="scrolleffect_multiplicator" name="scrolleffect_multiplicator" value="<?php echo RevSliderFunctions::getVal($arrFieldsParams, "scrolleffect_multiplicator", "1.3");?>">																				
+									<div class="clear"></div>
+
+									<span class="label" id="label_scrolleffect_multiplicator_layers" origtitle="<?php _e("Parallax Speed Multiplicator For Layers.  Best Values between 0.2 and 2", 'revslider');?>"><?php _e("Effect Factor Layers", 'revslider');?> </span>
+									<input type="text" class="text-sidebar withlabel" id="scrolleffect_multiplicator_layers" name="scrolleffect_multiplicator_layers" value="<?php echo RevSliderFunctions::getVal($arrFieldsParams, "scrolleffect_multiplicator_layers", "1.3");?>">																				
+									<div class="clear"></div>
+
+									<span class="label" id="label_scrolleffect_off_mobile" origtitle="<?php _e("Disable Fade Out Effect On Mobile Devices", 'revslider');?>"><?php _e("Disable on Mobile", 'revslider');?> </span>
+									<input type="checkbox" class="tp-moderncheckbox withlabel" id="scrolleffect_off_mobile" name="scrolleffect_off_mobile" data-unchecked="off" <?php checked(RevSliderFunctions::getVal($arrFieldsParams, "scrolleffect_off_mobile", "on"), "on");?>>
+									<div class="clear"></div>
+
+								</div>								
+							</div>
+						</div><!-- END OF SCROLL EFFECTS--> 
 
 
 					<?php
@@ -4492,11 +4642,11 @@ if(!isset($linksEditSlides)) $linksEditSlides = '';
 											<input class="withlabel"  type="radio" name="update_animations" value="false"> <?php _e("append", 'revslider')?>
 											<div class="tp-clearfix"></div>
 
-											<span class="label label-with-subsection" id="label_update_static_captions" origtitle="<?php _e("Overwrite or append the static styles due the new imported values ?", 'revslider');?>"><?php _e("Static Styles", 'revslider');?> </span>
+											<!--span class="label label-with-subsection" id="label_update_static_captions" origtitle="<?php _e("Overwrite or append the static styles due the new imported values ?", 'revslider');?>"><?php _e("Static Styles", 'revslider');?> </span>
 											<input class="withlabel" type="radio" name="update_static_captions" value="true"> <?php _e("overwrite", 'revslider')?>
 											<input class="withlabel" type="radio" name="update_static_captions" value="false"> <?php _e("append", 'revslider')?>
 											<input class="withlabel" type="radio" name="update_static_captions" value="none" checked="checked"> <?php _e("ignore",'revslider'); ?>
-											<div class="tp-clearfix"></div>
+											<div class="tp-clearfix"></div-->
 
 											<div class="divide5"></div>
 											<input type="submit" style="width:100%" class="button-primary revgreen" id="rs-submit-import-form" value="<?php _e('Import Slider', 'revslider'); ?>">

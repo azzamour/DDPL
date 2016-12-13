@@ -1,4 +1,8 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
 return array(
 	'name' => __( 'Old Call to Action Button', 'js_composer' ) . ' 2',
 	'base' => 'vc_cta_button2',

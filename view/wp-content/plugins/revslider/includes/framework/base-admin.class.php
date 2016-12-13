@@ -427,6 +427,8 @@ class RevSliderBaseAdmin extends RevSliderBase {
 		
 		$operations = new RevSliderOperations();
 		$options_exist = $operations->getGeneralSettingsValues();
+		if(!is_array($options_exist)) $options_exist = array();
+		
 		$options = array_merge($options_exist, $options);
 		
 		$operations->updateGeneralSettings($options);

@@ -1,6 +1,6 @@
 /********************************************
  * REVOLUTION 5.0 EXTENSION - KEN BURN
- * @version: 1.1 (25.10.2016)
+ * @version: 1.2 (2.11.2016)
  * @requires jquery.themepunch.revolution.js
  * @author ThemePunch
 *********************************************/
@@ -11,7 +11,7 @@ var _R = jQuery.fn.revolution,
 	extension = {	alias:"KenBurns Min JS",
 					name:"revolution.extensions.kenburn.min.js",
 					min_core: "5.0",
-					version:"1.1.0"
+					version:"1.2.0"
 			  };
 
 ///////////////////////////////////////////
@@ -121,6 +121,7 @@ jQuery.extend(true,_R, {
 				o.start.scale = f;	
 				o.end.scale = fe;
 
+				d.rotatestart = d.rotatestart===0 ? 0.01 : d.rotatestart;
 				o.start.rotation = d.rotatestart+"deg";
 				o.end.rotation = d.rotateend+"deg";		
 				

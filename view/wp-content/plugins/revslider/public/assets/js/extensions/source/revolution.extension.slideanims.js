@@ -1,17 +1,16 @@
 /************************************************
- * REVOLUTION 5.2 EXTENSION - SLIDE ANIMATIONS
- * @version: 1.5 (25.10.2016)
+ * REVOLUTION 5.3 EXTENSION - SLIDE ANIMATIONS
+ * @version: 1.6 (17.11.2016)
  * @requires jquery.themepunch.revolution.js
  * @author ThemePunch
 ************************************************/
-
 (function($) {
 "use strict";
 var _R = jQuery.fn.revolution,
 	extension = {	alias:"SlideAnimations Min JS",
 					name:"revolution.extensions.slideanims.min.js",
-					min_core: "4.5",
-					version:"1.5.0"
+					min_core: "5.0",
+					version:"1.6"
 			  };
 
 	///////////////////////////////////////////
@@ -47,9 +46,10 @@ var _R = jQuery.fn.revolution,
 
 				var sh=slotholder,
 					img = sh.find('.defaultimg'),
+					mediafilter = img.data('mediafilter'),
 					scalestart = sh.data('zoomstart'),
 					rotatestart = sh.data('rotationstart');
-
+				
 				if (img.data('currotate')!=undefined)
 					rotatestart = img.data('currotate');
 				if (img.data('curscale')!=undefined && vorh=="box")
@@ -110,7 +110,7 @@ var _R = jQuery.fn.revolution,
 													'height:'+opt.sloth+'px;'+
 													'overflow:hidden;">'+
 
-										  '<div class="slotslide" data-x="'+x+'" data-y="'+y+'" '+
+										  '<div class="slotslide '+mediafilter+'" data-x="'+x+'" data-y="'+y+'" '+
 										  			'style="position:absolute;'+
 													'top:'+(0)+'px;'+
 													'left:'+(0)+'px;'+
@@ -149,7 +149,7 @@ var _R = jQuery.fn.revolution,
 																	'left:'+(fulloff+(i*opt.slotw))+'px;'+
 																	'overflow:hidden;width:'+(opt.slotw+0.3)+'px;'+
 																	'height:'+h+'px">'+
-									'<div class="slotslide" style="position:absolute;'+
+									'<div class="slotslide '+mediafilter+'" style="position:absolute;'+
 																	'top:0px;left:'+off+'px;'+
 																	'width:'+(opt.slotw+0.6)+'px;'+
 																	'height:'+h+'px;overflow:hidden;">'+
@@ -175,7 +175,7 @@ var _R = jQuery.fn.revolution,
 														 'width:'+w+'px;'+
 														 'height:'+(opt.sloth)+'px">'+
 
-											 '<div class="slotslide" style="position:absolute;'+
+											 '<div class="slotslide '+mediafilter+'" style="position:absolute;'+
 																 'top:'+(off)+'px;'+
 																 'left:0px;width:'+w+'px;'+
 																 'height:'+opt.sloth+'px;'+

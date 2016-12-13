@@ -1,6 +1,6 @@
 /************************************************
  * REVOLUTION 5.3 EXTENSION - LAYER ANIMATION
- * @version: 3.0.6 (25.10.2016)
+ * @version: 3.4.4 (30.11.2016)
  * @requires jquery.themepunch.revolution.js
  * @author ThemePunch
 ************************************************/
@@ -12,7 +12,7 @@ var _R = jQuery.fn.revolution,
 	extension = {	alias:"LayerAnimation Min JS",
 					name:"revolution.extensions.layeranimation.min.js",
 					min_core: "5.3.0",
-					version:"3.0.6"
+					version:"3.4.4"
 			  };
 	
 
@@ -46,20 +46,22 @@ jQuery.extend(true,_R, {
 			d.inframeindex = 0;
 			d.outframeindex = -1;
 			d.hoverframeindex = -1;			
-			for (var i=0;i<d.frames.length;i++) {
-				if (d.frames[0].from===undefined) d.frames[0].from = "o:inherit";
-				
-				if (d.frames[0].delay===0) d.frames[0].delay=20;
-								
-				if (d.frames[i].frame==="hover") 
-					d.hoverframeindex =  i;
-				else
-				if (d.frames[i].frame==="frame_999" || d.frames[i].frame==="frame_out" || d.frames[i].frame==="last" || d.frames[i].frame==="end") 
-					d.outframeindex = i;
-				
-				if (d.frames[i].split!==undefined && d.frames[i].split.match(/chars|words|lines/g)) 
-					d.splittext = true;				
-			}		
+			if (d.frames!==undefined) {
+				for (var i=0;i<d.frames.length;i++) {
+					if (d.frames[0].from===undefined) d.frames[0].from = "o:inherit";
+					
+					if (d.frames[0].delay===0) d.frames[0].delay=20;
+									
+					if (d.frames[i].frame==="hover") 
+						d.hoverframeindex =  i;
+					else
+					if (d.frames[i].frame==="frame_999" || d.frames[i].frame==="frame_out" || d.frames[i].frame==="last" || d.frames[i].frame==="end") 
+						d.outframeindex = i;
+					
+					if (d.frames[i].split!==undefined && d.frames[i].split.match(/chars|words|lines/g)) 
+						d.splittext = true;				
+				}		
+			}
 			d.outframeindex  = d.outframeindex===-1 ? d.hoverframeindex === -1 ? d.frames.length-1 : d.frames.length -2 : d.outframeindex; // CHECK LATER !!!
 			d.frames_added = true;
 								
@@ -73,12 +75,14 @@ jQuery.extend(true,_R, {
 			t = _.videotype,
 			ap = _.autoplay,
 			an = _.autoplayonlyfirsttime;
-
 		
 		if (t!=undefined && t!="none")
 		 if (ap==true || ap=="true" || ap=="on" ||  ap=="1sttime" || an) {	
-
-			_R.playVideo(_nc,opt);	
+		 	if (opt.sliderType!=="carousel" || 
+		 		(opt.sliderType==="carousel" && opt.carousel.showLayersAllTime==="on" && _nc.closest('li').hasClass("active-revslide")) ||
+		 		(opt.sliderType==="carousel" && opt.carousel.showLayersAllTime!=="on" && _nc.closest('li').hasClass("active-revslide"))
+		 		)
+				_R.playVideo(_nc,opt);	
 
 			_R.toggleState(_nc.data('videotoggledby'));
 			if ( an || ap=="1sttime") {
@@ -100,12 +104,13 @@ jQuery.extend(true,_R, {
 		
 		var s = parseInt(_nc.data('startslide'),0),
 			e = parseInt(_nc.data('endslide'),0);
+
 		if (s < 0)
 			s=0;
 		if (e <0 )
-			e = opt.slideamount;
-		if (s===0 && e===opt.slideamount-1)
-			e = opt.slideamount+1;
+			e = opt.realslideamount;
+		if (s===0 && e===opt.realslideamount-1)
+			e = opt.realslideamount+1;
 		_nc.data('startslide',s);
 		_nc.data('endslide',e);		
 	},
@@ -115,7 +120,9 @@ jQuery.extend(true,_R, {
 	*************************************/	
 	animateTheCaptions : function(obj)  {		
 
+		
 		if (_R.compare_version(extension).check==="stop") return false;
+
 
 		var opt = obj.opt,
 			nextli = obj.slide,
@@ -152,18 +159,27 @@ jQuery.extend(true,_R, {
 		}
 		
 		// PREPARE THE LAYERS
-		if (opt.layers[index])
+		if (index!==undefined && opt.layers[index])
 			jQuery.each(opt.layers[index], function(i,a) { 
+				var _t = jQuery(this);
 				_R.updateMarkup(this,opt);
-				_R.prepareSingleCaption({caption:jQuery(this), opt:opt, offsetx:base_offsetx, offsety:base_offsety, index:i, recall:recall,  preset:preset});	
-				if (!preset || startSlideAnimAt===0) _R.buildFullTimeLine({caption:jQuery(this), opt:opt, offsetx:base_offsetx, offsety:base_offsety, index:i, recall:recall,  preset:preset, regenerate: startSlideAnimAt===0});
+				_R.prepareSingleCaption({caption:_t, opt:opt, offsetx:base_offsetx, offsety:base_offsety, index:i, recall:recall,  preset:preset});	
+				if (!preset || startSlideAnimAt===0) _R.buildFullTimeLine({caption:_t, opt:opt, offsetx:base_offsetx, offsety:base_offsety, index:i, recall:recall,  preset:preset, regenerate: startSlideAnimAt===0});
+
+				if (recall && opt.sliderType==="carousel" && opt.carousel.showLayersAllTime==="on") _R.animcompleted(_t,opt);	    
 			});
 		
 		if (opt.layers["static"])
 			jQuery.each(opt.layers["static"], function(i,a) { 
-				_R.updateMarkup(this,opt);
-				_R.prepareSingleCaption({caption:jQuery(this), opt:opt, offsetx:base_offsetx, offsety:base_offsety, index:i, recall:recall,  preset:preset});
-				if (!preset || startSlideAnimAt===0)  _R.buildFullTimeLine({caption:jQuery(this), opt:opt, offsetx:base_offsetx, offsety:base_offsety, index:i, recall:recall,  preset:preset, regenerate: startSlideAnimAt===0});
+				var _t = jQuery(this),
+					_ = _t.data();
+				
+				if (_.hoveredstatus!==true && _.inhoveroutanimation!==true) {
+					_R.updateMarkup(this,opt);
+					_R.prepareSingleCaption({caption:_t, opt:opt, offsetx:base_offsetx, offsety:base_offsety, index:i, recall:recall,  preset:preset});
+					if (!preset || startSlideAnimAt===0)  _R.buildFullTimeLine({caption:_t, opt:opt, offsetx:base_offsetx, offsety:base_offsety, index:i, recall:recall,  preset:preset, regenerate: startSlideAnimAt===0});
+					if (recall && opt.sliderType==="carousel" && opt.carousel.showLayersAllTime==="on") _R.animcompleted(_t,opt);	    
+				}
 		});
 
 		
@@ -177,16 +193,17 @@ jQuery.extend(true,_R, {
 		// RESTART ANIMATION TIMELINES
 		
 		if (!preset) 
-			if (startSlideAnimAt!==undefined) {		
-				jQuery.each(opt.timelines[index].layers,function(key,o) {	
-					var _ = o.layer.data();
-					if (o.wrapper==="none" || o.wrapper===undefined) {												
-						if (o.triggerstate=="keep" && _.triggerstate==="on")
-							_R.playAnimationFrame({caption:o.layer,opt:opt,frame:"frame_0", triggerdirection:"in", triggerframein:"frame_0", triggerframeout:"frame_999"});							
-						else 
-							o.timeline.restart(0);						
-					}															
-				});
+			if (startSlideAnimAt!==undefined) {
+				if (index!==undefined)				
+					jQuery.each(opt.timelines[index].layers,function(key,o) {	
+						var _ = o.layer.data();
+						if (o.wrapper==="none" || o.wrapper===undefined) {												
+							if (o.triggerstate=="keep" && _.triggerstate==="on")
+								_R.playAnimationFrame({caption:o.layer,opt:opt,frame:"frame_0", triggerdirection:"in", triggerframein:"frame_0", triggerframeout:"frame_999"});							
+							else 
+								o.timeline.restart(0);						
+						}															
+					});
 				if (opt.timelines.staticlayers) 				
 					jQuery.each(opt.timelines.staticlayers.layers,function(key,o) {					
 						
@@ -201,47 +218,71 @@ jQuery.extend(true,_R, {
 							triggered_out = _.frames[_.frames.length-1].delay==="bytrigger",
 							layer_start_status = _.triggered_startstatus,
 							triggerstate = _.lasttriggerstate;
-												
+						
+						if (_.hoveredstatus===true || _.inhoveroutanimation==true) return;
+
+						/*console.log("-----------------------")
+						console.log("Show Static Layer Start")
+						console.log("-----------------------")
+						console.log(ct);
+						console.log(isvisible)*/
+
+						// LAYER ALREADY VISIBLE, TIMER IS NOT UNKNOW ANY MORE
 						if (ct!==undefined && isvisible) {							
-							if (triggerstate=="keep") {								
+							if (triggerstate=="keep") {				
+								
 								_R.playAnimationFrame({caption:o.layer,opt:opt,frame:"frame_0", triggerdirection:"in", triggerframein:"frame_0", triggerframeout:"frame_999"});
 								_.triggeredtimeline.time(ct);
 							}
 							else {
-								o.timeline.time(ct);
+								
+								if (_.hoveredstatus!==true)
+									o.timeline.time(ct);
 							}
 						}
 							
 
+
 						// RESET STATUS ALWAYS TO HIDDEN
 						if (triggerstate==="reset" && layer_start_status==="hidden") {							
+							//console.log("Pre Path X");
 							o.timeline.time(0);
 							_.animdirection = "out";
 						}
 						
-						// NEED TO DO SOMETHING
+						//console.log("in Range:"+in_v_range+"  "+o.firstslide+" <=  "+_actli+" <= "+o.lastslide);
+						// LAYER IS ON SLIDE TO SHOW, OR LAYER NEED TO DISAPPEAR
 						if (in_v_range) {								
 							if (isvisible) {	
-								if (_actli===o.lastslide) {								
+								//console.log("Path A");
+								if (_actli===o.lastslide) {
+									//console.log("Path A.1");
 									o.timeline.play(elt);
 									_.animdirection = "in";
 								}
-							} else {											
-								if (!triggered_in && _.animdirection!=="out") {																		
+							} else {					
+								//console.log("Path B");
+								//console.log(triggered_in+"   "+_.animdirection)
+								if (!triggered_in && _.animdirection!=="in") {																		
+									//console.log("Path B.1")
 									o.timeline.play(flt);
 								}
 								if ((layer_start_status=="visible" && triggerstate!=="keep") || (triggerstate==="keep" &&  isvisible===true) || (layer_start_status=="visible" &&  isvisible===undefined)) {
+									//console.log("Path B.2");
 									o.timeline.play(flt+0.01);
 									_.animdirection = "in";									
 								}
 							}
-						} else 
-
-						if (in_uv_range) {							
-							if (isvisible) {
-								o.timeline.play("frame_999");
-							} else {
-
+						} else {
+							//console.log("Path C");
+							if (in_uv_range) {	
+								//console.log("Path C.1");						
+								if (isvisible) {
+									//console.log("Path C.1.1")
+									o.timeline.play("frame_999");
+								} else {
+									//console.log("Path C.1.2")
+								}
 							}
 						}
 						
@@ -253,6 +294,7 @@ jQuery.extend(true,_R, {
 		
 		// RESUME THE MAIN TIMELINE NOW
 		if (mtl != undefined) setTimeout(function() {
+			
 			mtl.resume();
 		},30);
 
@@ -286,18 +328,21 @@ jQuery.extend(true,_R, {
 		_._ba = _.basealign || "grid";
 		_._gw = _._ba==="grid" ? opt.width : opt.ulw;
 		_._gh = _._ba==="grid" ? opt.height : opt.ulh; 
+
 		
 		_._lig = _._lig===undefined ? _nc.hasClass("rev_layer_in_group") ? _nc.closest('.rev_group') : _nc.hasClass("rev_layer_in_column") ?_nc.closest('.rev_column_inner')  : _nc.hasClass("rev_column_inner") ?  _nc.closest(".rev_row") : "none" :  _._lig,			
-		
+		_._ingroup = _._ingroup===undefined ? !_nc.hasClass('rev_group') && _nc.closest('.rev_group') ? true : false :_._ingroup;
+		_._isgroup = _._isgroup===undefined ? _nc.hasClass("rev_group") ? true  : false : _._isgroup;
 		_._nctype = _.type || "none";
 		_._cbgc_auto = _._cbgc_auto===undefined ? _._nctype==="column" ?  _._pw.find('.rev_column_bg_auto_sized') : false : _._cbgc_auto;
 		_._cbgc_man = _._cbgc_man===undefined ? _._nctype==="column" ? _._pw.find('.rev_column_bg_man_sized') : false : _._cbgc_man;
 		_._slideid = _._slideid || _nc.closest('.tp-revslider-slidesli').data('index');
 		_._id = _._id===undefined ? _nc.data('id') || _nc.attr('id') : _._id;
-		_._slidelink = _._slidelink || _nc.hasClass("slidelink");
+		_._slidelink = _._slidelink===undefined ?  _nc.hasClass("slidelink")===undefined ? false : _nc.hasClass("slidelink") : _._slidelink;
 
 		if (_._li===undefined) 
 			if (_nc.hasClass("tp-static-layer")) {
+				_._isstatic = true;
 				_._li = _nc.closest('.tp-static-layers');
 				_._slideid = "staticlayers";
 			} else {
@@ -307,7 +352,9 @@ jQuery.extend(true,_R, {
 		_._row = _._row===undefined ? _._nctype==="column" ? _._pw.closest('.rev_row') : false : _._row;
 						
 		if (_._togglelisteners===undefined && _nc.find('.rs-toggled-content')) {			
-			_._togglelisteners = true;
+			_._togglelisteners = true;			
+			if (_.actions===undefined) _nc.click(function() {_R.swaptoggleState(_nc);	})
+			
 		} else {
 			_._togglelisteners = false;
 		}
@@ -367,6 +414,7 @@ jQuery.extend(true,_R, {
 			if (im.data('ww') == undefined && im.width()>0) im.data('ww',im.width());
 			if (im.data('hh') == undefined && im.height()>0) im.data('hh',im.height());
 
+
 			var ww = im.data('ww'),
 				hh = im.data('hh'),
 				fuw = _._ba =="slide" ? opt.ulw : opt.gridwidth[opt.curWinRange],
@@ -374,6 +422,8 @@ jQuery.extend(true,_R, {
 			
 			ww =  makeArray(im.data('ww'),opt)[opt.curWinRange] || makeArray(im.data('ww'),opt) || "auto",
 			hh =  makeArray(im.data('hh'),opt)[opt.curWinRange] || makeArray(im.data('hh'),opt) || "auto";
+
+
 			
 			var wful = ww==="full" || ww === "full-proportional",
 				hful = hh==="full" || hh === "full-proportional";
@@ -397,6 +447,7 @@ jQuery.extend(true,_R, {
 			ww = ww===undefined ? 0 : ww;
 			hh = hh===undefined ? 0 : hh;
 			
+
 			if (_._responsive!=="off") {							
 				if (_._ba!="grid" && wful) 
 					if (jQuery.isNumeric(ww))
@@ -425,13 +476,43 @@ jQuery.extend(true,_R, {
 				im.css({width:ww, height:hh});				
 					
 			}
+
+			
+			if (_._ingroup) {				
+				if (ww!==undefined && !jQuery.isNumeric(ww) && ww.indexOf("%")>0)
+					punchgs.TweenLite.set([_._lw,_._pw,_._mw],{minWidth:ww});						
+				
+
+				if (hh!==undefined && !jQuery.isNumeric(hh) && hh.indexOf("%")>0)
+					punchgs.TweenLite.set([_._lw,_._pw,_._mw],{minHeight:hh});						
+			}
+			
 			
 		} 
+		
 
 		if (_._ba==="slide") {
 			obj.offsetx = 0;
 			obj.offsety=0;
+		} else 
+		if (_._isstatic && opt.carousel!==undefined && opt.carousel.horizontal_align!==undefined) {
+
+			switch (opt.carousel.horizontal_align) {
+				case "center":
+					obj.offsetx = 0 + (opt.ulw - opt.gridwidth[opt.curWinRange])/2;
+
+				break;
+				case "left":
+				break;
+				case "right":
+					obj.offsetx = (opt.ulw - opt.gridwidth[opt.curWinRange]);
+				break;
+			}
+			obj.offsetx = obj.offsetx<0 ? 0 : obj.offsetx;
+			
 		}
+
+
 
 		var tag = _.audio=="html5" ? "audio" : "video";
 
@@ -441,8 +522,8 @@ jQuery.extend(true,_R, {
 			_.layertype = "video";
 			if (_R.manageVideoLayer) _R.manageVideoLayer(_nc,opt,recall,internrecall);				
 			if (!recall && !internrecall) {
-				var t = _.videotype;
-				if (_R.resetVideo) _R.resetVideo(_nc,opt);					
+				var t = _.videotype;				
+				if (_R.resetVideo) _R.resetVideo(_nc,opt,obj.preset);					
 			}
 			
 			var asprat = _.aspectratio;
@@ -508,14 +589,23 @@ jQuery.extend(true,_R, {
 			   if (opt.autoHeight=="on") ovhh = opt.conh
 			   _nc.css({'width':_._gw, 'height':ovhh });			
 			}
-						
+					
+
 			if ((html5vid == false && !yvcover) || ((_.forcecover!=1 && !_nc.hasClass('fullscreenvideo') && !yvcover))) {
 
 				im.width(ww);
 				im.height(hh);
-			}					
+			}	
+
+			if (_._ingroup) {				
+			if (_.videowidth!==undefined && !jQuery.isNumeric(_.videowidth) && _.videowidth.indexOf("%")>0)
+					punchgs.TweenLite.set([_._lw,_._pw,_._mw],{minWidth:_.videowidth});						
+			}
+
 		}	// END OF POSITION AND STYLE READ OUTS OF VIDEO
-	
+		
+
+
 		// RESPONIVE HANDLING OF CURRENT LAYER		
 		calcCaptionResponsive(_nc,opt,0,_._responsive);
 
@@ -553,8 +643,12 @@ jQuery.extend(true,_R, {
 			elx = _.arrobj.elx.length==0 ? 0 : _.arrobj.elx,
 			ely = _.arrobj.ely.length==0 ? 0 : _.arrobj.ely;
 		
+
+	
+	
 		_.eow = _nc.outerWidth(true);
 		_.eoh = _nc.outerHeight(true);
+
 
 		
 		
@@ -581,7 +675,7 @@ jQuery.extend(true,_R, {
 			crw=_._lig.width(); 
 			crh=_._lig.height();
 			obj.offsetx =0;
-			obj.offsety = 0;			
+			obj.offsety = 0;				
 		}
 
 		
@@ -589,11 +683,12 @@ jQuery.extend(true,_R, {
 		elx = elx==="center" || elx==="middle" ? (crw/2 - _.eow/2) +  hofs : elx==="left" ? hofs : elx==="right" ? (crw - _.eow) - hofs : _._respoffset !=="off"  ? elx * opt.bw : elx;
 		ely = ely=="center" || ely=="middle" ? 	(crh/2 - _.eoh/2) + vofs : ely =="top" ? vofs : ely=="bottom" ? (crh - _.eoh)-vofs : _._respoffset !=="off"  ? ely*opt.bw : ely;			
 		
-		if (rtl && !_.slidelink) 
+		if (rtl && !_._slidelink) 
 			elx = elx + _.eow;
 	
-		if (_.slidelink) elx=0;
+		if (_._slidelink) elx=0;
 
+		
 		_.calcx = (parseInt(elx,0)+obj.offsetx);
 		_.calcy = (parseInt(ely,0)+obj.offsety);
 
@@ -616,7 +711,11 @@ jQuery.extend(true,_R, {
 		if (_.blendmode!==undefined)
 			punchgs.TweenLite.set(_._pw,{mixBlendMode:_.blendmode});
 		
-				
+		/*if (_._nctype==="svg") {
+			_.svgcontainer = _.svgcontainer===undefined ? _nc.find('.tp-svg-innercontainer') : _.svgcontainer;
+			punchgs.TweenLite.set(_.svgcontainer,{ ... });
+		}*/
+
 		//SET ROW BROKEN / TABLE  FORMED
 		if (_._nctype==="row") {
 			if (_.columnbreak<=opt.curWinRange) {
@@ -628,6 +727,15 @@ jQuery.extend(true,_R, {
 
 		// LOOP ANIMATION WIDTH/HEIGHT 
 		if (_.loopanimation=="on") punchgs.TweenLite.set(_._lw,{minWidth:_.eow,minHeight:_.eoh});
+
+		// ELEMENT IN GROUPS WITH % WIDTH AND HEIGHT SHOULD EXTEND PARRENT SIZES		
+		if (_._ingroup) {				
+			if (_._groupw!==undefined && !jQuery.isNumeric(_._groupw) && _._groupw.indexOf("%")>0)
+				punchgs.TweenLite.set([_._lw,_._pw,_._mw],{minWidth:_._groupw});						
+			
+			if (_._grouph!==undefined && !jQuery.isNumeric(_._grouph) && _._grouph.indexOf("%")>0)
+				punchgs.TweenLite.set([_._lw,_._pw,_._mw],{minHeight:_._grouph});						
+		}
 
 	},
 
@@ -744,9 +852,15 @@ jQuery.extend(true,_R, {
 				_.hoveranim = convertHoverStyle(_.hoveranim,_.frames[_.hoverframeindex].style);			
 				
 				if ($svg.svg) {
-					var $svghover = setSVGAnimObject(_.svg_hover,newSVGHoverAnimObject());
-					if ($hover.anim.color!=undefined) 
-						$svghover.anim.fill = $hover.anim.color;										
+
+					var $svghover = setSVGAnimObject(_.svg_hover,newSVGHoverAnimObject());					
+					if (_.hoveranim.anim.color!=undefined) {
+						$svghover.anim.fill = _.hoveranim.anim.color;	
+						_.idlesvg.anim.fill = $svg.svg.css("color");
+					}
+
+
+						
 					_.hoversvg = $svghover;
 				}
 				_nc.hover(function(e) {					
@@ -756,39 +870,51 @@ jQuery.extend(true,_R, {
 				 		nc = obj.caption,				 		
 				 		_ = nc.data(),
 				 		frame = _.frames[_.hoverframeindex],				 		
-				 		animended = true; //tl.ct>=tl.ffe;
+				 		animended = true;
 				 					 	
-				 	_.forcehover = frame.force;
-				 //	animended = _.forcehover===true ? true : _.triggeredtimeline!==undefined ? _.triggeredtimeline.progress()==1 : animended;
-				 					 	
-				 	if (animended) {	
-				 		
+				 	_.forcehover = frame.force;				 
+				 	
+				 	if (animended) {					 		
 					 	_.hovertimelines.item = punchgs.TweenLite.to(nc,frame.speed/1000,_.hoveranim.anim);					 	
 					 	if (_.hoverzIndex || (_.hoveranim.anim && _.hoveranim.anim.zIndex)) {
 							_.basiczindex = _.basiczindex===undefined ? _.cssobj.zIndex : _.basiczindex;
-							_.hoverzIndex = _.hoverzIndex===undefined ? _.hoveranim.anim.zIndex : _.hoverzIndex;					
+							_.hoverzIndex = _.hoverzIndex===undefined ? _.hoveranim.anim.zIndex : _.hoverzIndex;			
+							_.inhoverinanimation = true;		
+							if (frame.speed===0) _.inhoverinanimation= false;
 					 		_.hovertimelines.pwhoveranim = punchgs.TweenLite.to(_._pw,frame.speed/1000,{overwrite:"auto",zIndex:_.hoverzIndex});
+					 		_.hovertimelines.pwhoveranim.eventCallback("onComplete",function(_) {
+					 			
+				 			_.inhoverinanimation=false;;
+				 		},[_])
 					 	}
-					 	if ($svg.svg)  
-					 		_.hovertimelines.svghoveranim = punchgs.TweenLite.to($svg.svg,frame.speed/1000,_.hoversvg.anim);		
+					 	if ($svg.svg)  					 		
+					 		_.hovertimelines.svghoveranim = punchgs.TweenLite.to([$svg.svg, $svg.svg.find('path')],frame.speed/1000,_.hoversvg.anim);							 	
 					 	_.hoveredstatus = true;
 					 }
 				 },
 				 function(e) {
+				 	
 				 	var obj = {caption:jQuery(e.currentTarget), opt:opt, firstframe : "frame_0", lastframe:"frame_999"},
 				 		tl = getTLInfos(obj),
 				 		nc = obj.caption,
 				 		_ = nc.data(),
 				 		frame = _.frames[_.hoverframeindex],
-				 		animended = true; //tl.ct>=tl.ffe;
+				 		animended = true; 
 
-				 //	animended = _.forcehover===true ? true : _.triggeredtimeline!==undefined ? _.triggeredtimeline.progress()==1 : animended;				 	
+				 	
 				 	if (animended) {	
 				 		_.hoveredstatus = false;	
-				 		
+				 		_.inhoveroutanimation = true;
+				 		_.hovertimelines.item.pause();
 				 		_.hovertimelines.item = punchgs.TweenLite.to(nc,frame.speed/1000,jQuery.extend(true,{},_._gsTransformTo));
+				 	
+				 		if (frame.speed==0) _.inhoveroutanimation= false;				 		
+				 		_.hovertimelines.item.eventCallback("onComplete",function(_) {
+				 	
+				 			_.inhoveroutanimation=false;;
+				 		},[_])
 				 		if (_.hovertimelines.pwhoveranim!==undefined) _.hovertimelines.pwhoveranim = punchgs.TweenLite.to(_._pw,frame.speed/1000,{overwrite:"auto",zIndex:_.basiczindex}); 
-				 		if ($svg.svg) punchgs.TweenLite.to($svg.svg,frame.speed/1000,_.idlesvg.anim);	 
+				 		if ($svg.svg) punchgs.TweenLite.to([$svg.svg, $svg.svg.find('path')],frame.speed/1000,_.idlesvg.anim);	 
 				 	}
 				 });
 			}
@@ -872,6 +998,7 @@ jQuery.extend(true,_R, {
 			verylastframe = _.frames.length-1,
 			$split = _.frames[frame_index].split;
 
+		
 		if (_.hoverframeindex!==-1 &&  _.hoverframeindex==verylastframe) verylastframe=verylastframe-1;
 		
 		tweens.content =  new punchgs.TimelineLite({align:"normal"});
@@ -915,7 +1042,7 @@ jQuery.extend(true,_R, {
 			$from.speed = _.frames[frame_index].speed === undefined ? $from.speed :   _.frames[frame_index].speed;			
 			$from.anim.x = $from.anim.x * opt.bw || getBorderDirections($from.anim.x,opt,_.eow,_.eoh,_.calcy,_.calcx, "horizontal" );
 	  		$from.anim.y = $from.anim.y * opt.bw || getBorderDirections($from.anim.y,opt,_.eow,_.eoh,_.calcy,_.calcx, "vertical" );
-
+	  	
 	  	}
 
 	  	if ($to!==undefined) {				
@@ -924,6 +1051,7 @@ jQuery.extend(true,_R, {
 			$to.anim.x = $to.anim.x * opt.bw || getBorderDirections($to.anim.x,opt,_.eow,_.eoh,_.calcy,_.calcx, "horizontal" );
 	  		$to.anim.y = $to.anim.y * opt.bw || getBorderDirections($to.anim.y,opt,_.eow,_.eoh,_.calcy,_.calcx, "vertical" );
 
+	  		
 	  	} 
 
 	  	
@@ -941,21 +1069,28 @@ jQuery.extend(true,_R, {
 	  		
 			$to.speed = _.frames[frame_index].speed === undefined ||  _.frames[frame_index].speed==="inherit" ? _.frames[_.inframeindex].speed : _.frames[frame_index].speed;
 			$to.anim.ease = _.frames[frame_index].ease === undefined ||  _.frames[frame_index].ease==="inherit" ? _.frames[_.inframeindex].ease : _.frames[frame_index].ease;
-			$to.anim.overwrite ="auto";
+			$to.anim.overwrite ="auto";			
 	  	}
+
 
 	  	// IN CASE FIRST FRAME REACHED
 	  	if (frame_index===0 && !obj.fromcurrentstate) {		  	
+	  		
 	  		if (animobject != _nc) {		  		
-				var oldease = $to.anim.ease;  	 
+				var old = jQuery.extend({},$to.anim,true);				
 			  	timeline.add(punchgs.TweenLite.set(_nc, $to.anim),label);
 			  	$to = newAnimObject();	
-			  	$to.ease = oldease;
+			  	$to.ease = old.ease;
+			  	if (old.filter!==undefined) $to.anim.filter = old.filter;
+			  	if (old["-webkit-filter"]!==undefined) $to.anim["-webkit-filter"] = old["-webkit-filter"];			  	
 			}
+
 
 			$from.anim.visibility = "hidden";
 			$from.anim.immediateRender = true;	
 			$to.anim.visibility = "visible";
+
+
 			//_nc.data('speed',$from.speed);
 			//_nc.data('ease',$to.anim.ease);					
 		} else 
@@ -969,28 +1104,34 @@ jQuery.extend(true,_R, {
 		}
 		
 
+
 	
-		if (frame_index===0 && !obj.fromcurrentstate) 		
+		if (frame_index===0 && !obj.fromcurrentstate) {				
 			timeline.add(tweens.content.staggerFromTo(animobject,$from.speed/1000,$from.anim,$to.anim,$elemdelay),label);												
-		else
+		} else {
 			timeline.add(tweens.content.staggerTo(animobject,$to.speed/1000,$to.anim,$elemdelay),label);
-				
-		if ($mask_to!==undefined && $mask_to!==false) {			
+		}
+		
+		
+		
+		if ($mask_to!==undefined && $mask_to!==false && (frame_index!==0 || !obj.ignorefirstframe)) {			
 			$mask_to.anim.ease = $mask_to.anim.ease === undefined || $mask_to.anim.ease==="inherit" ? _.frames[0].ease : $mask_to.anim.ease;
 			$mask_to.anim.overflow = "hidden";
 			$mask_to.anim.x = $mask_to.anim.x * opt.bw || getBorderDirections($mask_to.anim.x,opt,_.eow,_.eoh,_.calcy,_.calcx,"horizontal");
-		  	$mask_to.anim.y = $mask_to.anim.y * opt.bw || getBorderDirections($mask_to.anim.y,opt,_.eow,_.eoh,_.calcy,_.calcx,"vertical");
+		  	$mask_to.anim.y = $mask_to.anim.y * opt.bw || getBorderDirections($mask_to.anim.y,opt,_.eow,_.eoh,_.calcy,_.calcx,"vertical");		
 		}
 						
-		if (frame_index===0 && $mask_from && $mask_from!==false && !obj.fromcurrentstate) {
+		if ((frame_index===0 && $mask_from && $mask_from!==false && !obj.fromcurrentstate) || (frame_index===0 && obj.ignorefirstframe)) {
 			$mask_to =  new Object();
 			$mask_to.anim = new Object();
 			$mask_to.anim.overwrite = "auto";	
 			$mask_to.anim.ease = $to.anim.ease;					
 			$mask_to.anim.x = $mask_to.anim.y = 0;
-			$mask_from.anim.x = $mask_from.anim.x * opt.bw || getBorderDirections($mask_from.anim.x,opt,_.eow,_.eoh,_.calcy,_.calcx,"horizontal");
-			$mask_from.anim.y = $mask_from.anim.y * opt.bw || getBorderDirections($mask_from.anim.y,opt,_.eow,_.eoh,_.calcy,_.calcx,"vertical");		  						
-			$mask_from.anim.overflow ="hidden";					
+			if ($mask_from && $mask_from!==false) {
+				$mask_from.anim.x = $mask_from.anim.x * opt.bw || getBorderDirections($mask_from.anim.x,opt,_.eow,_.eoh,_.calcy,_.calcx,"horizontal");
+				$mask_from.anim.y = $mask_from.anim.y * opt.bw || getBorderDirections($mask_from.anim.y,opt,_.eow,_.eoh,_.calcy,_.calcx,"vertical");		  						
+				$mask_from.anim.overflow ="hidden";
+			}			
 		} else
 		if (frame_index===0) 
 			timeline.add(tweens.mask.set(_._mw,{overflow:"visible"}),label);
@@ -999,11 +1140,11 @@ jQuery.extend(true,_R, {
 
 
 		
-		if ($mask_from!==undefined && $mask_to!==undefined && $mask_from!==false && $mask_to!==false) 		
+		if ($mask_from!==undefined && $mask_to!==undefined && $mask_from!==false && $mask_to!==false) 			
 			timeline.add(tweens.mask.fromTo(_._mw,$from.speed/1000,$mask_from.anim,$mask_to.anim,$elemdelay),label);			
 		else 
-		if ($mask_to!==undefined && $mask_to!==false)
-			timeline.add(tweens.mask.to(_._mw,$to.speed/1000,$mask_to.anim,$elemdelay),label);
+		if ($mask_to!==undefined && $mask_to!==false)			
+			timeline.add(tweens.mask.to(_._mw,$to.speed/1000,$mask_to.anim,$elemdelay),label);		
 				
 		timeline.addLabel(label+"_end");
 		
@@ -1022,7 +1163,8 @@ jQuery.extend(true,_R, {
 			data.layer = _nc;
 			data.eventtype = frame_index===0 ? "enterstage" : frame_index===_.outframeindex ? "leavestage" : "framestarted";
 			data.layertype = _nc.data('layertype');
-			_nc.data('active',true);
+			_.active = true;
+			//_nc.data('active',true);
 									
 			//_.idleanimadded = false;
 			data.frame_index = frame_index;			
@@ -1046,7 +1188,7 @@ jQuery.extend(true,_R, {
 							_R.endMoveCaption({caption:jQuery(ncobj.dchildren[q]), opt:opt, checkchildrens:true});
 					}						
 			}		
-			punchgs.TweenLite.set(pw,{visibility:"visible"});
+			punchgs.TweenLite.set(pw,{visibility:"visible"});			
 			_.current_frame = frame_index;
 			_.current_timeline = tl;
 			_.current_timeline_time = tl.time();
@@ -1062,7 +1204,7 @@ jQuery.extend(true,_R, {
 		tweens.content.eventCallback("onUpdate",function(label,id,pw,_,tl,frame_index,toanim,ust) {	
 			
 			if (_._nctype==="column") setColumnBgDimension(_nc,opt);
-			punchgs.TweenLite.set(pw,{visibility:"visible"});	
+			punchgs.TweenLite.set(pw,{visibility:"visible"});				
 			_.current_frame = frame_index;
 			_.current_timeline = tl;
 			_.current_timeline_time = tl.time();
@@ -1089,7 +1231,8 @@ jQuery.extend(true,_R, {
 			data.layer = _nc;
 			data.eventtype = frame_index===0 ? "enteredstage" : frame_index===frame_max-1 || frame_index===verylastframe ? "leftstage" : "frameended";
 			data.layertype = _nc.data('layertype');
-			data.layersettings = _nc.data();			  	
+			data.layersettings = _nc.data();	
+
 			opt.c.trigger("revolution.layeraction",[data]);			  	
 			if (data.eventtype!=="leftstage") _R.animcompleted(_nc,opt);
 			if (data.eventtype==="leftstage") 
@@ -1099,8 +1242,9 @@ jQuery.extend(true,_R, {
 				punchgs.TweenLite.set(_._cbgc_man,{display:"none"});
 				punchgs.TweenLite.set(_._cbgc_auto,{display:"block"});
 			}				
-			if (data.eventtype === "leftstage") {
-				punchgs.TweenLite.set(pw,{visibility:"hidden"});
+			if (data.eventtype === "leftstage") {							
+				_.active = false;
+				punchgs.TweenLite.set(pw,{visibility:"hidden",overwrite:"auto"});				
 				_.animdirection="out";
 				_.visibleelement=false;
 				_R.unToggleState(_.layertoggledby);
@@ -1162,17 +1306,23 @@ jQuery.extend(true,_R, {
 			i=0;
 		
 
+
 		for (var k in _.frames) {			
 			if (_.frames[k].framename === obj.frame) frameindex = i;
 			i++;
 		}
 		
 
+		
+		if (_.triggeredtimeline!==undefined) _.triggeredtimeline.pause();
 		_.triggeredtimeline = new punchgs.TimelineLite;
 		nc.timeline.pause();
 
 		var fcs = _.visibleelement===true ? true : false;
-		_.triggeredtimeline = _R.createFrameOnTimeline({caption:obj.caption, timeline : _.triggeredtimeline, label:"triggered", frameindex : frameindex, updateStaticTimeline:true, opt:obj.opt, fromcurrentstate:fcs}).play();
+
+		
+		_.triggeredtimeline = _R.createFrameOnTimeline({caption:obj.caption, timeline : _.triggeredtimeline, label:"triggered", frameindex : frameindex, updateStaticTimeline:true, opt:obj.opt, ignorefirstframe:true, fromcurrentstate:fcs}).play();
+		
 		
 		
 		//nc.timeline.play(obj.frame);		
@@ -1202,11 +1352,18 @@ jQuery.extend(true,_R, {
 		if (allcaptions)
 			jQuery.each(allcaptions,function(i) {
 			    var _nc=jQuery(this);
-				killCaptionLoops(_nc);
-				clearTimeout(_nc.data('videoplaywait'));				
-				_R.endMoveCaption({caption:_nc,opt:opt, currentslide:slideindex});					
-				if (_R.removeMediaFromList) _R.removeMediaFromList(_nc,opt);
-				opt.lastplayedvideos = [];
+			    if (opt.sliderType==="carousel" && opt.carousel.showLayersAllTime==="on") {			    	
+					clearTimeout(_nc.data('videoplaywait'));
+					if (_R.stopVideo) _R.stopVideo(_nc,opt);
+					if (_R.removeMediaFromList) _R.removeMediaFromList(_nc,opt);
+					opt.lastplayedvideos = [];
+			    } else {
+			    	killCaptionLoops(_nc);			    	
+					clearTimeout(_nc.data('videoplaywait'));				
+					_R.endMoveCaption({caption:_nc,opt:opt, currentslide:slideindex});					
+					if (_R.removeMediaFromList) _R.removeMediaFromList(_nc,opt);
+					opt.lastplayedvideos = [];
+				}
 				
 			});		
 	}
@@ -1274,6 +1431,8 @@ var newAnimObject = function(a) {
 	a.anim.visibility = a.anim.visibility===undefined ? "visible" : a.anim.visibility;
 	a.anim.overwrite = a.anim.overwrite===undefined ? "auto"  : a.anim.overwrite;
 	a.speed = a.speed===undefined ? 0.3 : a.speed;
+	a.filter = a.filter===undefined ? "blur(0px) grayscale(0px)" : a.filter;
+	a["-webkit-filter"] = a["-webkit-filter"]===undefined ? "blur(0px) grayscale(0px)" : a["-webkit-filter"];
 
 
 	return a;
@@ -1373,13 +1532,14 @@ var getAnimDatas = function(frm,data,reversed) {
 		return o;		
 
 
-	var customarray = data.split(';');	
+	var customarray = data.split(';'),
+		tmpf="";
 	
 	if (customarray)	
 		jQuery.each(customarray,function(index,pa) {
 			var p = pa.split(":")
 			var w = p[0],
-				v = p[1];
+				v = p[1];				
 			
 			
 			if (reversed && v!=undefined && v.length>0 && v.match(/\(R\)/)) {							
@@ -1402,6 +1562,9 @@ var getAnimDatas = function(frm,data,reversed) {
 				if (w=="scaleX" || w=="sX") o.anim.scaleX = animDataTranslator(v,o.anim.scaleX);
 				if (w=="scaleY" || w=="sY") o.anim.scaleY = animDataTranslator(v,o.anim.scaleY);
 				if (w=="opacity" || w=="o") o.anim.opacity = animDataTranslator(v,o.anim.opacity);
+				if (w=="fb") tmpf = tmpf==="" ? 'blur('+parseInt(v,0)+'px)' : tmpf+" "+'blur('+parseInt(v,0)+'px)';
+				if (w=="fg") tmpf = tmpf==="" ? 'grayscale('+parseInt(v,0)+'%)' : tmpf+" "+'grayscale('+parseInt(v,0)+'%)';
+								
 				if (o.anim.opacity===0) o.anim.autoAlpha = 0;
 
 				o.anim.opacity = o.anim.opacity == 0 ? 0.0001 : o.anim.opacity;
@@ -1415,12 +1578,16 @@ var getAnimDatas = function(frm,data,reversed) {
 				if (w=="transformPerspective" || w=="tP") o.anim.transformPerspective=parseInt(v,0);
 				if (w=="speed" || w=="s") o.speed = parseFloat(v);	
 				
-				//if (w=="ease" || w=="e") o.anim.ease = v;
+				//if (w=="ease" || w=="e") o.anim.ease = v;				
 			}
 
 		})	
+	if (tmpf!=="") {
+		o.anim['-webkit-filter'] = tmpf;
+		o.anim['filter'] = tmpf;
+	}
 
-		
+	
 	return o;
 }
 
@@ -1542,7 +1709,9 @@ var getcssParams = function(nc,level) {
 
 	obj.basealign = nc.data('basealign') || "grid";
 	
+	
 	obj.fontSize = gp ? pc.data('fontsize')===undefined ?  parseInt(pc.css('fontSize'),0) || 0 : pc.data('fontsize')  :  nc.data('fontsize')===undefined ?  parseInt(nc.css('fontSize'),0) || 0 : nc.data('fontsize'); 
+	
 	obj.fontWeight = gp ? pc.data('fontweight')===undefined ?  parseInt(pc.css('fontWeight'),0) || 0 : pc.data('fontweight')  :  nc.data('fontweight')===undefined ?  parseInt(nc.css('fontWeight'),0) || 0 : nc.data('fontweight'); 
 	obj.whiteSpace = gp ? pc.data('whitespace')===undefined ?  pc.css('whitespace') || "normal" : pc.data('whitespace')  :  nc.data('whitespace')===undefined ?  nc.css('whitespace') || "normal" : nc.data('whitespace'); 
 	obj.textAlign = gp ? pc.data('textalign')===undefined ?  pc.css('textalign') || "inherit" : pc.data('textalign')  :  nc.data('textalign')===undefined ?  nc.css('textalign') || "inherit" : nc.data('textalign'); 
@@ -1596,29 +1765,33 @@ var getcssParams = function(nc,level) {
 		obj.man = nc.data('man')===undefined ? parseInt(nc.css('-ms-animation-transition'),0) || "none" : nc.data('man');
 		obj.ani = nc.data('ani')===undefined ? parseInt(nc.css('transition'),0) || "none" : nc.data('ani');
 	}
-		
-	obj.styleProps = nc.css(["background-color",							 
-							 "border-top-color",
-							 "border-bottom-color",
-							 "border-right-color",
-							 "border-left-color",							
-							 "border-top-style",
-							 "border-bottom-style",
-							 "border-left-style",
-							 "border-right-style",							
-							 "border-left-width",
-							 "border-right-width",
-							 "border-bottom-width",
-							 "border-top-width",							 
-							 "color",							 
-							 "text-decoration",
-							 "font-style",							 
-							 "borderTopLeftRadius",
-							 "borderTopRightRadius",
-							 "borderBottomLeftRadius",
-							 "borderBottomRightRadius"							
-							 ]);		
 	
+	
+	obj.styleProps = {	borderTopLeftRadius : nc[0].style.borderTopLeftRadius,
+						borderTopRightRadius : nc[0].style.borderTopRightRadius,
+						borderBottomRightRadius : nc[0].style.borderBottomRightRadius,
+						borderBottomLeftRadius : nc[0].style.borderBottomLeftRadius,
+						"background-color" : nc[0].style["background-color"],
+						"border-top-color" : nc[0].style["border-top-color"],
+						"border-bottom-color" : nc[0].style["border-bottom-color"],
+						"border-right-color" : nc[0].style["border-right-color"],
+						"border-left-color" : nc[0].style["border-left-color"],
+						"border-top-style" : nc[0].style["border-top-style"],
+						"border-bottom-style" : nc[0].style["border-bottom-style"],
+						"border-left-style" : nc[0].style["border-left-style"],
+						"border-right-style" : nc[0].style["border-right-style"],
+						"border-left-width" : nc[0].style["border-left-width"],
+						"border-right-width" : nc[0].style["border-right-width"],
+						"border-bottom-width" : nc[0].style["border-bottom-width"],
+						"border-top-width" : nc[0].style["border-top-width"],
+						"color" : nc[0].style["color"],		
+						"text-decoration" : nc[0].style["text-decoration"],
+						"font-style" : nc[0].style["font-style"]
+					};
+	
+	if (obj.styleProps.color=="") 
+		obj.styleProps.color = nc.css("color");		
+
 	return obj;
 }
 
@@ -1647,8 +1820,14 @@ var minmaxconvert = function(a,m,r,fr) {
 var calcCaptionResponsive = function(nc,opt,level,responsive) {
 	
 	var _=nc.data();
+
+	_ = _===undefined ? {} : _;
+
 	try{
-		if (nc[0].nodeName=="BR" || nc[0].tagName=="br") 			
+		if (nc[0].nodeName=="BR" || nc[0].tagName=="br" 
+			/*|| nc[0].nodeName=="b" || nc[0].tagName=="b" ||
+			nc[0].nodeName=="strong" || nc[0].tagName=="STRONG"*/
+			) 			
 			return false;				
 	} catch(e) {
 
@@ -1713,12 +1892,43 @@ var calcCaptionResponsive = function(nc,opt,level,responsive) {
 				minw = minmaxconvert(obj.minWidth,bw,"0px",winw),
 				minh = minmaxconvert(obj.minHeight,bh,"0px",winh);
 			
+			
+
 			// TWEEN FIX ISSUES
 			minw=minw===undefined ? 0 : minw;
 			minh=minh===undefined ? 0 : minh;
 			maxw=maxw===undefined ? "none" : maxw;
 			maxh=maxh===undefined ? "none" : maxh;
 			
+
+			
+			if (_._isgroup) {
+				
+				if (minw==="#1/1#")  minw = maxw = winw;
+				if (minw==="#1/2#")  minw = maxw = winw / 2;
+				if (minw==="#1/3#")  minw = maxw = winw/3;				
+
+				if (minw==="#1/4#")  minw = maxw = winw / 4;
+				if (minw==="#1/5#")  minw = maxw = winw / 5;
+				if (minw==="#1/6#")  minw = maxw = winw / 6;
+
+				if (minw==="#2/3#")  minw = maxw = (winw / 3) * 2;
+				if (minw==="#3/4#")  minw = maxw = (winw / 4) * 3;
+				if (minw==="#2/5#")  minw = maxw = (winw / 5) * 2;
+				if (minw==="#3/5#")  minw = maxw = (winw / 5) * 3;
+				if (minw==="#4/5#")  minw = maxw = (winw / 5) * 4;
+				
+				if (minw==="#3/6#")  minw = maxw = (winw / 6) * 3;
+				if (minw==="#4/6#")  minw = maxw = (winw / 6) * 4;
+				if (minw==="#5/6#")  minw = maxw = (winw / 6) * 5;
+
+			}
+
+			if (_._ingroup) {
+				_._groupw = minw;
+				_._grouph = minh;
+			}
+
 			punchgs.TweenLite.set(nc,{
 				 maxWidth:maxw,
 				 maxHeight:maxh,

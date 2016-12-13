@@ -1,6 +1,6 @@
 /********************************************
  * REVOLUTION 5.2 EXTENSION - NAVIGATION
- * @version: 1.3.1 (25.10.2016)
+ * @version: 1.3.2 (25.10.2016)
  * @requires jquery.themepunch.revolution.js
  * @author ThemePunch
 *********************************************/
@@ -11,7 +11,7 @@ var _R = jQuery.fn.revolution,
 	extension = {	alias:"Navigation Min JS",
 					name:"revolution.extensions.navigation.min.js",
 					min_core: "5.3",
-					version:"1.3.1"
+					version:"1.3.2"
 			  };
 
 
@@ -546,6 +546,8 @@ var isme = function (a,c,e) {
 };
 
 // 	-	SET THE SWIPE FUNCTION //	
+
+
 var swipeAction = function(container,opt,vertical) {	
 		
 	//container[0].opt = opt;
@@ -553,6 +555,8 @@ var swipeAction = function(container,opt,vertical) {
 	// TOUCH ENABLED SCROLL
 	var _ = opt.carousel;
 	jQuery(".bullet, .bullets, .tp-bullets, .tparrows").addClass("noSwipe");
+		
+
 	
 	_.Limit = "endless";			
 	var notonbody =  _ISM || _R.get_browser()==="Firefox",
@@ -587,7 +591,7 @@ var swipeAction = function(container,opt,vertical) {
 				starget = jQuery(this).attr('class'),
 				istt = starget.match(/tp-tabs|tp-thumb/gi) ? true : false;
 								
-
+			
 				
 			// SWIPE OVER SLIDER, TO SWIPE SLIDES IN CAROUSEL MODE
 			if (opt.sliderType==="carousel" && 
@@ -605,10 +609,11 @@ var swipeAction = function(container,opt,vertical) {
 						}
 						_.overpull = "none";																						
 						_.wrap.addClass("dragged");		
+						
 					break;
 					case "move":	
 										
-
+							opt.c.find('.tp-withaction').addClass("tp-temporarydisabled");
 							_.slide_offset = _.infinity==="off" ? _.slide_globaloffset + distance : _R.simp(_.slide_globaloffset + distance, _.maxwidth);
 							
 							if (_.infinity==="off") {
@@ -634,7 +639,10 @@ var swipeAction = function(container,opt,vertical) {
 							_R.carouselToEvalPosition(opt,direction);							
 							opt.dragStartedOverSlider = false;
 							opt.dragStartedOverThumbs = false;
-							opt.dragStartedOverTabs = false;																									
+							opt.dragStartedOverTabs = false;	
+							setTimeout(function() {
+								opt.c.find('.tp-withaction').removeClass("tp-temporarydisabled");							
+							},19);
 					break;
 				}
 			}  else

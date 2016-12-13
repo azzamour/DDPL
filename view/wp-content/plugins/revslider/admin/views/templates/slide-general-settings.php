@@ -161,7 +161,7 @@ $slide_general_addon = apply_filters('revslider_slide_settings_addons', array(),
 </nav>
 
 		
-<div class="editor_buttons_wrapper  postbox unite-postbox" style="max-width:100% !important; min-width:1200px !important;">
+<div id="slide_main_settings_wrapper" class="editor_buttons_wrapper  postbox unite-postbox">
 	<div class="box-closed tp-accordion" style="border-bottom:5px solid #ddd;">
 		<ul class="rs-slide-settings-tabs">
 			<?php
@@ -335,7 +335,7 @@ $slide_general_addon = apply_filters('revslider_slide_settings_addons', array(),
 								<?php _e('example: T8--OggjJKQ', 'revslider'); ?>
 								<div class="tp-clearfix"></div>
 								<label style="min-width:180px"><?php _e("Cover Image:",'revslider'); ?></label>
-								<span id="youtube-image-picker"></span>
+								<span id="youtube-image-picker"><a href="javascript:void(0)" id="button_change_image_yt" class="button-primary revgreen" ><i class="fa-icon-photo"></i><?php _e("YouTube Video Poster", 'revslider'); ?></a></span>
 							</span>
 							<div class="tp-clearfix"></div>
 							
@@ -635,7 +635,7 @@ $slide_general_addon = apply_filters('revslider_slide_settings_addons', array(),
 					<span id="mainbg-sub-filters" style="display:none">
 						<div style="display:none; margin-bottom: 10px;">																	
 							<select id="media-filter-type" name="media-filter-type">
-								<option value="none">No Filter</option>
+								<option value="none"><?php _e('No Filter', 'revslider'); ?></option>
 									<option <?php selected($mediafilter, '_1977'); ?> value="_1977">1977</option>
 									<option <?php selected($mediafilter, 'aden'); ?> value="aden">Aden</option>
 									<option <?php selected($mediafilter, 'brooklyn'); ?> value="brooklyn">Brooklyn</option>
@@ -660,7 +660,7 @@ $slide_general_addon = apply_filters('revslider_slide_settings_addons', array(),
 							</select>
 						</div>
 						<div id="inst-filter-grid">									
-							<div data-type="none" class="filter_none inst-filter-griditem selected"><div class="ifgname">No Filter</div><div class="inst-filter-griditem-img none" style="visibility: inherit; opacity: 1;"></div><div class="inst-filter-griditem-img-noeff"></div></div>
+							<div data-type="none" class="filter_none inst-filter-griditem selected"><div class="ifgname"><?php _e('No Filter', 'revslider'); ?></div><div class="inst-filter-griditem-img none" style="visibility: inherit; opacity: 1;"></div><div class="inst-filter-griditem-img-noeff"></div></div>
 							<div data-type="_1977" class="filter__1977 inst-filter-griditem "><div class="ifgname">1977</div><div class="inst-filter-griditem-img _1977" style="visibility: inherit; opacity: 1;"></div><div class="inst-filter-griditem-img-noeff"></div></div>
 							<div data-type="aden" class="filter_aden inst-filter-griditem "><div class="ifgname">Aden</div><div class="inst-filter-griditem-img aden" style="visibility: inherit; opacity: 1;"></div><div class="inst-filter-griditem-img-noeff"></div></div>
 							<div data-type="brooklyn" class="filter_brooklyn inst-filter-griditem "><div class="ifgname">Brooklyn</div><div class="inst-filter-griditem-img brooklyn" style="visibility: inherit; opacity: 1;"></div><div class="inst-filter-griditem-img-noeff"></div></div>
@@ -691,7 +691,7 @@ $slide_general_addon = apply_filters('revslider_slide_settings_addons', array(),
 						</div>
 						<div id="kenburn_wrapper" <?php echo ($kenburn_effect == 'off') ? 'style="display: none;"' : ''; ?>>						
 							<div id="ken_burn_example_wrapper">									
-								<div id="kenburn-playpause-wrapper"><i class="eg-icon-play"></i><span>PLAY</span></div><div id="kenburn-backtoidle"></div>
+								<div id="kenburn-playpause-wrapper"><i class="eg-icon-play"></i><span><?php _e('PLAY', 'revslider'); ?></span></div><div id="kenburn-backtoidle"></div>
 								<div id="ken_burn_example">								
 									<div id="ken_burn_slot_example" class="tp-bgimg defaultimg">									
 									</div>

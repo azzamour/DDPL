@@ -2256,7 +2256,7 @@ class RevSliderSlide extends RevSliderElementsBase{
 	 * 
 	 * update slide parameters in db
 	 */
-	protected function updateParamsInDB($arrUpdate = array()){
+	protected function updateParamsInDB($arrUpdate = array(), $static = false){
 		$this->validateInited();
 		
 		$this->params = apply_filters('revslider_slide_updateParamsInDB', array_merge($this->params,$arrUpdate), $this);
@@ -2264,8 +2264,12 @@ class RevSliderSlide extends RevSliderElementsBase{
 		$jsonParams = json_encode($this->params);
 		
 		$arrDBUpdate = array("params"=>$jsonParams);
-		
-		$this->db->update(RevSliderGlobals::$table_slides,$arrDBUpdate,array("id"=>$this->id));
+		if($static === false){
+			$this->db->update(RevSliderGlobals::$table_slides,$arrDBUpdate,array("id"=>$this->id));
+		}else{
+			
+			$this->db->update(RevSliderGlobals::$table_static_slides,$arrDBUpdate,array("id"=>$static));
+		}
 	}
 	
 	
@@ -2273,7 +2277,7 @@ class RevSliderSlide extends RevSliderElementsBase{
 	 * 
 	 * update current layers in db
 	 */
-	protected function updateLayersInDB($arrLayers = null){
+	protected function updateLayersInDB($arrLayers = null, $static = false){
 		$this->validateInited();
 		
 		if($arrLayers === null)
@@ -2284,8 +2288,11 @@ class RevSliderSlide extends RevSliderElementsBase{
 		
 		$jsonLayers = json_encode($arrLayers);
 		$arrDBUpdate = array("layers"=>$jsonLayers);
-		
-		$this->db->update(RevSliderGlobals::$table_slides,$arrDBUpdate,array("id"=>$this->id));
+		if($static === false){
+			$this->db->update(RevSliderGlobals::$table_slides,$arrDBUpdate,array("id"=>$this->id));
+		}else{
+			$this->db->update(RevSliderGlobals::$table_static_slides,$arrDBUpdate,array("id"=>$static));
+		}
 	} 
 	
 	
@@ -2861,13 +2868,12 @@ class RevSliderSlide extends RevSliderElementsBase{
 	 * 
 	 * replace image url's among slide image and layer images
 	 */
-	public function replaceImageUrls($urlFrom, $urlTo){
-		
+	public function replaceImageUrls($urlFrom, $urlTo, $static = false){
 		$this->validateInited();
 		
 		$isUpdated = false;
 		
-		$check = array('image', 'background_image', 'slide_thumb', 'show_alternate_image');
+		$check = array('image', 'image_url', 'background_image', 'slide_thumb', 'show_alternate_image');
 		
 		if(isset($this->params['background_type']) && $this->params['background_type'] == 'html5'){
 			$check[] = 'slide_bg_html_mpeg';
@@ -2884,8 +2890,9 @@ class RevSliderSlide extends RevSliderElementsBase{
 			}
 		}
 		
-		if($isUpdated == true)
-			$this->updateParamsInDB();
+		if($isUpdated == true){
+			$this->updateParamsInDB(array(), $static);
+		}
 		
 		
 		// update image url in layers
@@ -2954,8 +2961,9 @@ class RevSliderSlide extends RevSliderElementsBase{
 			
 		}
 		
-		if($isUpdated == true)
-			$this->updateLayersInDB();
+		if($isUpdated == true){
+			$this->updateLayersInDB(null, $static);
+		}
 		
 		do_action('revslider_slide_replaceImageUrls', $this);
 	}

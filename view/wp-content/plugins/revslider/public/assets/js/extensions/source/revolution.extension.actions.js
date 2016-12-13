@@ -1,6 +1,6 @@
 /********************************************
  * REVOLUTION 5.3 EXTENSION - ACTIONS
- * @version: 2.0.2 (25.10.2016)
+ * @version: 2.0.4 (24.11.2016)
  * @requires jquery.themepunch.revolution.js
  * @author ThemePunch
 *********************************************/
@@ -11,7 +11,7 @@ var _R = jQuery.fn.revolution,
 	extension = {	alias:"Actions Min JS",
 					name:"revolution.extensions.actions.min.js",
 					min_core: "5.3",
-					version:"2.0.2"
+					version:"2.0.4"
 			  };
 
 
@@ -38,7 +38,7 @@ if (as)
 	jQuery.each(as,function(i,a) {		
 
 		a.delay = parseInt(a.delay,0)/1000;
-		_nc.addClass("noSwipe");
+		_nc.addClass("tp-withaction");
 
 		// LISTEN TO ESC TO EXIT FROM FULLSCREEN
 		if (!opt.fullscreen_esclistener) {
@@ -115,7 +115,8 @@ if (as)
 		}
 		
 		_nc.on(a.event,function() {		
-
+			
+			if (a.event==="click" && _nc.hasClass("tp-temporarydisabled")) return false;
 			var tnc = a.layer == "backgroundvideo" ? jQuery(".active-revslide .slotholder .rs-background-video-layer") : a.layer == "firstvideo" ? jQuery(".active-revslide .tp-videolayer").first() : jQuery("#"+a.layer);
 
 			if (a.action=="stoplayer" || a.action=="togglelayer" || a.action=="startlayer") {
@@ -275,7 +276,7 @@ var actionSwitches = function(tnc,opt,a,_nc) {
 			_nc.toggleClass('rs-toggle-content-active');
 		break;
 		case "toggle_global_mute_video":			
-		    if (!_nc.hasClass("rs-toggle-content-active")) {
+		    if (opt.globalmute === true) {
 		    	opt.globalmute = false;				    	
 		    	if (opt.playingvideos != undefined && opt.playingvideos.length>0) {			
 					jQuery.each(opt.playingvideos,function(i,_nc) {							

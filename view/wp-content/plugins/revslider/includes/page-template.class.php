@@ -110,7 +110,9 @@ class RevSliderPageTemplate {
 	public function view_project_template( $template ) {
 
 		global $post;
-
+		
+		if(!isset($post->ID)) return $template;
+			
 		if (!isset($this->templates[get_post_meta( 
 			$post->ID, '_wp_page_template', true 
 		)] ) ) {

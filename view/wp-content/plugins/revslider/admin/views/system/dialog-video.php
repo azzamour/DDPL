@@ -1,9 +1,9 @@
 <?php if( !defined( 'ABSPATH') ) exit(); ?>
 
 <!-- //Youtube dialog: -->
-<div id="dialog_video" class="dialog-video" title="<?php _e('Add Video Layout', 'revslider'); ?>" style="display:none">
+<div id="dialog_video" class="dialog-video" title="<?php _e('Add Video Layer', 'revslider'); ?>" style="display:none">
 	
-	<form name="video_dialog_form" onkeypress="return event.keyCode != 13;">
+	<form id="video_dialog_form" name="video_dialog_form" onkeypress="return event.keyCode != 13;">
 		<div id="video_content" style="display:none"></div>
 
 		<div id="video-dialog-wrap">

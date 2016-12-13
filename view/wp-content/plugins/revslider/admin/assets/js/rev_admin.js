@@ -1,3 +1,6 @@
+var rs_install_slider = {};
+var rs_install_ids = [];
+var rs_install_url = false;
 var RevSliderAdmin = new function(){
 
 	var t = this;
@@ -1055,15 +1058,21 @@ var RevSliderAdmin = new function(){
 		 * add Template Slider through Import. Check for zip name
 		 **/
 		jQuery('body').on('click', '.template_slider_item_reimport, .install_template_slider', function(){
-			
-			if(jQuery(this).hasClass('deny_download')){
-				alert(rev_lang.this_template_requires_version+' '+jQuery(this).data('versionneed')+' '+rev_lang.of_slider_revolution);
+			var _t = jQuery(this);
+
+			jQuery('#import_dialog_box').data('requested_slide',_t.data('title'));
+
+			if(_t.hasClass('deny_download')){
+				alert(rev_lang.this_template_requires_version+' '+_t.data('versionneed')+' '+rev_lang.of_slider_revolution);
 				return false;
 			}
 			
+			var mdata = {};
+			mdata.zip = _t.data('zipname');
+			mdata.uid = _t.data('uid');
+			mdata.package = 'false';
+			
 			//modify the dialog with some informations 
-			jQuery('.rs-zip-name').text(jQuery(this).data('zipname'));
-			jQuery('.rs-uid').val(jQuery(this).data('uid'));
 			
 			//from server or from local file
 			
@@ -1082,11 +1091,15 @@ var RevSliderAdmin = new function(){
 						jQuery(".input_import_slider").val('');
 						jQuery('.rs-import-slider-button').hide();
 						
+						jQuery('.rs-zip-name').text(mdata.zip);
+						jQuery('.rs-uid').val(mdata.uid);
+						jQuery('.rs-package').val(mdata['package']); //set that the package needs to be installed
+						
 						jQuery("#dialog_import_template_slider").dialog({
 							modal:true,
 							resizable:false,
 							width:600,
-							height:400,
+							height:450,
 							closeOnEscape:true,
 							dialogClass:"tpdialogs",
 							create:function(ui) {				
@@ -1108,8 +1121,8 @@ var RevSliderAdmin = new function(){
 								jQuery('#dialog_import_template_slider_page_template').dialog({
 									modal:true,
 									resizable:false,
-									title:'Import',
-									width:350,
+									title:'Create Blank Demo Page',
+									width:450,
 									height:200,
 									closeOnEscape:true,
 									dialogClass:"tpdialogs",
@@ -1118,24 +1131,14 @@ var RevSliderAdmin = new function(){
 									},
 									buttons:{
 										'Yes':function(){
+											import_template_online_slider(mdata, 'true');
 											
-											jQuery('#rs-import-template-from-server').find('.rs-page-creation').val('true');
-											//show please wait
-											showWaitAMinute({fadeIn:300,text:rev_lang.please_wait_a_moment});
-											
-											//get from server
-											jQuery('#rs-import-template-from-server').submit();
 											jQuery(this).dialog("close");
 											jQuery("#dialog_import_template_slider_from").dialog("close");
 										},
 										'No':function(){
-											jQuery('#rs-import-template-from-server').find('.rs-page-creation').val('false');
+											import_template_online_slider(mdata, 'false');
 											
-											//show please wait
-											showWaitAMinute({fadeIn:300,text:rev_lang.please_wait_a_moment});
-											
-											//get from server
-											jQuery('#rs-import-template-from-server').submit();
 											jQuery(this).dialog("close");
 											jQuery("#dialog_import_template_slider_from").dialog("close");
 										}
@@ -1143,13 +1146,8 @@ var RevSliderAdmin = new function(){
 									
 								});
 							}else{
-								jQuery('#rs-import-template-from-server').find('.rs-page-creation').val('false');
+								import_template_online_slider(mdata, 'false');
 								
-								//show please wait
-								showWaitAMinute({fadeIn:300,text:rev_lang.please_wait_a_moment});
-								
-								//get from server
-								jQuery('#rs-import-template-from-server').submit();
 								jQuery("#dialog_import_template_slider_from").dialog("close");
 							}
 						}else{
@@ -1165,6 +1163,11 @@ var RevSliderAdmin = new function(){
 		
 		
 		
+		/*jQuery('#form-import-online-slider-local').submit(function(evt){
+			
+		});*/
+		
+		
 		jQuery('body').on('click', '.template_slider_item_reimport_package, .install_template_slider_package', function(){
 			
 			if(jQuery(this).hasClass('deny_download')){
@@ -1172,18 +1175,18 @@ var RevSliderAdmin = new function(){
 				return false;
 			}
 			
-			//modify the dialog with some informations 
-			jQuery('.rs-zip-name').text(jQuery(this).data('zipname'));
-			jQuery('.rs-uid').val(jQuery(this).data('uid'));
-			jQuery('.rs-package').val('true'); //set that the package needs to be installed
+			var mdata = {};
+			mdata.zip = jQuery(this).data('zipname');
+			mdata.uid = jQuery(this).data('uid');
+			mdata['package'] = 'true';
 			
 			if(rs_plugin_validated){
 				if(rs_pack_page_creation){
 					jQuery('#dialog_import_template_slider_page_template').dialog({
 						modal:true,
 						resizable:false,
-						title:'Import',
-						width:350,
+						title:'Create Blank Demo Page',
+						width:450,
 						height:200,
 						closeOnEscape:true,
 						dialogClass:"tpdialogs",
@@ -1192,52 +1195,249 @@ var RevSliderAdmin = new function(){
 						},
 						buttons:{
 							'Yes':function(){
+								import_template_online_slider(mdata, 'true');
 								
-								jQuery('#rs-import-template-from-server').find('.rs-page-creation').val('true');
-								//show please wait
-								showWaitAMinute({fadeIn:300,text:rev_lang.please_wait_a_moment});
-								
-								//get from server
-								jQuery('#rs-import-template-from-server').submit();
-								jQuery('.rs-package').val('false');
-				
 								jQuery(this).dialog("close");
 							},
 							'No':function(){
-								jQuery('#rs-import-template-from-server').find('.rs-page-creation').val('false');
+								import_template_online_slider(mdata, 'false');
 								
-								//show please wait
-								showWaitAMinute({fadeIn:300,text:rev_lang.please_wait_a_moment});
-								
-								//get from server
-								jQuery('#rs-import-template-from-server').submit();
-								jQuery('.rs-package').val('false');
-				
 								jQuery(this).dialog("close");
 							}
 						}
 						
 					});
 				}else{
-					jQuery('#rs-import-template-from-server').find('.rs-page-creation').val('false');
-					
-					//show please wait
-					showWaitAMinute({fadeIn:300,text:rev_lang.please_wait_a_moment});
-					
-					//get from server
-					jQuery('#rs-import-template-from-server').submit();
-					jQuery('.rs-package').val('false');
+					import_template_online_slider(mdata, 'false');
 				}
 			}else{
-				jQuery('.rs-package').val('false');
+				//jQuery('.rs-package').val('false');
 			
 				alert(rev_lang.this_feature_only_if_activated);
 			}
 			
-			
 			jQuery('#close-template').click();
 			return false;
 		});
+		
+		var installclosebutton;
+
+		
+		var import_template_online_slider = function(mdata, create_page){
+			
+			jQuery('#import_dialog_box').html('');
+
+			
+			//open dialog which will then have all the information of the Sliders
+			jQuery('#dialog_import_template_slider_info').dialog({
+				modal:true,
+				resizable:false,
+				width:450,
+				minHeight:350,
+				open: function(event, ui) {
+					var dialog = jQuery(event.target).parent(),						
+						dialogtitle = dialog.find('.ui-dialog-titlebar');					
+					dialog.attr("id","tp_import_sliders");
+					dialogtitle.attr("id","tp_import_sliders_title");
+					installclosebutton = jQuery(".ui-dialog-titlebar-close", ui.dialog);
+					jQuery(".ui-dialog-titlebar-close", ui.dialog).hide();
+				}
+			});
+			
+			if(mdata['package'] !== undefined && slider_package_uids[mdata.uid] !== undefined){
+				mdata['page-creation'] = false;
+				
+				delete(mdata['package']);
+				
+				rs_install_slider = {};
+				rs_install_ids = [];
+				
+				for(var i in slider_package_uids[mdata.uid]){
+					for(var ki in slider_package_uids[mdata.uid][i]){
+						rs_install_slider[i] = {
+                            uid: slider_package_uids[mdata.uid][i][ki],
+                            sid: ki,
+                            status: 0
+                        }
+					}
+				}
+				
+				var my_install_calls = 0;
+				var max_calls = 60;
+				var warning_calls = 30;
+				
+				var install_interval = setInterval(function(){
+					my_install_calls++;
+					
+					//jQuery('#import_dialog_box_action').append('.');
+					
+
+					if(my_install_calls == warning_calls){
+						jQuery('#import_dialog_box_action').append('<div class="import_failure">'+rev_lang.download_install_takes_longer+"</div>");
+					} 
+					if(my_install_calls == max_calls){
+						jQuery('#import_dialog_box').append(rev_lang.download_failed_check_server);
+						jQuery('#import_dialog_box').append('<div>'+rev_lang.aborting_import+'</div>');
+						jQuery('#import_dialog_box_action').html('');
+						installclosebutton.show();
+						clearInterval(install_interval);
+					}
+					
+					var cur_installing = 0;
+					var cur_installed = 1;
+					var finished = true;
+					for(var i in rs_install_slider){
+						if(rs_install_slider[i]['status'] === 1){
+							cur_installing = 1;
+						}
+						if(rs_install_slider[i]['status'] !== 2){
+							finished = false;
+						}
+						if(rs_install_slider[i]['status'] === 2){
+							cur_installed++;
+						}
+					}
+					
+					if(cur_installed <= Object.keys(rs_install_slider).length){
+						jQuery('#install-slider-counter').css({width:((cur_installed/Object.keys(rs_install_slider).length)*100)+"%"});
+					}else{
+						jQuery('#install-slider-counter').width('100%');
+					}
+					
+					if(cur_installing === 0){ //install new slider
+						my_install_calls = 0;//reset to 0 as new Slider will be installed
+						
+						
+						for(var i in rs_install_slider){
+							if(rs_install_slider[i]['status'] === 0){
+								
+								mdata.uid = rs_install_slider[i]['uid'];
+
+								jQuery('#import_dialog_box_action').html(slider_package_names[rs_install_slider[i]['uid']].name); //Write the Name of the Current Installing Slider
+								rs_install_slider[i]['status'] = 1;
+								
+								UniteAdminRev.ajaxRequest("import_slider_online_template_slidersview_new", mdata, function(response){
+									//modify the dialog with some informations 
+									rs_install_slider[i]['status'] = 2;
+									
+									if(response.slider_id !== undefined && response.slider_id > 0){
+										rs_install_ids.push(response.slider_id);
+									}
+									if(response.view !== false){
+										rs_install_url = response.view;
+									}
+									
+									if(response.error.length > 0){
+										for(var key in response.error){
+											jQuery('#import_dialog_box').append('<div>'+response.error[key]+'</div>');
+										}
+									}else{
+										for(var key in response.success){
+										//	jQuery('#import_dialog_box').append('<div>'+response.success[key]+'</div>');
+										}
+										
+									}
+								}, true);
+								break;
+							}
+						}
+					}
+					if(finished){
+						clearInterval(install_interval);
+						//all slider installed
+						
+						if(create_page === 'true'){
+							//create page
+							jQuery('#import_dialog_box').append('<div>'+rev_lang.create_draft+'</div>');
+							
+							UniteAdminRev.ajaxRequest("create_draft_page", {slider_ids: rs_install_ids}, function(response){
+								if(response.open !== false){ //open created page
+									jQuery('#import_dialog_box').append('<div>'+rev_lang.draft_created+'</div>');
+									window.open(response.open, '_blank');
+								}else{
+									jQuery('#import_dialog_box').append('<div>'+rev_lang.draft_not_created+'</div>');
+								}
+								jQuery('#import_dialog_box').append('<div>'+rev_lang.slider_import_success_reload+'</div>');
+								if(rs_install_url !== false){
+									location.href = rs_install_url;
+								}
+							}, true);
+							
+						}else{
+							jQuery('#import_dialog_box').append('<div>'+rev_lang.slider_import_success_reload+'</div>');
+							if(rs_install_url !== false){
+								location.href = rs_install_url;
+							}
+						}
+						
+					}
+				}, 1000);
+			}else{
+				mdata['page-creation'] = create_page;
+				
+				var title = jQuery('#import_dialog_box').data('requested_slide'); 
+				//t.get_title_by_uid(mdata["uid"]);
+				
+				jQuery('#import_dialog_box').append('<div>'+title+'</div>');
+				
+				UniteAdminRev.ajaxRequest("import_slider_online_template_slidersview_new", mdata, function(response){
+					//modify the dialog with some informations 
+					jQuery('#import_dialog_box_action').html('');
+					
+					if(response.error.length > 0){
+						for(var key in response.error){
+							jQuery('#import_dialog_box').append('<div>'+response.error[key]+'</div>');
+						}
+					}else{
+						for(var key in response.success){
+							jQuery('#install-slider-counter').css({width:"100%"});
+							//jQuery('#import_dialog_box').append('<div>'+response.success[key]+'</div>');
+						}
+						if(response.open !== false){ //open created page
+							jQuery('#import_dialog_box').append('<div>'+rev_lang.draft_created+'</div>');
+							window.open(response.open, '_blank');
+							
+						}
+						if(response.view !== false){ //redirect
+							jQuery('#import_dialog_box').append('<div>'+rev_lang.slider_import_success_reload+'</div>');
+							location.href = response.view;
+						}
+					}
+				}, true);
+			}
+			/*UniteAdminRev.ajaxRequest("import_slider_online_template_slidersview", mdata, function(response){
+				console.log(response);
+			});*/
+			
+			
+			/*jQuery('.rs-zip-name').text(mdata.zip);
+			jQuery('.rs-uid').val(mdata.uid);
+			jQuery('.rs-package').val(mdata['package']); //set that the package needs to be installed
+			
+			jQuery('#rs-import-template-from-server').find('.rs-page-creation').val(create_page);
+			
+			//show please wait
+			showWaitAMinute({fadeIn:300,text:rev_lang.please_wait_a_moment});
+			
+			//get from server
+			jQuery('#rs-import-template-from-server').submit();
+			jQuery('.rs-package').val('false');*/
+			
+		}
+		
+		
+		t.get_title_by_uid = function(uid){
+			//get name by uid
+			var dat = jQuery('.template_slide_item_img[data-uid="'+uid+'"]').data('title');
+			if(dat == undefined)
+				dat = jQuery('.install_template_slider[data-uid="'+uid+'"]').data('title');
+			if(dat == undefined)
+				dat = jQuery('.template_slider_item_import[data-uid="'+uid+'"]').data('title');
+			if(dat == undefined)
+				dat = jQuery('.install_template_slider_package[data-uid="'+uid+'"]').data('title');
+			
+			return dat;
+		}
 		
 		
 		/**
@@ -1314,6 +1514,54 @@ var RevSliderAdmin = new function(){
 			}
 		});
 		
+		
+		jQuery('#form-import-slider-local, #form-import-online-slider-local').submit(function(evt){
+			
+			var title = jQuery(this).find('input[name="import_file"]').val().split('\\').pop();
+			
+			
+			if(jQuery('#dialog_import_slider').dialog("instance") !== undefined){
+				jQuery('#dialog_import_slider').dialog('close');
+			}
+			if(jQuery('#dialog_import_template_slider').dialog("instance") !== undefined){
+				jQuery('#dialog_import_template_slider').dialog('close');
+			}
+			
+			jQuery('#dialog_import_template_slider_info').dialog({
+				modal:true,
+				resizable:false,
+				width:450,
+				minHeight:350,
+				open: function(event, ui) {
+					
+					var dialog = jQuery(event.target).parent(),						
+						dialogtitle = dialog.find('.ui-dialog-titlebar');					
+					dialog.attr("id","tp_import_sliders");
+					dialogtitle.attr("id","tp_import_sliders_title");
+					//installclosebutton = jQuery(".ui-dialog-titlebar-close", ui.dialog);
+					jQuery(".ui-dialog-titlebar-close", ui.dialog).hide();
+				}
+			});
+			jQuery('#import_dialog_box').html('');
+			jQuery('#import_dialog_box').append('<div>'+title+'</div>');
+			
+			var my_install_calls = 0;
+			var max_calls = 60;
+			var warning_calls = 30;			
+			var install_interval = setInterval(function(){
+				my_install_calls++;								
+				if(my_install_calls == warning_calls){
+					jQuery('#import_dialog_box_action').append(rev_lang.download_install_takes_longer);
+				}
+				if(my_install_calls == max_calls){
+					jQuery('#import_dialog_box').append(rev_lang.download_failed_check_server);
+					jQuery('#import_dialog_box').append('<div>'+rev_lang.aborting_import+'</div>');
+					jQuery('#import_dialog_box_action').html('');
+					installclosebutton.show();
+					clearInterval(install_interval);
+				}
+			}, 1000);
+		});
 		
 		jQuery("#button_import_template_slider, #button_import_template_slider_b").click(function(){
 			t.load_slider_template_html();
@@ -1888,8 +2136,10 @@ var RevSliderAdmin = new function(){
 		 * add Template Slider through Import, then add specific slide to current Slider and open it. Check for zip name
 		 **/
 		jQuery('body').on('click', '.install_template_slide', function(){
-			var data = jQuery(this);
-			
+			var data = jQuery(this);			
+
+			jQuery('#import_dialog_box').data('requested_slide',data.data('title'));
+
 			if(data.hasClass('deny_download')){
 				alert(rev_lang.this_template_requires_version+' '+data.data('versionneed')+' '+rev_lang.of_slider_revolution);
 				return false;
@@ -1941,6 +2191,10 @@ var RevSliderAdmin = new function(){
 								//show please wait
 								showWaitAMinute({fadeIn:300,text:rev_lang.please_wait_a_moment});
 								
+								//open dialog and put the dots
+								
+								import_single_slide_wait();
+								
 								//get from server
 								jQuery('#rs-import-slide-template-from-server').submit();
 								
@@ -1956,6 +2210,50 @@ var RevSliderAdmin = new function(){
 			}
 		});
 		
+		jQuery('#dialog_import_template_slide').submit(function(evt){
+			import_single_slide_wait();
+		});
+		
+		var import_single_slide_wait = function(){
+			jQuery('#import_dialog_box').html('');
+
+			//open dialog which will then have all the information of the Sliders
+			jQuery('#dialog_import_template_slide_info').dialog({
+				modal:true,
+				resizable:false,
+				width:450,
+				minHeight:350,
+				open: function(event, ui) {
+					var dialog = jQuery(event.target).parent(),						
+						dialogtitle = dialog.find('.ui-dialog-titlebar');					
+					dialog.attr("id","tp_import_sliders");
+					dialogtitle.attr("id","tp_import_sliders_title");
+					//installclosebutton = jQuery(".ui-dialog-titlebar-close", ui.dialog);
+					jQuery(".ui-dialog-titlebar-close", ui.dialog).hide();
+					
+				}
+			});
+			var my_install_calls = 0;
+			var warning_calls = 60;
+			var max_calls = 90;
+			
+			jQuery('#import_dialog_box').append(jQuery('#import_dialog_box').data('requested_slide'));
+
+			var install_interval = setInterval(function(){
+				my_install_calls++;
+												
+				if(my_install_calls == warning_calls){
+					jQuery('#import_dialog_box_action').append(rev_lang.download_install_takes_longer);
+				}
+				if(my_install_calls == max_calls){
+					jQuery('#import_dialog_box').append(rev_lang.download_failed_check_server);
+					jQuery('#import_dialog_box').append('<div>'+rev_lang.aborting_import+'</div>');
+					jQuery('#import_dialog_box_action').html('');					
+					clearInterval(install_interval);					
+				}
+			}, 1000);
+			
+		};
 		
 		
 		// TOGGLE SOME ACCORDION
@@ -2734,6 +3032,8 @@ var RevSliderAdmin = new function(){
 
 	var g_codemirrorCssDynamic = null;
 	var g_codemirrorCssStatic = null;
+	var g_codemirrorCssSlider = null;
+	var g_codemirrorJsSlider = null;
 	var staticStyles = null;
 	var urlStaticCssCaptions = null;
 
@@ -2760,6 +3060,14 @@ var RevSliderAdmin = new function(){
 		g_codemirrorCssStatic = CodeMirror.fromTextArea(document.getElementById("textarea_edit_static"), { lineNumbers: true });
 	}
 
+	t.setCodeMirrorSliderEditor = function(){
+		g_codemirrorCssSlider = CodeMirror.fromTextArea(document.getElementById("textarea_show_slider_styles"), { lineNumbers: true });
+	}
+
+	t.setCodeMirrorSliderEditorJS = function(){
+		g_codemirrorJsSlider = CodeMirror.fromTextArea(document.getElementById("textarea_show_slider_javascript"), { lineNumbers: true });
+	}
+
 	t.setCodeMirrorDynamicEditor = function(){
 		g_codemirrorCssDynamic = CodeMirror.fromTextArea(document.getElementById("textarea_show_dynamic_styles"), {
 			lineNumbers: true,
@@ -2771,6 +3079,8 @@ var RevSliderAdmin = new function(){
 		jQuery("#css-static-accordion").accordion({
 			heightStyle: "content",
 			activate: function(event, ui){
+				if(g_codemirrorCssSlider != null) g_codemirrorCssSlider.refresh();
+				if(g_codemirrorJsSlider != null) g_codemirrorJsSlider.refresh();
 				if(g_codemirrorCssStatic != null) g_codemirrorCssStatic.refresh();
 				if(g_codemirrorCssDynamic != null) g_codemirrorCssDynamic.refresh();
 			}
@@ -2783,10 +3093,34 @@ var RevSliderAdmin = new function(){
 			//if(!UniteLayersRev.getLayerGeneralParamsStatus()) return false; //false if fields are disabled
 
 			jQuery("#css-static-accordion").accordion({ active: 1 });
-
+			
+			
+			UniteAdminRev.ajaxRequest("get_slider_custom_css_js",{slider_id:curSliderID},function(response){
+				var cssData = response['css'];
+				var jsData = response['js'];
+				if(g_codemirrorCssSlider != null)
+					g_codemirrorCssSlider.setValue(cssData);
+				else{
+					jQuery("#textarea_show_slider_styles").val(cssData);
+					setTimeout('RevSliderAdmin.setCodeMirrorSliderEditor()',500);
+				}
+				
+				if(g_codemirrorJsSlider != null)
+					g_codemirrorJsSlider.setValue(jsData);
+				else{
+					jQuery("#textarea_show_slider_javascript").val(jsData);
+					setTimeout('RevSliderAdmin.setCodeMirrorSliderEditorJS()',500);
+				}
+				
+			}, false);
+			
+			
 			UniteAdminRev.ajaxRequest("get_static_css","",function(response){
 				var cssData = response.data;
-
+				
+				if(cssData !== ''){
+					//show button
+				}
 				if(g_codemirrorCssStatic != null)
 					g_codemirrorCssStatic.setValue(cssData);
 				else{
@@ -2797,7 +3131,7 @@ var RevSliderAdmin = new function(){
 
 			UniteAdminRev.ajaxRequest("get_dynamic_css","",function(response){
 				var cssData = response.data;
-
+				
 				if(g_codemirrorCssDynamic != null)
 					g_codemirrorCssDynamic.setValue(cssData);
 				else{
@@ -2805,29 +3139,81 @@ var RevSliderAdmin = new function(){
 					setTimeout('RevSliderAdmin.setCodeMirrorDynamicEditor()',500);
 				}
 			});
-
+			
+			jQuery("#css_slider_editor_wrap").dialog({
+				modal:true,
+				resizable:false,
+				minWidth:1024,
+				minHeight:500,
+				closeOnEscape:true,							
+				//title:rev_lang.global_styles_editor,				
+				create:function(ui) {							
+					//jQuery(ui.target).parent().find('.ui-dialog-titlebar').addClass("tp-slider-new-dialog-title");
+				},
+				open:function () {
+					jQuery(this).closest(".ui-dialog").addClass("tp-css-editor-dialog");					
+				},
+				buttons:{
+					'Save': function(){
+						var data = {};
+						if(g_codemirrorCssSlider != null)
+							data['css'] = g_codemirrorCssSlider.getValue();
+						else
+							data['css'] = jQuery("#textarea_show_slider_styles").val();
+						
+						if(g_codemirrorJsSlider != null)
+							data['js'] = g_codemirrorJsSlider.getValue();
+						else
+							data['js'] = jQuery("#textarea_show_slider_javascript").val();
+						
+						data['slider_id'] = curSliderID;
+						
+						UniteAdminRev.ajaxRequest("update_slider_custom_css_js",data,function(response){
+							/*if(g_codemirrorCssSlider != null)
+								g_codemirrorCssSlider.setValue('');
+							else
+								jQuery("#textarea_show_slider_styles").val('');*/
+						});
+						
+						jQuery(this).dialog('close');
+					}
+				}
+			});
+			
+			
+		});
+		
+		jQuery('.show_global_styles').click(function(){
+			initGlobalCssAccordion();
 			jQuery("#css_static_editor_wrap").dialog({
 				modal:true,
 				resizable:false,
-				title:rev_lang.global_styles_editor,
-				minWidth:700,
-				minHeight:500,
+				//title:rev_lang.global_styles_editor,
+				minWidth:1224,
+				minHeight:600,
 				closeOnEscape:true,
 				create:function(ui) {				
-					jQuery(ui.target).parent().find('.ui-dialog-titlebar').addClass("tp-slider-new-dialog-title");
+					//jQuery(ui.target).parent().find('.ui-dialog-titlebar').addClass("tp-slider-new-dialog-title");
 				},
 				open:function () {
-					jQuery(this).closest(".ui-dialog")
-					.find(".ui-button").each(function(i) {
-					   var cl;
-					   if (i==0) cl="revgray";
-					   if (i==1) cl="revgreen";
-					   if (i==2) cl="revred";
-					   jQuery(this).addClass(cl).addClass("button-primary").addClass("rev-uibuttons");
-				   })
+					jQuery(this).closest(".ui-dialog").addClass("tp-css-editor-dialog").addClass("tp-depricated-dialog");
 				},
 				buttons:{
-					Save:function(){
+					'Empty Global Styles': function(){
+						if(!confirm(rev_lang.really_clear_global_styles)){
+							return false;
+						}
+						
+						data = '';
+						
+						UniteAdminRev.ajaxRequest("update_static_css",data,function(response){
+							if(g_codemirrorCssStatic != null)
+								g_codemirrorCssStatic.setValue('');
+							else
+								jQuery("#textarea_edit_static").val('');
+						});
+					},
+					/*Save:function(){
 						if(!confirm(rev_lang.really_update_global_styles)){
 							return false;
 						}
@@ -2851,7 +3237,7 @@ var RevSliderAdmin = new function(){
 						//	setTimeout('UniteAdminRev.loadCssFile(RevSliderAdmin.getUrlStaticCssCaptions(),"rs-plugin-static-css");',1000);
 
 						jQuery(this).dialog("close");
-					},
+					},*/
 					"Cancel":function(){
 						jQuery(this).dialog("close");
 					}
